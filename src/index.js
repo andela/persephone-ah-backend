@@ -1,5 +1,5 @@
-const express = require('express');
-const bodyParser = require('body-parser');
+import express from 'express';
+import bodyParser from 'body-parser';
 
 // Create global app object
 const app = express();
@@ -8,8 +8,8 @@ const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-app.get('/', (req, res) => {
-  return res.send({ status: 200, message: `Welcome to Author's Haven` });
+app.get('/', (request, response) => {
+  return response.send({ status: 200, message: `Welcome to Author's Haven` });
 });
 
 const PORT = process.env.PORT || 3000;
@@ -19,4 +19,4 @@ app.listen(PORT, function() {
   console.log(`Listening on port: ${PORT}`);
 });
 
-module.exports = { app };
+export default app;
