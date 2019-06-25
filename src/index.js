@@ -1,7 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 
-// Create global app object
+// Create global App object
 const app = express();
 
 // Normal express config defaults
