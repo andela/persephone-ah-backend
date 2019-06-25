@@ -8,6 +8,7 @@ by leveraging the modern web.
 ---
 
 [![Build Status](https://travis-ci.org/andela/persephone-ah-backend.svg?branch=ch-setup-travisCI-166816088)](https://travis-ci.org/andela/persephone-ah-backend)
+[![Coverage Status](https://coveralls.io/repos/github/andela/persephone-ah-backend/badge.svg?branch=develop)](https://coveralls.io/github/andela/persephone-ah-backend?branch=develop)
 
 ## API Spec
 
