@@ -4,12 +4,13 @@
   "description": "A Social platform for the creative at heart",
   "main": "index.js",
   "scripts": {
-    "test": "mocha src/tests/*.js  --require @babel/register --exit || true",
+    "test": " nyc mocha src/tests/*.js  --require @babel/register --exit || true",
     "start": "babel-node src/index.js",
     "build": "npm run clean && npm run babel-build",
     "clean": "rm -rf dist",
     "babel-build": "babel src -d dist && node dist/index",
-    "heroku-postbuild": "echo skip post-build"
+    "heroku-postbuild": "echo skip post-build",
+    "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "author": "Andela Simulations Programme",
   "license": "MIT",
