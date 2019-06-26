@@ -3,34 +3,30 @@
   "version": "1.0.0",
   "description": "A Social platform for the creative at heart",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "test": "mocha src/tests/*.js  --require @babel/register --exit || true",
+    "start": "babel-node src/index.js",
+    "build": "npm run clean && npm run babel-build",
+    "clean": "rm -rf dist",
+    "babel-build": "babel src -d dist && node dist/index",
+    "heroku-postbuild": "echo skip post-build"
+  },
   "author": "Andela Simulations Programme",
   "license": "MIT",
   "dependencies": {
+    "@babel/cli": "^7.4.4",
+    "@babel/core": "^7.4.5",
+    "@babel/node": "^7.4.5",
+    "@babel/preset-env": "^7.4.5",
+    "@babel/register": "^7.4.4",
     "body-parser": "^1.18.3",
+    "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
     "cors": "^2.8.4",
     "dotenv": "^6.0.0",
     "ejs": "^2.6.1",
-    "errorhandler": "^1.5.0",
     "express": "^4.16.3",
-    "express-jwt": "^5.3.1",
-    "express-session": "^1.15.6",
     "jsonwebtoken": "^8.3.0",
-    "method-override": "^2.3.10",
-    "methods": "^1.1.2",
-    "mongoose": "^5.2.2",
-    "mongoose-unique-validator": "^2.0.1",
-    "passport": "^0.4.0",
-    "passport-local": "^1.0.0",
-    "request": "^2.87.0",
-    "underscore": "^1.9.1"
-  },
-  "devDependencies": {
-    "eslint": "^6.0.0",
-    "eslint-config-airbnb-base": "^13.1.0",
-    "eslint-config-prettier": "^5.0.0",
-    "eslint-plugin-import": "^2.17.3",
-    "eslint-plugin-prettier": "^3.1.0",
-    "prettier": "^1.18.2"
+    "mocha": "^6.1.4"
   }
 }
