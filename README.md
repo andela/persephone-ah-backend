@@ -1,14 +1,13 @@
 # Authors Haven - A Social platform for the creative at heart.
 
 [![Build Status](https://travis-ci.org/andela/persephone-ah-backend.svg?branch=ch-setup-travisCI-166816088)](https://travis-ci.org/andela/persephone-ah-backend) [![](https://img.shields.io/badge/Reviewed_by-Hound-blueviolet.svg)](https://houndci.com)
-
+[![Coverage Status](https://coveralls.io/repos/github/andela/persephone-ah-backend/badge.svg?branch=develop)](https://coveralls.io/github/andela/persephone-ah-backend?branch=develop)
 ## Vision
 
 Create a community of like minded authors to foster inspiration and innovation
 by leveraging the modern web.
 
 ---
-
 
 ## API Spec
 
