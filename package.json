@@ -32,11 +32,14 @@
     "sequelize": "^5.8.12"
   },
   "devDependencies": {
+    "coveralls": "^3.0.4",
     "eslint": "^6.0.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-config-prettier": "^5.0.0",
     "eslint-plugin-import": "^2.17.3",
     "eslint-plugin-prettier": "^3.1.0",
+    "mocha-lcov-reporter": "^1.3.0",
+    "nyc": "^14.1.1",
     "prettier": "^1.18.2",
     "sequelize-cli": "^5.5.0"
   }
