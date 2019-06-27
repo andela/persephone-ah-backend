@@ -4,13 +4,15 @@
   "description": "A Social platform for the creative at heart",
   "main": "index.js",
   "scripts": {
-    "test": " nyc mocha src/tests/*.js  --require @babel/register --exit || true",
+    "test": " nyc mocha src/**/*.spec.js --require @babel/register --exit || true",
     "start": "babel-node src/index.js",
     "build": "npm run clean && npm run babel-build",
     "clean": "rm -rf dist",
     "babel-build": "babel src -d dist && node dist/index",
     "heroku-postbuild": "echo skip post-build",
-    "coverage": "nyc report --reporter=text-lcov | coveralls"
+    "coverage": "nyc report --reporter=text-lcov | coveralls",
+    "db-migration": "sequelize db:migrate",
+    "migration-rollback": "sequelize db:migrate:undo:all"
   },
   "author": "Andela Simulations Programme",
   "license": "MIT",
@@ -32,7 +34,9 @@
     "pg-hstore": "^2.3.3",
     "sequelize": "^5.8.12",
     "sequelize-cli": "^5.5.0",
-    "swagger-ui-express": "^4.0.6"
+    "swagger-ui-express": "^4.0.6",
+    "sinon": "^7.3.2",
+    "sequelize-test-helpers": "^1.1.2"
   },
   "devDependencies": {
     "coveralls": "^3.0.4",
