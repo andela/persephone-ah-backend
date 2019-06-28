@@ -28,15 +28,17 @@
     "cors": "^2.8.4",
     "dotenv": "^6.2.0",
     "express": "^4.16.3",
+    "friendly-mail": "^1.0.0",
+    "express-validator": "^6.1.0",
     "jsonwebtoken": "^8.3.0",
     "mocha": "^6.1.4",
     "pg": "^7.11.0",
     "pg-hstore": "^2.3.3",
     "sequelize": "^5.8.12",
     "sequelize-cli": "^5.5.0",
-    "swagger-ui-express": "^4.0.6",
+    "sequelize-test-helpers": "^1.1.2",
     "sinon": "^7.3.2",
-    "sequelize-test-helpers": "^1.1.2"
+    "swagger-ui-express": "^4.0.6"
   },
   "devDependencies": {
     "coveralls": "^3.0.4",
