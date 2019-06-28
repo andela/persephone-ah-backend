@@ -71,5 +71,6 @@ export default (sequelize, DataTypes) => {
       defaultValue: 'author'
     }
   });
+
   return User;
 };
