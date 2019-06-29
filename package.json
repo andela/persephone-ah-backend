@@ -4,7 +4,7 @@
   "description": "A Social platform for the creative at heart",
   "main": "index.js",
   "scripts": {
-    "test": " nyc mocha src/**/*.spec.js --require @babel/register --exit || true",
+    "test": "cross-env NODE_ENV=test npm run db-migration && nyc mocha src/**/*.spec.js --require @babel/register --exit || true",
     "start": "nodemon --exec babel-node src/index.js",
     "build": "npm run clean && npm run babel-build",
     "clean": "rm -rf dist",
@@ -15,7 +15,7 @@
     "migration-rollback": "sequelize db:migrate:undo:all"
   },
   "author": "Andela Simulations Programme",
-  "license": "MIT", 
+  "license": "MIT",
   "dependencies": {
     "@babel/cli": "^7.4.4",
     "@babel/core": "^7.4.5",
@@ -27,6 +27,7 @@
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
     "cors": "^2.8.4",
+    "cross-env": "^5.2.0",
     "dotenv": "^6.2.0",
     "express": "^4.16.3",
     "express-validator": "^6.1.0",
@@ -39,6 +40,7 @@
     "sequelize-cli": "^5.5.0",
     "sequelize-test-helpers": "^1.1.2",
     "sinon": "^7.3.2",
+    "sinon-chai": "^3.3.0",
     "swagger-ui-express": "^4.0.6"
   },
   "devDependencies": {

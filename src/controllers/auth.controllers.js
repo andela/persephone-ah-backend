@@ -1,19 +1,25 @@
-import { validationResult } from 'express-validator';
+import  { signUpService, isUserExist }  from '../services/auth.services';
+import sendEmail from '../helpers/mail.helper'; 
 import Helper from '../services/helper';
-<<<<<<< HEAD
-import  authService  from '../services/auth.services'
 
 
 const signUp = async (request, response) => {
-	const value =  await authService.signUpService(request.body);
-	return response.status(201).json(value)
-=======
-import authService from '../services/auth.services';
+  try {
+    const result = await isUserExist(request.body.email)
+    if(result) {
+       return Helper.errorResponse(response, 409, {message: 'user already exists'})
+    }
 
-const signUp = async (request, response) => {
-  const value = await authService.authService(request.body);
-  return response.status(201).json(value);
->>>>>>> cc313268d6f8f5b773f0c2c664c853a8e97ac2d6
+    const value =  await signUpService(request.body);
+
+    const { firstName, email } = value.user;
+
+    sendEmail(firstName, email, 'Welcome Mail');
+    return response.status(201).json(value)
+  } catch (error) {
+    return response.status(500).json({ error: "internal server error"})
+  }
+  
 };
 
 export default { signUp };

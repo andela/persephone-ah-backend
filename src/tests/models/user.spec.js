@@ -5,7 +5,7 @@ import {
   checkPropertyExists
 } from 'sequelize-test-helpers';
 
-import UserModel from '../db/models/user';
+import UserModel from '../../db/models/user';
 
 describe('src/models/User', () => {
   const User = UserModel(sequelize, dataTypes);
@@ -18,6 +18,7 @@ describe('src/models/User', () => {
       'firstName',
       'lastName',
       'email',
+      'confirmEmailCode',
       'password',
       'confirmEmail',
       'isNotified',
