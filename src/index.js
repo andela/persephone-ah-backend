@@ -3,7 +3,7 @@ import bodyParser from 'body-parser';
 import swagger from 'swagger-ui-express';
 import logger from 'morgan';
 import swaggerConfig from '../swagger.json';
-import Routes from './routes/v1/auth.routes';
+import Routes from './routes/v1';
 
 // Create global App object
 const app = express();
@@ -12,7 +12,7 @@ const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(logger('dev'));
-app.use('/api/v1/auth', Routes)
+Routes(app);
 
 app.use('/api-docs', swagger.serve, swagger.setup(swaggerConfig));
 
