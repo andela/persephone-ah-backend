@@ -1,5 +1,5 @@
 import auth from './auth.routes';
 
-// export default app => {
-//     app.use('api/v1/auth', auth)
-// }
+export default app => {
+    app.use('/api/v1/auth', auth);
+};

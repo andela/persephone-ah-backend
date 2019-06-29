@@ -7,10 +7,10 @@ const {
 
 const UserValidator = {
   signUpValidator(request, response, next) {
-    if (request.body.password !== request.body.confirmPassword) {
-      const error = 'passwords must match';
-      return Helper.errorResponse(response, 422, error);
-    }
+    // if (request.body.password !== request.body.confirmPassword) {
+    //   const error = 'passwords must match';
+    //   return Helper.errorResponse(response, 422, error);
+    // }
     request
       .check('firstName')
       .isAlpha()
