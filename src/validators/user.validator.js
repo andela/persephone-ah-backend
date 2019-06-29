@@ -1,5 +1,7 @@
 import Helper from '../services/helper';
-import { check, validationResult } from 'express-validator';
+import { body, check, validationResult } from 'express-validator';
+import model from '../db/models';
+const { User } = model;
 
 const UserValidator = {
   signUpValidator(route) {
@@ -30,7 +32,15 @@ const UserValidator = {
             .matches('[0-9]')
             .withMessage('Password must contain a number')
             .matches('[A-Z]')
-            .withMessage('Password must contain an upper case letter')
+            .withMessage('Password must contain an upper case letter'),
+          body('email').custom(value => {
+              return User.findOne({where: { 'email': value }})
+              .then(user => {
+                if (user) {
+                  return Promise.reject('E-mail already in use');
+                }
+              })
+            })
         ];
 
       case 'login':
@@ -66,15 +76,12 @@ const UserValidator = {
   },
 
   checkValidationResult(request, response, next) {
-    if (request.body.password !== request.body.confirmPassword) {
-      const error = 'passwords must match';
-      return Helper.errorResponse(response, 422, error);
-    }
+    
     const result = validationResult(request);
     if (result.isEmpty()) {
       return next();
     }
-    return Helper.errorResponse(response, 422, result);
+    return Helper.errorResponse(response, 422, result.errors);
   }
 };
 export default UserValidator;
