@@ -10,10 +10,9 @@ const Helper = {
    * @param {string} error
    * @returns {object} error format
    */
-  errorResponse(response, statusCode, error) {
+  errorResponse(response, statusCode, errors) {
     return response.status(statusCode).json({
-      status: statusCode,
-      error
+      errors
     });
   }
 };

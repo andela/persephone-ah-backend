@@ -14,6 +14,7 @@ const signUpService =  async body => {
         firstName: result.firstName,
         lastName: result.lastName,
         email: result.email,
+        img: result.image,
         token: getToken(result),
     }
     return { user };
