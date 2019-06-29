@@ -33,6 +33,10 @@ module.exports = {
         allowNull: false,
         defaultValue: false
       },
+      confirmEmailCode: {
+        type: Sequelize.STRING,
+        allowNull: true
+      },
       isNotified: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
