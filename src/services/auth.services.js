@@ -1,5 +1,6 @@
 import { getToken } from '../helpers/jwt.helper';
 import model from '../db/models';
+
 const { User } = model;
 
 const signUpService = async body => {
@@ -38,7 +39,5 @@ const loginService = async body => {
   }
 };
 
-export default {
-  signUpService,
-  loginService
-};
+export const isUserExist = async (userEmail) =>  await User.findOne({where: { 'email': userEmail }});
+

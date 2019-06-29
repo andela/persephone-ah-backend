@@ -33,13 +33,7 @@ const UserValidator = {
             .withMessage('Password must contain a number')
             .matches('[A-Z]')
             .withMessage('Password must contain an upper case letter'),
-          body('email').custom(value => {
-            return User.findOne({ where: { email: value } }).then(user => {
-              if (user) {
-                return Promise.reject('E-mail already in use');
-              }
-            });
-          })
+          
         ];
 
       case 'login':
@@ -75,11 +69,12 @@ const UserValidator = {
   },
 
   checkValidationResult(request, response, next) {
+    
     const result = validationResult(request);
     if (result.isEmpty()) {
       return next();
     }
-    return Helper.errorResponse(response, 422, result.errors);
+    return Helper.errorResponse(response, 400, result.errors);
   }
 };
 export default UserValidator;
