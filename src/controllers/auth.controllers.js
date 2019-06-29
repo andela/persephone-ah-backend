@@ -1,17 +1,11 @@
-import model from '../db/models';
-const { User } = model;
+import { validationResult } from 'express-validator';
+import Helper from '../services/helper';
+import  authService  from '../services/auth.services'
+
 
 const signUp = async (request, response) => {
-	const { firstName, lastName, password, email } = request.body;
-
-	const user = await User.create({
-		firstName,
-		lastName,
-		password,
-		email,
-	});
-
-	return response.status(201).json(user);
+	const value =  await authService.signUpService(request.body);
+	return response.status(201).json(value)
 };
 
 export default { signUp };

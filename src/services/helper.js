@@ -11,7 +11,7 @@ const Helper = {
    * @returns {object} error format
    */
   errorResponse(response, statusCode, error) {
-    return response.status(statusCode).send({
+    return response.status(statusCode).json({
       status: statusCode,
       error
     });
