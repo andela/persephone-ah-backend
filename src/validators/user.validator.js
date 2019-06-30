@@ -4,7 +4,7 @@ import model from '../db/models';
 const { User } = model;
 
 const UserValidator = {
-  signUpValidator(route) {
+  validator(route) {
     switch (route) {
       case 'signup':
         return [
@@ -34,13 +34,12 @@ const UserValidator = {
             .matches('[A-Z]')
             .withMessage('Password must contain an upper case letter'),
           body('email').custom(value => {
-              return User.findOne({where: { 'email': value }})
-              .then(user => {
-                if (user) {
-                  return Promise.reject('E-mail already in use');
-                }
-              })
-            })
+            return User.findOne({ where: { email: value } }).then(user => {
+              if (user) {
+                return Promise.reject('E-mail already in use');
+              }
+            });
+          })
         ];
 
       case 'login':
@@ -76,7 +75,6 @@ const UserValidator = {
   },
 
   checkValidationResult(request, response, next) {
-    
     const result = validationResult(request);
     if (result.isEmpty()) {
       return next();
