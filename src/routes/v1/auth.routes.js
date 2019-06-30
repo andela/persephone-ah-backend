@@ -6,9 +6,16 @@ const router = express.Router();
 
 router.post(
   '/signup',
-  authValidator.signUpValidator('signup'),
+  authValidator.validator('signup'),
   authValidator.checkValidationResult,
   authController.signUp
+);
+
+router.post(
+  '/signin',
+  authValidator.validator('login'),
+  authValidator.checkValidationResult,
+  authController.login
 );
 
 export default router;
