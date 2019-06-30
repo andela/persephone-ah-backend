@@ -1,6 +1,7 @@
 import  { signUpService, isUserExist }  from '../services/auth.services';
 import sendEmail from '../helpers/mail.helper'; 
 import Helper from '../services/helper';
+import { worker } from 'cluster';
 
 
 const signUp = async (request, response) => {
@@ -19,7 +20,17 @@ const signUp = async (request, response) => {
   } catch (error) {
     return response.status(500).json({ error: "internal server error"})
   }
-  
+}
+
+const login = async (request, response) => {
+  const value = await authService.loginService(request.body);
+  if (value) {
+    return response.status(201).json(value);
+  } else {
+    return response.status(400).json({
+      Error: 'Invalid credentials'
+    });
+  }
 };
 
-export default { signUp };
+export default { signUp, login };

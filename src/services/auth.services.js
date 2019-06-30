@@ -21,5 +21,27 @@ export const signUpService =  async body => {
     return { user };
 }
 
+const loginService = async body => {
+  const { email, password } = body;
+  const result = await User.findOne({
+    where: { email }
+  });
+  if (result && result.validatePassword(password)) {
+    const { firstName, lastName } = result;
+    const token = await getToken(result);
+    const user = {
+      firstName,
+      lastName,
+      email,
+      token
+    };
+    return { user };
+  }
+};
+
 export const isUserExist = async (userEmail) =>  await User.findOne({where: { 'email': userEmail }});
 
+export default {
+  signUpService,
+  loginService
+};

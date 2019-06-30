@@ -1,10 +1,8 @@
 import Helper from '../services/helper';
-import { body, check, validationResult } from 'express-validator';
-import model from '../db/models';
-const { User } = model;
+import { check, validationResult } from 'express-validator';
 
 const UserValidator = {
-  signUpValidator(route) {
+  validator(route) {
     switch (route) {
       case 'signup':
         return [
@@ -28,7 +26,7 @@ const UserValidator = {
             .not()
             .isEmpty()
             .isLength({ min: 8 })
-            .withMessage('Pasword can not be less than 8 characters')
+            .withMessage('Password can not be less than 8 characters')
             .matches('[0-9]')
             .withMessage('Password must contain a number')
             .matches('[A-Z]')
@@ -45,9 +43,9 @@ const UserValidator = {
           check('password')
             .not()
             .isEmpty()
-            .withMessage('Pasword can not be empty')
+            .withMessage('Password can not be empty')
             .isLength({ min: 8 })
-            .withMessage('Pasword can not be less than 8 characters')
+            .withMessage('Password can not be less than 8 characters')
         ];
 
       case 'passwordReset':
@@ -56,7 +54,7 @@ const UserValidator = {
             .not()
             .isEmpty()
             .isLength({ min: 8 })
-            .withMessage('Pasword can not be less than 8 characters')
+            .withMessage('Password can not be less than 8 characters')
             .matches('[0-9]')
             .withMessage('Password must contain a number')
             .matches('[A-Z]')
@@ -69,7 +67,6 @@ const UserValidator = {
   },
 
   checkValidationResult(request, response, next) {
-    
     const result = validationResult(request);
     if (result.isEmpty()) {
       return next();
