@@ -1,11 +1,13 @@
 import Mail from 'friendly-mail';
 
-const sendEmail = async (recipientName, recipientMail, subject) => {
-  return await new Mail(subject)
+export const sendWelcomeEmail = async (recipientName, recipientMail, subject, type, confirmCode) => {
+  return await new Mail(type)
     .to(recipientMail)
     .subject(subject)
-    .data({ name: recipientName })
+    .data({ 
+      name: recipientName,
+      url: `http://localhost:3000/api/v1/users/verify/${confirmCode}`})
     .send();
 };
 
-export default sendEmail;
+

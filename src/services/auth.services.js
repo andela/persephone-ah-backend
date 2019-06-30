@@ -5,11 +5,12 @@ const { User } = model;
 
 export const signUpService =  async body => {
     const { firstName, lastName, email, password } = body;
+    const sanitizedEmail = email.toLowerCase();
     const result = await User.create({
         firstName,
         lastName,
         password,
-        email,
+        email: sanitizedEmail,
     });    
     const user = {
         firstName: result.firstName,
@@ -21,7 +22,7 @@ export const signUpService =  async body => {
     return { user };
 }
 
-const loginService = async body => {
+export const loginService = async body => {
   const { email, password } = body;
   const result = await User.findOne({
     where: { email }
@@ -40,8 +41,3 @@ const loginService = async body => {
 };
 
 export const isUserExist = async (userEmail) =>  await User.findOne({where: { 'email': userEmail }});
-
-export default {
-  signUpService,
-  loginService
-};
