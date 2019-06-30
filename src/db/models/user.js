@@ -19,6 +19,10 @@ export default (sequelize, DataTypes) => {
           msg: 'Please enter your Last Name'
         }
       },
+      userName: {
+        type: DataTypes.STRING,
+        allowNull: true
+      },
       email: {
         type: DataTypes.STRING,
         allowNull: {
