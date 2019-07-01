@@ -1,21 +1,29 @@
 import  { loginService, signUpService, isUserExist }  from '../services/auth.services';
 import Helper from '../services/helper'; 
 
-
+/**
+   * format
+   * @param {object} response
+   * @param {object} request
+   * @param {string} statusCode
+   * @param {object} result
+   * @param {object} value
+   * @returns {object} 
+   */
 const signUp = async (request, response) => {
+
   try {
     const result = await isUserExist(request.body.email.toLowerCase());
     if(result) {
-       return Helper.errorResponse(response, 409, {message: 'user already exists'})
+       return Helper.failResponse(response, 409, { message: 'user already exists'})
     }
 
-    const value  =  await signUpService(request.body);
-
-    const { firstName, email, confirmEmailCode } = value.user;
+    const value = await signUpService(request.body);
     
-    return response.status(201).json(value)
+    return Helper.successResponse(response, 201, value);
+
   } catch (error) {
-    return response.status(500).json({ error: "internal server error"})
+    return Helper.errorResponse(response, 500) 
   }
   
 };
@@ -26,7 +34,7 @@ const login = async (request, response) => {
     return response.status(200).json(value);
   } else {
     return response.status(400).json({
-      message: 'Invalid credentials'
+      message: 'Invalid email/password'
     });
   }
 };

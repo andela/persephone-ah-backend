@@ -29,7 +29,9 @@ describe('POST /users/signup', () => {
           .end((err, res) => {
             expect(res.status).to.equal(201);
             expect(res).to.be.an('Object');
-            expect(res.body).to.have.property('user');
+            expect(res.body).to.have.property('status');
+            expect(res.body).to.have.property('data');
+            expect(res.body.status).to.equal('success');
             done()
           });
    });
@@ -41,7 +43,9 @@ describe('POST /users/signup', () => {
      .send({})
      .end((err, res)=>{
         expect(res.status).to.equal(400);
-        expect(res.body).to.have.property('errors');
+        expect(res.body).to.have.property('status');
+        expect(res.body).to.have.property('data');
+        expect(res.body.status).to.equal('fail');
         done()
      });    
    });
@@ -53,7 +57,9 @@ describe('POST /users/signup', () => {
     .send({ email:"sandy", password: ""})
     .end((err, res)=>{
        expect(res.status).to.equal(400);
-       expect(res.body).to.have.property('errors');
+       expect(res.body).to.have.property('status');
+       expect(res.body).to.have.property('data');
+       expect(res.body.status).to.equal('fail');
        done()
       });
     });
@@ -65,7 +71,7 @@ describe('POST /users/signup', () => {
       .send(getUserData)
       .end((err, res)=>{
          expect(res.status).to.equal(409);
-         expect(res.body).to.have.property('errors');
+         expect(res.body.data.message).to.equal('user already exists');
          done()
       });
     });

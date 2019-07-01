@@ -15,6 +15,13 @@ const db = {};
 let sequelize;
 if (config.use_env_variable === 'production') {
   sequelize = new Sequelize(process.env[config.use_env_variable], config);
+} else if(process.env.NODE_ENV === 'test') {
+  sequelize = new Sequelize(
+    process.env.TEST_DATABASE_NAME,
+    process.env.TEST_DATABASE_USERNAME,
+    process.env.TEST_DATABASE_PASSWORD,
+    config
+  );
 } else {
   sequelize = new Sequelize(
     process.env.DATABASE_NAME,

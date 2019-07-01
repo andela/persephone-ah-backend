@@ -6,13 +6,14 @@ import { sendWelcomeEmail } from '../helpers/mail.helper';
 const { User } = model;
 
 export const signUpService =  async body => {
-    const { firstName, lastName, email, password } = body;
+    const { firstName, lastName, email, password, role } = body;
     const sanitizedEmail = email.toLowerCase();
     const result = await User.create({
         firstName,
         lastName,
         password,
         email: sanitizedEmail,
+        roleType: role
     });    
     const user = {
         firstName: result.firstName,
@@ -21,9 +22,7 @@ export const signUpService =  async body => {
         img: result.image,
         token: getToken(result),
     }  
-
     sendWelcomeEmail(result.firstName, result.email, 'Welcome Mail', 'welcome-mail', result.confirmEmailCode);
-
     return { user };
 }
 

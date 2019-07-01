@@ -74,7 +74,7 @@ const UserValidator = {
     if (result.isEmpty()) {
       return next();
     }
-    return Helper.errorResponse(response, 400, result.errors);
+    return Helper.failResponse(response, 400, result.errors);
   }
 };
 export default UserValidator;

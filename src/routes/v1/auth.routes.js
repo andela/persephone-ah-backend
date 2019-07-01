@@ -14,6 +14,6 @@ router
         authValidator.validator('login'),
         authValidator.checkValidationResult,
         authController.login
-    );
+    )
 
 export default router;
