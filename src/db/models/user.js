@@ -1,6 +1,3 @@
-import bcrypt from 'bcryptjs';
-import crypto from 'crypto';
-
 export default (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
     firstName: {
@@ -56,7 +53,7 @@ export default (sequelize, DataTypes) => {
     },
     confirmEmailCode: {
       type: DataTypes.STRING,
-      allowNull: true,
+      allowNull: true
     },
     isNotified: {
       type: DataTypes.BOOLEAN,
@@ -81,15 +78,7 @@ export default (sequelize, DataTypes) => {
       allowNull: true,
       defaultValue: 'author'
     }
-  }, {
-    hooks: {
-      afterValidate: (User) => {
-       User.password = bcrypt.hashSync(User.password, 10);
-       User.confirmEmailCode = crypto.randomBytes(16).toString('hex')
-      },
-    }
   });
 
   return User;
-
 };
