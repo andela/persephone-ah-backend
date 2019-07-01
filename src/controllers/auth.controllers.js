@@ -5,9 +5,6 @@ import Helper from '../services/helper';
    * format
    * @param {object} response
    * @param {object} request
-   * @param {string} statusCode
-   * @param {object} result
-   * @param {object} value
    * @returns {object} 
    */
 const signUp = async (request, response) => {
