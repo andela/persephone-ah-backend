@@ -1,5 +1,7 @@
 import { getToken } from '../helpers/jwt.helper';
+
 import model from '../db/models';
+import { sendWelcomeEmail } from '../helpers/mail.helper';
 
 const { User } = model;
 
@@ -19,6 +21,9 @@ export const signUpService =  async body => {
         img: result.image,
         token: getToken(result),
     }  
+
+    sendWelcomeEmail(result.firstName, result.email, 'Welcome Mail', 'welcome-mail', result.confirmEmailCode);
+
     return { user };
 }
 

@@ -1,6 +1,5 @@
-import  { signUpService, isUserExist }  from '../services/auth.services';
-import sendEmail from '../helpers/mail.helper'; 
-import Helper from '../services/helper';
+import  { loginService, signUpService, isUserExist }  from '../services/auth.services';
+import Helper from '../services/helper'; 
 
 
 const signUp = async (request, response) => {
@@ -10,11 +9,10 @@ const signUp = async (request, response) => {
        return Helper.errorResponse(response, 409, {message: 'user already exists'})
     }
 
-    const { user } =  await signUpService(request.body);
+    const value  =  await signUpService(request.body);
 
-    const { firstName, email, confirmEmailCode } = user;
+    const { firstName, email, confirmEmailCode } = value.user;
     
-    sendWelcomeEmail(firstName, email, 'Welcome Mail', 'welcome-mail', confirmEmailCode);
     return response.status(201).json(value)
   } catch (error) {
     return response.status(500).json({ error: "internal server error"})
