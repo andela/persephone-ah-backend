@@ -1,5 +1,5 @@
-import Helper from '../services/helper';
 import { check, validationResult } from 'express-validator';
+import Helper from '../services/helper';
 
 const UserValidator = {
   validator(route) {
@@ -30,8 +30,7 @@ const UserValidator = {
             .matches('[0-9]')
             .withMessage('Password must contain a number')
             .matches('[A-Z]')
-            .withMessage('Password must contain an upper case letter'),
-          
+            .withMessage('Password must contain an upper case letter')
         ];
 
       case 'login':
@@ -48,17 +47,21 @@ const UserValidator = {
             .withMessage('Password can not be less than 8 characters')
         ];
 
-      case 'passwordReset':
+      case 'forgotPassword':
+        return [
+          check('email')
+            .isEmail()
+            .withMessage('Please enter a valid email')
+            .trim()
+        ];
+      case 'resetPassword':
         return [
           check('password')
             .not()
             .isEmpty()
+            .withMessage('Password can not be empty')
             .isLength({ min: 8 })
             .withMessage('Password can not be less than 8 characters')
-            .matches('[0-9]')
-            .withMessage('Password must contain a number')
-            .matches('[A-Z]')
-            .withMessage('Password must contain an upper case letter')
         ];
 
       default:
