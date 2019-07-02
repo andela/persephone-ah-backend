@@ -28,9 +28,9 @@ const signUp = async (request, response) => {
 const login = async (request, response) => {
   const value = await loginService(request.body);
   if (value) {
-    return response.status(200).json(value);
+    return Helper.successResponse(response, 200, value);
   } else {
-    return response.status(400).json({
+    return Helper.failResponse(response, 400, {
       message: 'Invalid email/password'
     });
   }

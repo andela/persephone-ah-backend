@@ -118,7 +118,7 @@ describe('POST /users/login', () => {
       });
     expect(response).to.have.status(400);
     expect(response).to.be.a('object');
-    expect(response.body.message).to.equal('Invalid email/password');
+    expect(response.body.data.message).to.equal('Invalid email/password');
   });
 
   it('should return error for a wrong password', async () => {
@@ -133,7 +133,7 @@ describe('POST /users/login', () => {
         password: 'limah000'
       });
     expect(response).to.have.status(400);
-    expect(response.body.message).to.equal('Invalid email/password');
+    expect(response.body.data.message).to.equal('Invalid email/password');
   });
 });
 });
