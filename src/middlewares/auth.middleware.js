@@ -81,5 +81,47 @@ export default {
         }
       });
     }
+  },
+
+  /**
+   * @method isAdmin
+   * - it checks if user is an admin
+   * - returns next()
+   *
+   * @param {Object} request request object
+   * @param {Object} response response object
+   * @param {Function} next function
+   *
+   * @returns {Response} response object
+   */
+
+  async isAdmin(request, response, next) {
+    if (request.user.role !== 'admin') {
+      return response.status(403).json({
+        message: 'You do not have access to this resource, unauthorized'
+      });
+    }
+    next();
+  },
+
+  /**
+   * @method isSuperAdmin
+   * - it checks if user is a super_admin
+   * - returns next()
+   *
+   * @param {Object} request request object
+   * @param {Object} response response object
+   * @param {Function} next function
+   *
+   * @returns {Response} response object
+   */
+
+  async isSuperAdmin(request, response, next) {
+    if (request.user.role !== 'super_admin') {
+      return response.status(403).json({
+        message: 'You do not have access to this resource, unauthorized'
+      });
+    }
+    next();
   }
 };
