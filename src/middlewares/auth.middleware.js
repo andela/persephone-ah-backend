@@ -35,13 +35,7 @@ export default {
       }
       // find user with token
       const { user } = await User.findOne({ where: { email: decode.email } });
-      if (user) {
-        return response.status(400).json({
-          status: 400,
-          error: 'invalid token provided'
-        });
-      }
-      request.user = { id: decode.userId };
+      request.user = user;
       next();
     } catch (error) {
       return response.status(400).json({

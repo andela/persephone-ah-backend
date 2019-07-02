@@ -21,7 +21,7 @@ const Helper = {
   successResponse(response, statusCode, data) {
     return response.status(statusCode).json({
       status: 'success',
-      data: { data }
+      data
     });
   },
   failResponse(response, statusCode, error) {

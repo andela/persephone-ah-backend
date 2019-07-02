@@ -4,6 +4,13 @@ import {
   isUserExist
 } from '../services/auth.service';
 import Helper from '../services/helper';
+/**
+ *
+ *
+ * @param {object} request
+ * @param {object} response
+ * @returns
+ */
 
 const signUp = async (request, response) => {
   try {
@@ -15,16 +22,25 @@ const signUp = async (request, response) => {
     }
 
     const value = await signUpService(request.body);
-    return Helper.successResponse(response, 201, value);
+    return Helper.successResponse(response, 201, value.user);
   } catch (error) {
     return Helper.errorResponse(response, 500);
   }
 };
 
+
+/**
+ *
+ *
+ * @param {object} request
+ * @param {object} response
+ * @returns
+ */
+
 const login = async (request, response) => {
   const value = await loginService(request.body);
   if (value) {
-    return Helper.successResponse(response, 200, value);
+    return Helper.successResponse(response, 200, value.user);
   }
   return Helper.failResponse(response, 400, {
     message: 'Invalid email/password'
