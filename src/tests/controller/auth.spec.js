@@ -31,6 +31,9 @@ describe('Auth API endpoints', () => {
           expect(response.body).to.have.property('status');
           expect(response.body).to.have.property('data');
           expect(response.body.status).to.equal('success');
+          expect(response.body.data.firstName).to.equal('james');
+          expect(response.body.data.lastName).to.equal('Monday');
+          expect(response.body.data.email).to.equal('author@email.com');
           done();
         });
     });
@@ -45,6 +48,9 @@ describe('Auth API endpoints', () => {
           expect(response.body).to.have.property('status');
           expect(response.body).to.have.property('data');
           expect(response.body.status).to.equal('fail');
+          expect(response.body.data[0].msg).to.equal(
+            'First name must be only alphabetical chars'
+          );
           done();
         });
     });
@@ -53,12 +59,20 @@ describe('Auth API endpoints', () => {
       chai
         .request(app)
         .post('/api/v1/users/signup')
-        .send({ email: 'sandy', password: '' })
+        .send({
+          email: 'sandy',
+          password: 'samsss',
+          firstName: 'tytyt',
+          lastName: 'ghghghg'
+        })
         .end((error, response) => {
           expect(response.status).to.equal(400);
           expect(response.body).to.have.property('status');
           expect(response.body).to.have.property('data');
           expect(response.body.status).to.equal('fail');
+          expect(response.body.data[0].msg).to.equal(
+            'Please enter a valid email'
+          );
           done();
         });
     });
@@ -75,7 +89,7 @@ describe('Auth API endpoints', () => {
         });
     });
 
-    it('Should return internal server erroror', async () => {
+    it('Should return internal server error', async () => {
       const request = {
         body: {}
       };
@@ -98,6 +112,7 @@ describe('Auth API endpoints', () => {
         .send(user);
       expect(response).to.have.status(200);
       expect(response).to.be.an('object');
+      expect(response.body.data.email).to.equal(user.email);
     });
 
     it('should return error for a wrong email', async () => {
