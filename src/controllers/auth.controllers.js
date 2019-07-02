@@ -4,6 +4,13 @@ import {
   isUserExist
 } from '../services/auth.service';
 import Helper from '../services/helper';
+/**
+ *
+ *
+ * @param {object} request
+ * @param {object} response
+ * @returns
+ */
 
 /**
  * @method signUp
