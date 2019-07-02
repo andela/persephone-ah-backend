@@ -41,16 +41,11 @@ const signUp = async (request, response) => {
 };
 
 /**
- * @method login
- * - logs in a user
- * - validate user input
- * - returns user data with a generated token
- * Route: POST: /users/login
  *
- * @param {Object} request request object
- * @param {Object} response response object
  *
- * @returns {Response} response object
+ * @param {object} request
+ * @param {object} response
+ * @returns
  */
 
 const login = async (request, response) => {
