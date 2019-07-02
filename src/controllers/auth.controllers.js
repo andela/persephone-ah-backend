@@ -6,6 +6,13 @@ import {
   passwordResetServices
 } from '../services/auth.service';
 import Helper from '../services/helper';
+/**
+ *
+ *
+ * @param {object} request
+ * @param {object} response
+ * @returns
+ */
 
 export default {
   /**
