@@ -1,17 +1,11 @@
 import chai from 'chai';
 import chaiHttp from 'chai-http';
-import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
-import {
-  isAdmin,
-  isSuperAdmin,
-  verifyToken
-} from '../../middlewares/auth.middleware';
-import { getUserData, Response, createUser, getUser } from '../utils/db.utils';
-import models from '../../db/models';
-const { User } = models;
+import getToken from '../../helpers/jwt.helper';
+import middleware from '../../middlewares/auth.middleware';
+import { Response } from '../utils/db.utils';
 
 dotenv.config();
 
@@ -23,108 +17,60 @@ chai.use(sinonChai);
 describe('Authentication middleware', () => {
   it('Should return an error if token is not provided', async () => {
     const req = {
-      headers: 'x-access-token'
+      headers: {
+        authorization: ''
+      }
     };
-    const res = new Response();
-    sinon.stub(res, 'status').returnsThis();
-    sinon.stub(res, 'json').returnsThis();
+    const response = new Response();
+    sinon.stub(response, 'status').returnsThis();
+    sinon.stub(response, 'json').returnsThis();
     const next = () => {};
-    await verifyToken(req, res, next);
-    expect(res.status).to.have.been.calledWith(401);
-    expect(res.json).to.have.been.calledWith({
-      status: 401,
-      error: 'not authorized'
+    await middleware.verifyToken(req, response, next);
+    expect(response.status).to.have.been.calledWith(400);
+    expect(response.json).to.have.been.calledWith({
+      status: 400,
+      error: 'No token provided, you do not have access to this page'
     });
   });
 
   it('Should return an error if there is a deep error ', async () => {
-    const token = jwt.sign(
-      {
-        id: 23,
-        email: 'sample@getMaxListeners.com'
-      },
-      process.env.SECRET
-    );
+    const token = getToken({
+      id: 23,
+      role: 'sample'
+    });
 
     const req = {
       headers: {
-        'x-access-token': token
+        authorization: `Bearer ${token}`
       }
     };
-    const res = new Response();
-    sinon.stub(res, 'status').returnsThis();
-    sinon.stub(res, 'json').returnsThis();
+    const response = new Response();
+    sinon.stub(response, 'status').returnsThis();
+    sinon.stub(response, 'json').returnsThis();
     const next = () => {};
-    await verifyToken(req, res, next);
-    expect(res.status).to.have.been.calledWith(400);
-    expect(res.json).to.have.been.calledWith({
+    await middleware.verifyToken(req, response, next);
+    expect(response.status).to.have.been.calledWith(400);
+    expect(response.json).to.have.been.calledWith({
       status: 400,
-      error: 'token has expired'
+      error: 'You have provide an invalid token'
     });
   });
 
-  it('Should return an error if user does not exist ', async () => {
-    const user = getUser();
-    await createUser(user);
-
-    const token = jwt.sign(
-      {
-        id: user.id,
-        email: user.email,
-        role: user.roleType
-      },
-      process.env.SECRET,
-      {
-        expiresIn: '12h'
-      }
-    );
-
+  it('Should return an error if there is an invalid token', async () => {
     const req = {
       headers: {
-        'x-access-token': token
+        authorization: `Bearer uieruierueior.ererer.ererer.erre`
       }
     };
-    const res = new Response();
-    sinon.stub(res, 'status').returnsThis();
-    sinon.stub(res, 'json').returnsThis();
+    const response = new Response();
+    sinon.stub(response, 'status').returnsThis();
+    sinon.stub(response, 'json').returnsThis();
     const next = () => {};
-    await verifyToken(req, res, next);
-    expect(res.status).to.have.been.calledWith(400);
-    expect(res.json).to.have.been.calledWith({
-      error: 'invalid token provided',
-      status: 400
+    await middleware.verifyToken(req, response, next);
+    expect(response.status).to.have.been.calledWith(400);
+    expect(response.json).to.have.been.calledWith({
+      status: 400,
+      error: 'jwt malformed'
     });
   });
-
-  it('Should return an error if user is not an admin ',  () => {
-    const req = {
-      user: {
-        role: null
-      }
-    };
-    const res = new Response();
-    sinon.stub(res, 'status').returnsThis();
-    sinon.stub(res, 'json').returnsThis();
-    const next = () => {};
-    isAdmin(req, res, next);
-    expect(res.status).to.have.been.calledWith(403);
-    expect(res.json).to.have.been.calledWith({ message: 'Unauthorized' });
-  });
-
-  it('Should return an error if user is not super admin ',  () => {
-    const req = {
-      user: {
-        role: null
-      }
-    };
-    const res = new Response();
-    sinon.stub(res, 'status').returnsThis();
-    sinon.stub(res, 'json').returnsThis();
-    const next = () => {};
-    isSuperAdmin(req, res, next);
-    expect(res.status).to.have.been.calledWith(403);
-    expect(res.json).to.have.been.calledWith({ message: 'Unauthorized' });
-  });
-
 });
-

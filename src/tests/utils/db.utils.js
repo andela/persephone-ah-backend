@@ -1,4 +1,6 @@
 import faker from 'faker';
+import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
 import models from '../../db/models';
 
 const { User } = models;
@@ -17,13 +19,17 @@ export const getUser = () => ({
   password: 'Author40'
 });
 
-export const createUser = user =>
+export const createUser = user => {
+  const hashedPassword = bcrypt.hashSync(user.password, 10);
+  const confirmEmailCode = crypto.randomBytes(16).toString('hex');
   User.create({
     firstName: user.firstName,
     lastName: user.lastName,
     email: user.email,
-    password: 'Author40'
+    password: hashedPassword,
+    confirmEmailCode
   });
+};
 
 /**
  *
