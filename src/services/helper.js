@@ -9,8 +9,9 @@ const Helper = {
    * @param {string} statusCode
    * @param {object} error
    * @param {object} data
-   * @returns {object} error format
+   * @returns {object}
    */
+
   errorResponse(response, statusCode) {
     return response.status(statusCode).json({
       status: 'error',

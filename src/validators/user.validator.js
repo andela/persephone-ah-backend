@@ -1,7 +1,5 @@
+import { check, validationResult } from 'express-validator';
 import Helper from '../services/helper';
-import { body, check, validationResult } from 'express-validator';
-import model from '../db/models';
-const { User } = model;
 
 const UserValidator = {
   validator(route) {
@@ -28,12 +26,11 @@ const UserValidator = {
             .not()
             .isEmpty()
             .isLength({ min: 8 })
-            .withMessage('Pasword can not be less than 8 characters')
+            .withMessage('Password can not be less than 8 characters')
             .matches('[0-9]')
             .withMessage('Password must contain a number')
             .matches('[A-Z]')
-            .withMessage('Password must contain an upper case letter'),
-          
+            .withMessage('Password must contain an upper case letter')
         ];
 
       case 'login':
@@ -45,9 +42,9 @@ const UserValidator = {
           check('password')
             .not()
             .isEmpty()
-            .withMessage('Pasword can not be empty')
+            .withMessage('Password can not be empty')
             .isLength({ min: 8 })
-            .withMessage('Pasword can not be less than 8 characters')
+            .withMessage('Password can not be less than 8 characters')
         ];
 
       case 'passwordReset':
@@ -56,7 +53,7 @@ const UserValidator = {
             .not()
             .isEmpty()
             .isLength({ min: 8 })
-            .withMessage('Pasword can not be less than 8 characters')
+            .withMessage('Password can not be less than 8 characters')
             .matches('[0-9]')
             .withMessage('Password must contain a number')
             .matches('[A-Z]')
@@ -69,7 +66,6 @@ const UserValidator = {
   },
 
   checkValidationResult(request, response, next) {
-    
     const result = validationResult(request);
     if (result.isEmpty()) {
       return next();

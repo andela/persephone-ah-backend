@@ -47,8 +47,6 @@
         }
       }
     ],
-    "parserOptions": {
-      "sourceType": "module"
-    }
+    "parserOptions": 0
   }
 }
