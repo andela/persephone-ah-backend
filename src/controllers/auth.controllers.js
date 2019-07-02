@@ -5,11 +5,10 @@ import {
 } from '../services/auth.service';
 import Helper from '../services/helper';
 /**
- *
- *
- * @param {object} request
+ * format
  * @param {object} response
- * @returns
+ * @param {object} request
+ * @returns {object}
  */
 
 /**

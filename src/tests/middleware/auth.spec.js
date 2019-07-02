@@ -16,7 +16,7 @@ chai.use(sinonChai);
 
 describe('Authentication middleware', () => {
   it('Should return an error if token is not provided', async () => {
-    const req = {
+    const request = {
       headers: {
         authorization: ''
       }
@@ -25,7 +25,7 @@ describe('Authentication middleware', () => {
     sinon.stub(response, 'status').returnsThis();
     sinon.stub(response, 'json').returnsThis();
     const next = () => {};
-    await middleware.verifyToken(req, response, next);
+    await middleware.verifyToken(request, response, next);
     expect(response.status).to.have.been.calledWith(400);
     expect(response.json).to.have.been.calledWith({
       status: 400,
@@ -39,7 +39,7 @@ describe('Authentication middleware', () => {
       role: 'sample'
     });
 
-    const req = {
+    const request = {
       headers: {
         authorization: `Bearer ${token}`
       }
@@ -48,7 +48,7 @@ describe('Authentication middleware', () => {
     sinon.stub(response, 'status').returnsThis();
     sinon.stub(response, 'json').returnsThis();
     const next = () => {};
-    await middleware.verifyToken(req, response, next);
+    await middleware.verifyToken(request, response, next);
     expect(response.status).to.have.been.calledWith(400);
     expect(response.json).to.have.been.calledWith({
       status: 400,
@@ -57,7 +57,7 @@ describe('Authentication middleware', () => {
   });
 
   it('Should return an error if there is an invalid token', async () => {
-    const req = {
+    const request = {
       headers: {
         authorization: `Bearer uieruierueior.ererer.ererer.erre`
       }
@@ -66,11 +66,45 @@ describe('Authentication middleware', () => {
     sinon.stub(response, 'status').returnsThis();
     sinon.stub(response, 'json').returnsThis();
     const next = () => {};
-    await middleware.verifyToken(req, response, next);
+    await middleware.verifyToken(request, response, next);
     expect(response.status).to.have.been.calledWith(400);
     expect(response.json).to.have.been.calledWith({
       status: 400,
       error: 'jwt malformed'
+    });
+  });
+
+  it('Should return an error if user is not an admin ', () => {
+    const request = {
+      user: {
+        role: null
+      }
+    };
+    const response = new Response();
+    sinon.stub(response, 'status').returnsThis();
+    sinon.stub(response, 'json').returnsThis();
+    const next = () => {};
+    middleware.isAdmin(request, response, next);
+    expect(response.status).to.have.been.calledWith(403);
+    expect(response.json).to.have.been.calledWith({
+      message: 'You do not have access to this resource, unauthorized'
+    });
+  });
+
+  it('Should return an error if user is not super admin ', () => {
+    const request = {
+      user: {
+        role: null
+      }
+    };
+    const response = new Response();
+    sinon.stub(response, 'status').returnsThis();
+    sinon.stub(response, 'json').returnsThis();
+    const next = () => {};
+    middleware.isSuperAdmin(request, response, next);
+    expect(response.status).to.have.been.calledWith(403);
+    expect(response.json).to.have.been.calledWith({
+      message: 'You do not have access to this resource, unauthorized'
     });
   });
 });
