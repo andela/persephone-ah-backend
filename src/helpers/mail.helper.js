@@ -1,13 +1,33 @@
 import Mail from 'friendly-mail';
+import dotenv from 'dotenv';
 
-export const sendWelcomeEmail = async (recipientName, recipientMail, subject, type, confirmCode) => {
-  return await new Mail(type)
+dotenv.config();
+/**
+ *
+ *
+ * @param {string} recipientName
+ * @param {string} recipientMail
+ * @param {string} subject
+ * @param {string} type
+ * @param {string} confirmCode
+ * @returns
+ */
+
+const sendWelcomeEmail = (
+  recipientName,
+  recipientMail,
+  subject,
+  type,
+  confirmCode
+) => {
+  return new Mail(type)
     .to(recipientMail)
     .subject(subject)
-    .data({ 
+    .data({
       name: recipientName,
-      url: `http://localhost:3000/api/v1/users/verify/${confirmCode}`})
+      url: `${process.env.url}/api/v1/users/verify/${confirmCode}`
+    })
     .send();
 };
 
-
+export default sendWelcomeEmail;

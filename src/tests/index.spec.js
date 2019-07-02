@@ -1,5 +1,6 @@
 /* eslint-env mocha */
-import './models/user.spec';
-import './utils/db.utils.js';
-import './controller/auth.spec';
 
+import './utils/db.utils';
+import './misc/index.spec';
+import './models/user.spec';
+import './controller/auth.spec';

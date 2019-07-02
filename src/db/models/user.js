@@ -86,6 +86,7 @@ export default (sequelize, DataTypes) => {
     },
     {
       hooks: {
+        // eslint-disable-next-line no-shadow
         afterValidate: User => {
           User.password = bcrypt.hashSync(User.password, 10);
           User.confirmEmailCode = crypto.randomBytes(16).toString('hex');
@@ -93,10 +94,6 @@ export default (sequelize, DataTypes) => {
       }
     }
   );
-
-  User.prototype.validatePassword = function(password) {
-    return bcrypt.compareSync(password, this.password);
-  };
 
   return User;
 };

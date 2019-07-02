@@ -30,8 +30,7 @@ const UserValidator = {
             .matches('[0-9]')
             .withMessage('Password must contain a number')
             .matches('[A-Z]')
-            .withMessage('Password must contain an upper case letter'),
-          
+            .withMessage('Password must contain an upper case letter')
         ];
 
       case 'login':
@@ -71,7 +70,7 @@ const UserValidator = {
     if (result.isEmpty()) {
       return next();
     }
-    return Helper.errorResponse(response, 400, result.errors);
+    return Helper.failResponse(response, 400, result.errors);
   }
 };
 export default UserValidator;

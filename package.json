@@ -4,7 +4,7 @@
   "description": "A Social platform for the creative at heart",
   "main": "index.js",
   "scripts": {
-    "test": "cross-env NODE_ENV=test npm run db-migration && nyc mocha src/**/*.spec.js --require @babel/register --exit || true",
+    "test": "NODE_ENV=test npm run migration-rollback && npm run db-migration && nyc mocha src/**/*.spec.js --require @babel/register --exit || true",
     "start": "nodemon --exec babel-node src/index.js",
     "build": "npm run clean && npm run babel-build",
     "clean": "rm -rf dist",

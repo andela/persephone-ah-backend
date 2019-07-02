@@ -4,15 +4,30 @@ dotenv.config();
 
 const Helper = {
   /**
-   * Error format
-   * @param {string} res
+   * format
+   * @param {object} response
    * @param {string} statusCode
-   * @param {string} error
-   * @returns {object} error format
+   * @param {object} error
+   * @param {object} data
+   * @returns {object}
    */
-  errorResponse(response, statusCode, errors) {
+
+  errorResponse(response, statusCode) {
     return response.status(statusCode).json({
-      errors
+      status: 'error',
+      message: 'Unable to communicate with database'
+    });
+  },
+  successResponse(response, statusCode, data) {
+    return response.status(statusCode).json({
+      status: 'success',
+      data
+    });
+  },
+  failResponse(response, statusCode, error) {
+    return response.status(statusCode).json({
+      status: 'fail',
+      data: error
     });
   }
 };
