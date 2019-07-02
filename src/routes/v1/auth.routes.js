@@ -1,19 +1,24 @@
 import express from 'express';
-import authValidator from '../../validators/user.validator';
-import authController from '../../controllers/auth.controllers';
+import authenticationValidator from '../../validators/user.validator';
+import authenticationController from '../../controllers/auth.controller';
+import AuthenticationToken from '../../middlewares/auth.middleware';
+import profileUpdateCheck from '../../middlewares/profileUpdateCheck.middleware';
+import upload from '../../middlewares/imageUpload.middleware';
+const { login, signUp, profileUpdate } = authenticationController;
+const { validator, checkValidationResult } = authenticationValidator;
+const { verifyToken } = AuthenticationToken;
+const { profileChecks } = profileUpdateCheck;
 
 const router = express.Router();
 router
-   .post(
-        '/signup',
-        authValidator.validator('signup'),
-        authValidator.checkValidationResult,
-        authController.signUp)
-    .post(
-        '/login',
-        authValidator.validator('login'),
-        authValidator.checkValidationResult,
-        authController.login
-    );
+  .post('/signup', validator('signup'), checkValidationResult, signUp)
+  .post('/login', validator('login'), checkValidationResult, login);
+router.put(
+  '/profileupdate',
+  verifyToken,
+  upload.single('image'),
+  profileChecks,
+  profileUpdate
+);
 
 export default router;

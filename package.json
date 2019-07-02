@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "NODE_ENV=test npm run migration-rollback && npm run db-migration && nyc mocha src/**/*.spec.js --require @babel/register --exit || true",
+    "test-watch": "nodemon --exec \"npm test\"",
     "start": "nodemon --exec babel-node src/index.js",
     "build": "npm run clean && npm run babel-build",
     "clean": "rm -rf dist",
@@ -26,6 +27,7 @@
     "body-parser": "^1.18.3",
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
+    "cloudinary": "^1.14.0",
     "cors": "^2.8.4",
     "cross-env": "^5.2.0",
     "dotenv": "^6.2.0",
@@ -35,6 +37,7 @@
     "friendly-mail": "^1.0.0",
     "jsonwebtoken": "^8.5.1",
     "mocha": "^6.1.4",
+    "multer": "^1.4.1",
     "pg": "^7.11.0",
     "pg-hstore": "^2.3.3",
     "sequelize": "^5.8.12",

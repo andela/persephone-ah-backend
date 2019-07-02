@@ -1,52 +1,50 @@
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
-import models from '../db/models';
-
-const { User } = models;
 
 dotenv.config();
 
+/**
+ *
+ *  Middleware Utils module
+ *
+ */
+
 export default {
   /**
+   * @method verifyToken
+   * - it implement jwt's verify method to decode incoming request with token
+   * - returns user data with a generated token
    *
+   * @param {Object} request request object
+   * @param {Object} response response object
+   * @param {Function} next function
    *
-   * @param {object} request
-   * @param {object} response
-   * @param {function} next
-   * @returns
+   * @returns {Response} response object
    */
 
   async verifyToken(request, response, next) {
-    // get token
-    const token = request.headers.authorization.split(' ')[1];
-    if (!token) {
-      return response.status(401).json({
-        status: 401,
-        error: 'You do not have access to this resource, not authorized'
-      });
-    }
     try {
-      const decode = await jwt.verify(token, process.env.SECRET);
-      if (!decode) {
-        return response.status(500).json({
-          status: 500,
-          error: 'failed to authenticate token'
-        });
+      if (!request.headers.authorization) {
+        throw new Error(
+          'No token provided, you do not have access to this page'
+        );
       }
-      // find user with token
-      const { user } = await User.findOne({ where: { email: decode.email } });
-      if (user) {
+      // get token
+      const token = request.headers.authorization.split(' ')[1];
+
+      const decode = await jwt.verify(token, process.env.SECRET);
+      if (!decode.email) {
         return response.status(400).json({
           status: 400,
-          error: 'invalid token provided'
+          error: 'You have provide an invalid token'
         });
       }
-      request.user = { id: decode.userId };
+      request.user = decode;
       next();
     } catch (error) {
       return response.status(400).json({
         status: 400,
-        error: 'token has expired'
+        error: error.message
       });
     }
   }

@@ -1,5 +1,6 @@
 import faker from 'faker';
 import models from '../../db/models';
+import getToken from '../../helpers/jwt.helper';
 
 const { User } = models;
 
