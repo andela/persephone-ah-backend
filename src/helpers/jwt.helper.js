@@ -4,10 +4,13 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 /**
+ * @method getToken
+ * - it implement jwt to sign user object
+ * - returns a generated token
  *
+ * @param {Object} user user's data object containing email, id, roleType
  *
- * @param {object} user
- * @returns
+ * @returns {Response} object
  */
 
 const getToken = user => {

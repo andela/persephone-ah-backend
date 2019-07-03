@@ -3,14 +3,18 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 /**
+ * @method sendWelcomeEmail
+ * - it sends a welcome email to new users
+ * - it implement mailstrap.io API to send email via friendly-mail
+ * - returns a promise
  *
+ * @param {String} recipientName user's first name object
+ * @param {String} recipientMail user's email
+ * @param {String} subject subject of mail
+ * @param {String} type type of mail template to use via friendly-mail
+ * @param {String} confirmCode email confirmation code
  *
- * @param {string} recipientName
- * @param {string} recipientMail
- * @param {string} subject
- * @param {string} type
- * @param {string} confirmCode
- * @returns
+ * @returns {Promise}
  */
 
 const sendWelcomeEmail = (

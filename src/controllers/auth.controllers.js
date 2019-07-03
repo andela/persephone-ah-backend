@@ -11,6 +11,19 @@ import Helper from '../services/helper';
  * @returns {object}
  */
 
+/**
+ * @method signUp
+ * - create a new user
+ * - validate user input
+ * - returns user data with a generated token
+ * Route: POST: /users/signup
+ *
+ * @param {Object} request request object
+ * @param {Object} response response object
+ *
+ * @returns {Response} response object
+ */
+
 const signUp = async (request, response) => {
   try {
     const result = await isUserExist(request.body.email.toLowerCase());
@@ -28,11 +41,16 @@ const signUp = async (request, response) => {
 };
 
 /**
+ * @method login
+ * - logs in a user
+ * - validate user input
+ * - returns user data with a generated token
+ * Route: POST: /users/login
  *
+ * @param {Object} request request object
+ * @param {Object} response response object
  *
- * @param {object} request
- * @param {object} response
- * @returns
+ * @returns {Response} response object
  */
 
 const login = async (request, response) => {

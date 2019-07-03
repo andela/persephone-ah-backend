@@ -1,4 +1,5 @@
 import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
 import getToken from '../helpers/jwt.helper';
 import model from '../db/models';
 import sendWelcomeEmail from '../helpers/mail.helper';
@@ -6,18 +7,27 @@ import sendWelcomeEmail from '../helpers/mail.helper';
 const { User } = model;
 
 /**
- * @param {object} body
- * @returns
+ * @method signUpService
+ * - it persist a new user to the database
+ * - sends new user a welcome email
+ * - returns user data
+ *
+ * @param {Object} body request body's object
+ *
+ * @returns {Object} user object
  */
 
 export const signUpService = async body => {
   const { firstName, lastName, email, password, role } = body;
   const sanitizedEmail = email.toLowerCase();
+  const hashedPassword = bcrypt.hashSync(password, 10);
+  const confirmEmailCode = crypto.randomBytes(16).toString('hex');
   const result = await User.create({
     firstName,
     lastName,
-    password,
+    password: hashedPassword,
     email: sanitizedEmail,
+    confirmEmailCode,
     roleType: role
   });
 
@@ -39,11 +49,15 @@ export const signUpService = async body => {
 
   return { user };
 };
+
 /**
+ * @method loginService
+ * - it verifies if user exist in the database
+ * - returns user data
  *
+ * @param {Object} body request body's object
  *
- * @param {object} body
- * @returns
+ * @returns {Object} user object
  */
 
 export const loginService = async body => {
@@ -60,7 +74,7 @@ export const loginService = async body => {
     const user = {
       firstName,
       lastName,
-      email,
+      email: result.email,
       token
     };
     return { user };
@@ -68,9 +82,13 @@ export const loginService = async body => {
 };
 
 /**
+ * @method isUserExist
+ * - it persist a new user to the database
+ * - returns a promise
  *
+ * @param {String} userEmail user's email
  *
- * @param {string} userEmail
+ * @returns {Promise}
  */
 
 export const isUserExist = async userEmail =>
