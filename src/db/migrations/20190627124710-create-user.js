@@ -15,6 +15,10 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
+      userName: {
+        type: Sequelize.STRING,
+        allowNull: true
+      },
       email: {
         type: Sequelize.STRING,
         allowNull: false,
@@ -32,6 +36,10 @@ module.exports = {
         type: Sequelize.BOOLEAN,
         allowNull: false,
         defaultValue: false
+      },
+      confirmEmailCode: {
+        type: Sequelize.STRING,
+        allowNull: true
       },
       isNotified: {
         type: Sequelize.BOOLEAN,

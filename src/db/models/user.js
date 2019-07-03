@@ -14,6 +14,10 @@ export default (sequelize, DataTypes) => {
         msg: 'Please enter your Last Name'
       }
     },
+    userName: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
     email: {
       type: DataTypes.STRING,
       allowNull: {
@@ -47,6 +51,10 @@ export default (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: false
     },
+    confirmEmailCode: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
     isNotified: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
@@ -71,5 +79,6 @@ export default (sequelize, DataTypes) => {
       defaultValue: 'author'
     }
   });
+
   return User;
 };

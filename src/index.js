@@ -1,7 +1,9 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import swagger from 'swagger-ui-express';
+import logger from 'morgan';
 import swaggerConfig from '../swagger.json';
+import Routes from './routes/v1';
 
 // Create global App object
 const app = express();
@@ -9,6 +11,8 @@ const app = express();
 // Normal express config defaults
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(logger('dev'));
+Routes(app);
 
 app.use('/api-docs', swagger.serve, swagger.setup(swaggerConfig));
 
@@ -17,6 +21,22 @@ app.get('/', (request, response) => {
     status: 200,
     message: `Welcome to Author's Haven`
   });
+});
+
+app.use((req, res, next) => {
+  const error = new Error('You are trying to access a wrong Route');
+  error.status = 404;
+  next(error);
+});
+
+app.use((error, req, res, next) => {
+  res.status(error.status || 500);
+  res.json({
+    status: error.status || 500,
+    error: error.name,
+    message: error.message
+  });
+  next();
 });
 
 const PORT = process.env.PORT || 3000;
