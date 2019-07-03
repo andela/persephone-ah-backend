@@ -61,7 +61,6 @@ const UserValidator = {
         ];
 
       default:
-        return [];
     }
   },
 

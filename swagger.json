@@ -13,120 +13,132 @@
       "url": "https://persephone-backend.herokuapp.com"
     }
   ],
-    "schemes": [
-        "http"
-    ],
-    "consumes": [
-        "application/json",
-        "multipart/form-data"
-    ],
-    "produces": [
-        "application/json"
-    ],
-    "security":[{
-        "ApiKeyAuth":[]
-      }],
-    "paths": {
-        "/users/login": {
-            
-            "post": {
-                "tags": [
-                    "Login"
-                ],
-                "summary": "POST API endpoint for user login",
-                "description": "User Login",
-                "parameters": [
-                    {
-                        "name": "login",
-                        "description": "Login params ",
-                        "in": "body",
-                        "required": "true",
-                        "schema": {
-                            "$ref": "#/definitions/User"
-                        }
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "User logged in successfully"
-                    }
-                }
-            }
-        },
-        "/users/signup": {
-            "post": {
-                "tags": [
-                    "Sign up new users"
-                ],
-                "summary": "POST API endpoint for signing up new user",
-                "description": "Create new users",
-                "parameters": [
-                    {
-                        "name": "user",
-                        "description": "User params to create new user",
-                        "in": "body",
-                        "required": "true",
-                        "schema": {
-                            "$ref": "#/definitions/User"
-                        }
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "responses": {
-                    "201": {
-                        "description": "New user created"
-                    }
-                }
-            }
-        }
-      },
-      "securityDefinitions": {
-        "ApiKeyAuth": {
-            "type": "apiKey",
-            "in": "header",
-            "name": "x-access-token"
-        }
-    },
-    "definitions": {
-        "Login": {
-            "type": "object",
-            "properties": {
-                "email": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string"
-                }
-            }
-        },
-        "User": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string",
-                    "example": 1
-                },
-                "firstName": {
-                    "type": "string",
-                    "example": "persephone"
-                },
-                "lastName": {
-                    "type": "string",
-                    "example": "team"
-                },
-                "email": {
-                    "type": "string",
-                    "example": "persephone@andela.com"
-                },
-                "password": {
-                    "type": "strinGHJ"
-                }
-            }
-        }
+  "schemes": ["http"],
+  "consumes": ["application/json", "multipart/form-data"],
+  "produces": ["application/json"],
+  "security": [
+    {
+      "ApiKeyAuth": []
     }
+  ],
+  "paths": {
+    "/users/login": {
+      "post": {
+        "tags": ["Login"],
+        "summary": "POST API endpoint for user login",
+        "description": "User Login",
+        "parameters": [
+          {
+            "name": "login",
+            "description": "Login params ",
+            "in": "body",
+            "required": "true",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        ],
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "User logged in successfully"
+          }
+        }
+      }
+    },
+    "/users/signup": {
+      "post": {
+        "tags": ["Sign up new users"],
+        "summary": "POST API endpoint for signing up new user",
+        "description": "Create new users",
+        "parameters": [
+          {
+            "name": "user",
+            "description": "User params to create new user",
+            "in": "body",
+            "required": "true",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        ],
+        "produces": ["application/json"],
+        "responses": {
+          "201": {
+            "description": "New user created"
+          }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "tags": ["User"],
+        "summary": "GET API endpoint for getting all users",
+        "description": "Get all users",
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved all users",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/users"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "ApiKeyAuth": {
+      "type": "apiKey",
+      "in": "header",
+      "name": "x-access-token"
+    }
+  },
+  "definitions": {
+    "Login": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "User": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": 1
+        },
+        "firstName": {
+          "type": "string",
+          "example": "persephone"
+        },
+        "lastName": {
+          "type": "string",
+          "example": "team"
+        },
+        "email": {
+          "type": "string",
+          "example": "persephone@andela.com"
+        },
+        "password": {
+          "type": "strinGHJ"
+        }
+      }
+    },
+    "users": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/User"
+      }
+    }
+  }
 }
