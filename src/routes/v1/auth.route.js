@@ -14,7 +14,8 @@ const {
   forgotPassword,
   passwordReset,
   profileUpdate,
-  logout
+  logout,
+  verifyEmail
 } = authenticationController;
 
 const router = express.Router();
@@ -44,5 +45,6 @@ router.put(
   profileChecks,
   profileUpdate
 );
+router.get('/verify/:confirmEmailCode', verifyEmail);
 
 export default router;

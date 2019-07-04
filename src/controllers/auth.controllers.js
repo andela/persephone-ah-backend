@@ -5,7 +5,8 @@ import {
   isUserExist,
   forgotPasswordServices,
   passwordResetServices,
-  saveToBlackListServices
+  saveToBlackListServices,
+  isVerifyUser
 } from '../services/auth.service';
 import Helper from '../services/helper';
 import { upload } from '../helpers/image.helper';
@@ -174,6 +175,7 @@ export default {
   },
 
   /**
+<<<<<<< HEAD
    * @method logout
    * Handles the Logic for user logout
    *  Route: GET: /users/logout
@@ -192,5 +194,40 @@ export default {
       });
     }
     return failResponse(response, 500, 'internal error');
+=======
+   * @method verifyEmail
+   * - It verifies user email
+   * Route: POST: /users/verify/:confirmEmailCode
+   *
+   * @param {Object} request request object
+   * @param {Object} response response object
+   *
+   * @returns {Response} response object
+   */
+
+  async verifyEmail(request, response) {
+    try {
+      const { confirmEmailCode } = request.params;
+
+      if (!confirmEmailCode) {
+        return Helper.failResponse(response, 400, {
+          message: 'No verification token provided'
+        });
+      }
+      const user = await isVerifyUser(confirmEmailCode);
+      if (!user) {
+        return Helper.failResponse(response, 400, {
+          message: 'You have provided an invalid token'
+        });
+      }
+      await user.update({ confirmEmailCode: null });
+
+      return Helper.successResponse(response, 200, {
+        message: 'User successfully verified'
+      });
+    } catch (error) {
+      return Helper.failResponse(response, 500, error.message);
+    }
+>>>>>>> 7db6f2b...  ft(verify): User verification functionality
   }
 };
