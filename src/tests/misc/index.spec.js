@@ -19,4 +19,15 @@ describe('GET /', () => {
         done();
       });
   });
+  it('it should throw an error when a bad route is accessed', done => {
+    chai
+      .request(app)
+      .get('/api/v1/apple')
+      .end((error, response) => {
+        expect(response).to.have.status(404);
+        expect(response.body.status).to.be.equal(404);
+        expect(response.body.error).to.be.equal('Error');
+        done();
+      });
+  });
 });

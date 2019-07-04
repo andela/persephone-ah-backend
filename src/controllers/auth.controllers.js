@@ -6,13 +6,6 @@ import {
   passwordResetServices
 } from '../services/auth.service';
 import Helper from '../services/helper';
-/**
- *
- *
- * @param {object} request
- * @param {object} response
- * @returns
- */
 
 export default {
   /**
@@ -115,6 +108,13 @@ export default {
 
   async passwordReset(request, response) {
     const { password, decoded } = request.body;
+    /**
+     *
+     *
+     * @param {object} request
+     * @param {object} response
+     * @returns
+     */
 
     await passwordResetServices(decoded.email, password);
 
