@@ -3,13 +3,13 @@ import chaiHttp from 'chai-http';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 import { getUserData, Response, createUser, getUser } from '../utils/db.utils';
-import authController from '../../controllers/auth.controllers';
+import authenticationController from '../../controllers/auth.controllers';
 import app from '../../index';
 import models from '../../db/models';
 import { getPasswordResetToken } from '../../helpers/jwt.helper';
 
 const { User } = models;
-
+const { signUp } = authenticationController;
 chai.use(chaiHttp);
 chai.use(sinonChai);
 
@@ -96,7 +96,7 @@ describe('Auth API endpoints', () => {
       };
       const response = new Response();
       sinon.stub(response, 'status').returnsThis();
-      await authController.signUp(request, response);
+      await signUp(request, response);
       expect(response.status).to.have.been.calledWith(500);
     });
   });
