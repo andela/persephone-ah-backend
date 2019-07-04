@@ -6,13 +6,14 @@ import { getUserData, Response, createUser, getUser } from '../utils/db.utils';
 import authController from '../../controllers/auth.controllers';
 import app from '../../index';
 import models from '../../db/models';
+import { getPasswordResetToken } from '../../helpers/jwt.helper';
 
 const { User } = models;
 
-const { expect } = chai;
-
 chai.use(chaiHttp);
 chai.use(sinonChai);
+
+const { expect } = chai;
 
 describe('Auth API endpoints', () => {
   describe('POST /users/signup', () => {
@@ -145,6 +146,114 @@ describe('Auth API endpoints', () => {
         });
       expect(response).to.have.status(400);
       expect(response.body.data.message).to.equal('Invalid email/password');
+    });
+  });
+
+  describe('POST /users/forgot_password', () => {
+    const endpoint = '/api/v1/users/forgot_password';
+    it('should send link for password reset', async () => {
+      const user = getUser();
+      const { email } = user;
+      user.email = email.toLowerCase();
+
+      await createUser(user);
+
+      const response = await chai
+        .request(app)
+        .post(endpoint)
+        .send({ email: user.email });
+
+      expect(response).to.have.status(201);
+      expect(response.body.status).to.equal('success');
+      expect(response.body.data.message).to.equal(
+        'kindly check your mail for password reset instructions'
+      );
+    });
+
+    it('should send link for password reset', async () => {
+      const response = await chai
+        .request(app)
+        .post(endpoint)
+        .send({ email: 'randomMal@doesnt.com' });
+
+      expect(response).to.have.status(404);
+      expect(response.body.status).to.equal('error');
+      expect(response.body.error.message).to.equal('email does not exist');
+    });
+
+    it('should return error for wrong email format', async () => {
+      const email = 'wrongmailformat';
+
+      const response = await chai
+        .request(app)
+        .post(endpoint)
+        .send({ email });
+
+      expect(response).to.have.status(400);
+      expect(response.body.status).to.equal('fail');
+    });
+  });
+
+  describe('POST /users/password_reset', () => {
+    const endpoint = '/api/v1/users/password_reset';
+    it('should return an error message', async () => {
+      const response = await chai
+        .request(app)
+        .patch(endpoint)
+        .send({ password: 'password' });
+
+      expect(response).to.have.status(401);
+      expect(response.body.status).to.equal('error');
+      expect(response.body.error.message).to.equal('Authentication error');
+    });
+
+    it('should return successful password reset', async () => {
+      const user = getUser();
+      const createdUser = await createUser(user);
+
+      const token = await getPasswordResetToken(createdUser.dataValues);
+
+      const response = await chai
+        .request(app)
+        .patch(`${endpoint}?token=${token}`)
+        .send({ password: 'Password01' });
+
+      expect(response).to.have.status(200);
+      expect(response.body.status).to.equal('success');
+      expect(response.body.data.message).to.equal(
+        'password reset was successful'
+      );
+    });
+
+    it('should return error for invalid token', async () => {
+      const user = getUser();
+      const createdUser = await createUser(user);
+
+      const token = await getPasswordResetToken(createdUser.dataValues);
+
+      const response = await chai
+        .request(app)
+        .patch(`${endpoint}?token=${token}makeitinvalid`)
+        .send({ password: 'Password01' });
+
+      expect(response).to.have.status(401);
+      expect(response.body.status).to.equal('error');
+      expect(response.body.error.message).to.equal('Authentication error');
+    });
+
+    it('should return error for wrong password format', async () => {
+      const user = getUser();
+      const createdUser = await createUser(user);
+
+      const token = await getPasswordResetToken(createdUser.dataValues);
+
+      const response = await chai
+        .request(app)
+        .patch(`${endpoint}?token=${token}`)
+        .send({ password: 'password' });
+
+      expect(response).to.have.status(400);
+      expect(response.body.status).to.equal('fail');
     });
   });
 });

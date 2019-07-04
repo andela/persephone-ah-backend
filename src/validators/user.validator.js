@@ -47,7 +47,14 @@ const UserValidator = {
             .withMessage('Password can not be less than 8 characters')
         ];
 
-      case 'passwordReset':
+      case 'forgotPassword':
+        return [
+          check('email')
+            .isEmail()
+            .withMessage('Please enter a valid email')
+            .trim()
+        ];
+      case 'resetPassword':
         return [
           check('password')
             .not()
@@ -61,7 +68,6 @@ const UserValidator = {
         ];
 
       default:
-        return [];
     }
   },
 

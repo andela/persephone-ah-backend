@@ -12,7 +12,7 @@ dotenv.config();
 export default {
   /**
    * @method verifyToken
-   * - it implement jwt's verify method to decode incoming request with token
+   * - it implement jwt verify method to decode incoming request with token
    * - returns user data with a generated token
    *
    * @param {Object} request request object
@@ -45,6 +45,40 @@ export default {
       return response.status(400).json({
         status: 400,
         error: error.message
+      });
+    }
+  },
+
+  /**
+   * @method verifyPasswordResetToken
+   * - Confirms the token passed is valid
+   *
+   * @param {object} request - request object
+   * @param {object} response - response object
+   * @param {function} next - When called it moves to the next function
+   * @returns {object} response - for error case
+   */
+
+  async verifyPasswordResetToken(request, response, next) {
+    const { token } = request.query;
+
+    try {
+      const decoded = await jwt.verify(
+        token,
+        process.env.PASSWORD_RESET_SECRET
+      );
+
+      if (decoded) {
+        request.body.decoded = decoded;
+        next();
+      }
+    } catch (error) {
+      return response.status(401).json({
+        status: 'error',
+        error: {
+          message: 'Authentication error',
+          body: 'invalid or expired token'
+        }
       });
     }
   }
