@@ -10,123 +10,515 @@
       "url": "http://localhost:3000/api/v1"
     },
     {
-      "url": "https://persephone-backend.herokuapp.com"
+      "url": "https://persephone-backend.herokuapp.com/api/v1"
     }
   ],
-    "schemes": [
-        "http"
-    ],
-    "consumes": [
-        "application/json",
-        "multipart/form-data"
-    ],
-    "produces": [
-        "application/json"
-    ],
-    "security":[{
-        "ApiKeyAuth":[]
-      }],
-    "paths": {
-        "/users/login": {
-            
-            "post": {
-                "tags": [
-                    "Login"
-                ],
-                "summary": "POST API endpoint for user login",
-                "description": "User Login",
-                "parameters": [
-                    {
-                        "name": "login",
-                        "description": "Login params ",
-                        "in": "body",
-                        "required": "true",
-                        "schema": {
-                            "$ref": "#/definitions/User"
-                        }
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "User logged in successfully"
-                    }
+  "tags": [
+    {
+      "name": "Users",
+      "description": "Users API end point"
+    }
+  ],
+  "paths": {
+    "/users/login": {
+      "post": {
+        "tags": ["Users"],
+        "summary": "POST API endpoint for user login",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password"
+                  }
                 }
+              }
             }
+          }
         },
-        "/users/signup": {
-            "post": {
-                "tags": [
-                    "Sign up new users"
-                ],
-                "summary": "POST API endpoint for signing up new user",
-                "description": "Create new users",
-                "parameters": [
-                    {
-                        "name": "user",
-                        "description": "User params to create new user",
-                        "in": "body",
-                        "required": "true",
-                        "schema": {
-                            "$ref": "#/definitions/User"
-                        }
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "responses": {
-                    "201": {
-                        "description": "New user created"
-                    }
+        "responses": {
+          "200": {
+            "description": "User logged in successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticationInfo"
                 }
+              }
             }
+          },
+          "400": {
+            "description": "Indicate error in input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/badRequestResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/signup": {
+      "post": {
+        "tags": ["Users"],
+        "summary": "POST API endpoint for signing up new user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "firstName": {
+                    "type": "string"
+                  },
+                  "lastName": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "New user created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticationInfo"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error in input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/badRequestResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/forgot_password": {
+      "post": {
+        "tags": ["Users"],
+        "summary": "Post user email for password reset instructions",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "existingUser@mail.com"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "New user created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "example": "kindly check your mail for password reset instructions"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User email does not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "error"
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "example": "email does not exist"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/password_reset": {
+      "post": {
+        "tags": ["Users"],
+        "summary": "Post user email for password reset instructions",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "query",
+            "description": "token sent to user email address",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "password": {
+                    "type": "string",
+                    "format": "password"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "New user created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "example": "password reset was successful"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error in input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/badRequestResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error in input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/badAuthenticationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/create_users": {
+      "post": {
+        "tags": ["Users"],
+        "summary": "POST API endpoint for Super Admin to create other admins",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "firstName": {
+                    "type": "string",
+                    "example": "John"
+                  },
+                  "lastName": {
+                    "type": "string",
+                    "example": "Doe"
+                  },
+                  "email": {
+                    "type": "string",
+                    "example": "john@gmail.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "New user created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticationInfo"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error in input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/badRequestResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User email does not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "error"
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "example": "email does not exist"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/update/{userId}": {
+      "put": {
+        "tags": ["Users"],
+        "summary": "POST API endpoint for Super Admin to update user information",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "description": "user Id of the user to be updated",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "firstName": {
+                    "type": "string",
+                    "example": "John"
+                  },
+                  "lastName": {
+                    "type": "string",
+                    "example": "Doe"
+                  },
+                  "email": {
+                    "type": "string",
+                    "example": "john@gmail.com"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "New user created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticationInfo"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error in input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/badRequestResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "apiKey",
+        "name": "Authorization",
+        "in": "header"
+      }
+    },
+    "schemas": {
+      "AuthenticationInfo": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "token": {
+            "type": "string"
+          }
         }
       },
-      "securityDefinitions": {
-        "ApiKeyAuth": {
-            "type": "apiKey",
-            "in": "header",
-            "name": "x-access-token"
-        }
-    },
-    "definitions": {
-        "Login": {
-            "type": "object",
-            "properties": {
-                "email": {
-                    "type": "string"
+      "badRequestResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "error"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "msg": {
+                  "type": "string",
+                  "example": "please enter your firstName"
                 },
-                "password": {
-                    "type": "string"
+                "params": {
+                  "type": "string",
+                  "example": "firstName"
+                },
+                "location": {
+                  "type": "string",
+                  "example": "body"
                 }
+              }
             }
-        },
-        "User": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string",
-                    "example": 1
-                },
-                "firstName": {
-                    "type": "string",
-                    "example": "persephone"
-                },
-                "lastName": {
-                    "type": "string",
-                    "example": "team"
-                },
-                "email": {
-                    "type": "string",
-                    "example": "persephone@andela.com"
-                },
-                "password": {
-                    "type": "strinGHJ"
-                }
-            }
+          }
         }
+      },
+      "badAuthenticationError": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "error"
+          },
+          "error": {
+            "type": "object",
+            "items": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Authentication invalid"
+                },
+                "body": {
+                  "type": "string",
+                  "example": "Invalid or expired Token"
+                }
+              }
+            }
+          }
+        }
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": 1
+          },
+          "firstName": {
+            "type": "string",
+            "example": "persephone"
+          },
+          "lastName": {
+            "type": "string",
+            "example": "team"
+          },
+          "email": {
+            "type": "string",
+            "example": "persephone@andela.com"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      }
     }
+  }
 }

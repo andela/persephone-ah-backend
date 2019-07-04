@@ -52,6 +52,18 @@
     "sinon-chai": "^3.3.0",
     "swagger-ui-express": "^4.0.6"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.js": [
+      "npm run lint:fix",
+      "npm run prettier",
+      "git add"
+    ]
+  },
   "devDependencies": {
     "coveralls": "^3.0.4",
     "eslint": "^6.0.0",

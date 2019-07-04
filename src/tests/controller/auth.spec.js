@@ -124,7 +124,7 @@ describe('Auth API endpoints', () => {
         .request(app)
         .post('/api/v1/users/login')
         .send({
-          email: 'wrong@email.com',
+          email: 'wrong@gmail.com',
           password: user.password
         });
       expect(response).to.have.status(400);
