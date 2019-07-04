@@ -2,6 +2,7 @@ import faker from 'faker';
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import models from '../../db/models';
+import getToken from '../../helpers/jwt.helper';
 
 const { User } = models;
 

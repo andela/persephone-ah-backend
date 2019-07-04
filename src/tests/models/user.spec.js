@@ -26,7 +26,11 @@ describe('src/models/User', () => {
       'passwordToken',
       'socialAuth',
       'roleType',
-      'image'
+      'image',
+      'bio',
+      'twitterHandle',
+      'facebookHandle',
+      'userName'
     ].forEach(checkPropertyExists(user));
   });
 });

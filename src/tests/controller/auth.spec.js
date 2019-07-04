@@ -2,8 +2,10 @@ import chai from 'chai';
 import chaiHttp from 'chai-http';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
+
 import { getUserData, Response, createUser, getUser } from '../utils/db.utils';
 import authController from '../../controllers/auth.controllers';
+import AuthenticationMiddleWare from '../../middlewares/profileUpdateCheck.middleware';
 import app from '../../index';
 import models from '../../db/models';
 
@@ -13,11 +15,63 @@ const { expect } = chai;
 
 chai.use(chaiHttp);
 chai.use(sinonChai);
+let userToken;
+let secondUserToken;
+let deletedUserToken;
+before(done => {
+  chai
+    .request(app)
+    .post('/api/v1/users/signup')
+    .send({
+      firstName: 'tobe',
+      lastName: 'deleted',
+      email: 'deleted@user.com',
+      password: 'NewUser20'
+    })
+    .end((err, res) => {
+      const { token } = res.body.data;
+      deletedUserToken = token;
+      done(err);
+    });
+});
 
 describe('Auth API endpoints', () => {
   describe('POST /users/signup', () => {
     before(async () => {
       await User.destroy({ where: {}, force: true });
+    });
+    before(done => {
+      chai
+        .request(app)
+        .post('/api/v1/users/signup')
+        .send({
+          firstName: 'new',
+          lastName: 'user',
+          email: 'new@user.com',
+          password: 'NewUser20'
+        })
+        .end((err, res) => {
+          const { token } = res.body.data;
+          userToken = token;
+          done(err);
+        });
+    });
+
+    before(done => {
+      chai
+        .request(app)
+        .post('/api/v1/users/signup')
+        .send({
+          firstName: 'second',
+          lastName: 'user',
+          email: 'second@user.com',
+          password: 'NewUser20'
+        })
+        .end((err, res) => {
+          const { token } = res.body.data;
+          secondUserToken = token;
+          done(err);
+        });
     });
 
     it('Should successfully signup a user', done => {
@@ -134,7 +188,6 @@ describe('Auth API endpoints', () => {
 
     it('should return error for a wrong password', async () => {
       const user = getUser();
-
       await createUser(user);
       const response = await chai
         .request(app)
@@ -145,6 +198,81 @@ describe('Auth API endpoints', () => {
         });
       expect(response).to.have.status(400);
       expect(response.body.data.message).to.equal('Invalid email/password');
+    });
+  });
+
+  describe('PUT users/profileupdate', () => {
+    it('Should update the provided user profile details', async () => {
+      const response = await chai
+        .request(app)
+        .put('/api/v1/users/profileupdate')
+        .set('Authorization', `Bearer ${userToken}`)
+        .field('bio', 'My name is my name')
+        .field('userName', 'aboyhasnoname')
+        .field('firstName', 'newname')
+        .attach(
+          'image',
+          './src/tests/testFiles/default_avatar.png',
+          'image.jpeg'
+        );
+
+      expect(response).to.have.status(200);
+      expect(response.body.status).to.be.equal('success');
+      expect(response.body.data.bio).to.be.equal('My name is my name');
+      expect(response.body.data.userName).to.be.equal('aboyhasnoname');
+      expect(response.body.data).to.have.keys(
+        'bio',
+        'userName',
+        'firstName',
+        'lastName',
+        'twitterHandle',
+        'facebookHandle',
+        'image'
+      );
+    });
+
+    it('Should return an error if an update is about to happen on a non-existent account', async () => {
+      const response = await chai
+        .request(app)
+        .put('/api/v1/users/profileupdate')
+        .set('Authorization', `Bearer ${deletedUserToken}`)
+        .send({
+          bio: 'My name is my name',
+          userName: 'aboyhasnoname',
+          firstName: 'newname'
+        });
+
+      expect(response).to.have.status(404);
+      expect(response.body.status).to.be.equal('fail');
+      expect(response.body.data.message).to.be.equal(
+        'User account does not exist'
+      );
+    });
+
+    it('Should return an error if a new user tries to take an existing username', async () => {
+      const response = await chai
+        .request(app)
+        .put('/api/v1/users/profileupdate')
+        .set('Authorization', `Bearer ${secondUserToken}`)
+        .send({
+          userName: 'aboyhasnoname'
+        });
+
+      expect(response).to.have.status(409);
+      expect(response.body.status).to.be.equal('fail');
+      expect(response.body.data.message).to.be.equal(
+        'Username has already been taken'
+      );
+    });
+
+    it('Should return internal server error while updating a profile', async () => {
+      const request = {
+        body: {}
+      };
+      const response = new Response();
+      sinon.stub(response, 'status').returnsThis();
+      await AuthenticationMiddleWare.profileChecks(request, response);
+      expect(response.status).to.have.been.calledWith(500);
     });
   });
 });
