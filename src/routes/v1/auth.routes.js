@@ -1,39 +1,18 @@
 import express from 'express';
 import authenticationValidator from '../../validators/user.validator';
 import authenticationController from '../../controllers/auth.controllers';
-import authorization from '../../middlewares/auth.middleware';
 import AuthenticationToken from '../../middlewares/auth.middleware';
 import profileUpdateCheck from '../../middlewares/profileUpdateCheck.middleware';
 import upload from '../../middlewares/imageUpload.middleware';
+const { login, signUp, profileUpdate } = authenticationController;
 const { validator, checkValidationResult } = authenticationValidator;
 const { verifyToken } = AuthenticationToken;
 const { profileChecks } = profileUpdateCheck;
-const {
-  signUp,
-  login,
-  forgotPassword,
-  passwordReset,
-  profileUpdate
-} = authenticationController;
 
 const router = express.Router();
 router
   .post('/signup', validator('signup'), checkValidationResult, signUp)
-  .post('/login', validator('login'), checkValidationResult, login)
-  .post(
-    '/forgot_password',
-    validator('forgotPassword'),
-    checkValidationResult,
-    forgotPassword
-  )
-  .patch(
-    '/password_reset',
-    authorization.verifyPasswordResetToken,
-    validator('resetPassword'),
-    checkValidationResult,
-    passwordReset
-  );
-
+  .post('/login', validator('login'), checkValidationResult, login);
 router.put(
   '/profileupdate',
   verifyToken,

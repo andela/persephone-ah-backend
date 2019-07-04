@@ -1,5 +1,5 @@
-import { check, validationResult } from 'express-validator';
 import Helper from '../services/helper';
+import { check, validationResult } from 'express-validator';
 
 const UserValidator = {
   validator(route) {

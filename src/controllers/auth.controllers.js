@@ -6,6 +6,7 @@ import {
   passwordResetServices
 } from '../services/auth.service';
 import Helper from '../services/helper';
+import { upload } from '../helpers/image.helper';
 
 export default {
   /**
@@ -117,5 +118,54 @@ export default {
         message: 'password reset was successful'
       }
     });
+  },
+
+  /**
+   *
+   * @description Handles the Logic for Updating a User profile
+   *  Route: PUT: /users/profileupdate
+   * @param {object} request
+   * @param {object} response
+   * @returns JSON API Response
+   */
+  async profileUpdate(request, response, next) {
+    try {
+      let imagePath;
+      const previousImage = request.foundUser.image;
+      let imageUniqueName;
+      let uploadedImage;
+      if (request.file) {
+        imagePath = request.file.path;
+        imageUniqueName = request.file.originalname;
+        const imageResponse = await upload(imagePath, imageUniqueName);
+        uploadedImage = imageResponse.secure_url;
+      }
+
+      const fields = {
+        ...request.body,
+        image: uploadedImage || previousImage
+      };
+      const updatedUser = await request.foundUser.update(fields);
+      const {
+        firstName,
+        lastName,
+        bio,
+        twitterHandle,
+        facebookHandle,
+        image,
+        userName
+      } = updatedUser;
+      return Helper.successResponse(response, 200, {
+        firstName,
+        lastName,
+        bio,
+        userName,
+        twitterHandle,
+        facebookHandle,
+        image
+      });
+    } catch (error) {
+      next(error);
+    }
   }
 };
