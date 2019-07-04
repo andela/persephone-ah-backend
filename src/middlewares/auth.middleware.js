@@ -86,6 +86,8 @@ export default {
   /**
    * @method isAdmin
    * - it checks if user is an admin
+   * @method isAdmin
+   * - it checks if user is an admin
    * - returns next()
    *
    * @param {Object} request request object
@@ -98,6 +100,7 @@ export default {
   async isAdmin(request, response, next) {
     if (request.user.role !== 'admin') {
       return response.status(403).json({
+        status: 403,
         message: 'You do not have access to this resource, unauthorized'
       });
     }
@@ -117,8 +120,34 @@ export default {
    */
 
   async isSuperAdmin(request, response, next) {
-    if (request.user.role !== 'super_admin') {
+    if (request.user.roleType !== 'super_admin') {
       return response.status(403).json({
+        status: 403,
+        message: 'You do not have access to this resource, unauthorized'
+      });
+    }
+    next();
+  },
+
+  /**
+   * @method isSuperAdmin
+   * - it checks if user is a super_admin
+   * - returns next()
+   *
+   * @param {Object} request request object
+   * @param {Object} response response object
+   * @param {Function} next function
+   *
+   * @returns {Response} response object
+   */
+
+  async adminCheck(request, response, next) {
+    const admin =
+      request.user.roleType === 'super_admin' ||
+      request.user.roleType === 'admin';
+    if (!admin) {
+      return response.status(403).json({
+        status: 403,
         message: 'You do not have access to this resource, unauthorized'
       });
     }

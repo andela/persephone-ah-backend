@@ -19,4 +19,15 @@ describe('GET /', () => {
         done();
       });
   });
+
+  it('Should throw error for accessing a wrong route', () => {
+    chai
+      .request(app)
+      .get('/damilola')
+      .end((error, response) => {
+        expect(response.body.message).to.equal(
+          'You are trying to access a wrong Route'
+        );
+      });
+  });
 });

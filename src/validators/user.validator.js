@@ -1,4 +1,4 @@
-import { check, validationResult } from 'express-validator';
+import { check, validationResult, param } from 'express-validator';
 import Helper from '../services/helper';
 
 const UserValidator = {
@@ -65,6 +65,22 @@ const UserValidator = {
             .withMessage('Password must contain a number')
             .matches('[A-Z]')
             .withMessage('Password must contain an upper case letter')
+        ];
+
+      case 'role':
+        return [
+          check('role')
+            .isIn(['admin', 'super_admin'])
+            .withMessage('Please select an appropriate role type')
+        ];
+
+      case 'userId':
+        return [
+          param('userId')
+            .isNumeric()
+            .not()
+            .matches('[-, +, %]')
+            .withMessage('User ID must be a number')
         ];
 
       default:

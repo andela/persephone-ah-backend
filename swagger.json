@@ -1,9 +1,9 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "version": "1.0",
     "title": "Author's Haven",
-    "description": "Authors Haven - A Social platform for the creative at heart."
+    "description": "Authors Haven - A Social platform for the creative at heart.",
+    "version": "1.0"
   },
   "servers": [
     {
@@ -11,33 +11,23 @@
     },
     {
       "url": "https://persephone-backend.herokuapp.com/api/v1"
+    },
+    {
+      "url": "http://persephone-backend-staging.herokuapp.com/"
     }
   ],
   "tags": [
     {
-      "name": "Sign up",
-      "description": "create new user"
-    },
-    {
-      "name": "Login",
-      "description": "Endpoint to test the server setup"
-    },
-    {
-      "name": "Forgot Password",
-      "description": "Endpoint to get password reset email instruction"
-    },
-    {
-      "name": "Password reset",
-      "description": "Endpoint to request for password reset"
+      "name": "Users",
+      "description": "Users API end point"
     }
   ],
   "paths": {
     "/users/login": {
       "post": {
-        "tags": ["Login"],
+        "tags": ["Users"],
         "summary": "POST API endpoint for user login",
         "requestBody": {
-          "required": true,
           "content": {
             "application/json": {
               "schema": {
@@ -53,7 +43,8 @@
                 }
               }
             }
-          }
+          },
+          "required": true
         },
         "responses": {
           "200": {
@@ -81,10 +72,9 @@
     },
     "/users/signup": {
       "post": {
-        "tags": ["Sign up"],
+        "tags": ["Users"],
         "summary": "POST API endpoint for signing up new user",
         "requestBody": {
-          "required": true,
           "content": {
             "application/json": {
               "schema": {
@@ -106,7 +96,8 @@
                 }
               }
             }
-          }
+          },
+          "required": true
         },
         "responses": {
           "201": {
@@ -134,10 +125,9 @@
     },
     "/users/forgot_password": {
       "post": {
-        "tags": ["Forgot Password"],
+        "tags": ["Users"],
         "summary": "Post user email for password reset instructions",
         "requestBody": {
-          "required": true,
           "content": {
             "application/json": {
               "schema": {
@@ -150,7 +140,8 @@
                 }
               }
             }
-          }
+          },
+          "required": true
         },
         "responses": {
           "201": {
@@ -208,20 +199,22 @@
     },
     "/users/password_reset": {
       "post": {
-        "tags": ["Password reset"],
+        "tags": ["Users"],
         "summary": "Post user email for password reset instructions",
         "parameters": [
           {
             "name": "token",
             "in": "query",
             "description": "token sent to user email address",
+            "required": false,
+            "style": "form",
+            "explode": true,
             "schema": {
               "type": "string"
             }
           }
         ],
         "requestBody": {
-          "required": true,
           "content": {
             "application/json": {
               "schema": {
@@ -234,10 +227,11 @@
                 }
               }
             }
-          }
+          },
+          "required": true
         },
         "responses": {
-          "201": {
+          "200": {
             "description": "New user created",
             "content": {
               "application/json": {
@@ -284,16 +278,248 @@
           }
         }
       }
+    },
+    "/users/create_users": {
+      "post": {
+        "tags": ["Users"],
+        "summary": "POST API endpoint for Super Admin to create other admins",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "firstName": {
+                    "type": "string",
+                    "example": "John"
+                  },
+                  "lastName": {
+                    "type": "string",
+                    "example": "Doe"
+                  },
+                  "email": {
+                    "type": "string",
+                    "example": "john@gmail.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "New user created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticationInfo"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error in input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/badRequestResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User email does not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "error"
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "example": "email does not exist"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/update/{userId}": {
+      "put": {
+        "tags": ["Users"],
+        "summary": "POST API endpoint for Super Admin to update user information",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "user Id of the user to be updated",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "existingUser@mail.com"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "New user created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "example": "kindly check your mail for password reset instructions"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User email does not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "error"
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "example": "email does not exist"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{userId}": {
+      "delete": {
+        "tags": ["Users"],
+        "summary": "POST API endpoint for Admin to delete user",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "user Id of the user to be deleted",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "New user created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "example": "kindly check your mail for password reset instructions"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User email does not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "error"
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "example": "email does not exist"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
-    "securitySchemes": {
-      "bearerAuth": {
-        "type": "apiKey",
-        "name": "Authorization",
-        "in": "header"
-      }
-    },
     "schemas": {
       "AuthenticationInfo": {
         "type": "object",
@@ -368,7 +594,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "example": 1
+            "example": "1"
           },
           "firstName": {
             "type": "string",
@@ -386,6 +612,13 @@
             "type": "string"
           }
         }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "apiKey",
+        "name": "Authorization",
+        "in": "header"
       }
     }
   }
