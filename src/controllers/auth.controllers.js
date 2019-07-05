@@ -108,6 +108,13 @@ export default {
 
   async passwordReset(request, response) {
     const { password, decoded } = request.body;
+    /**
+     *
+     *
+     * @param {object} request
+     * @param {object} response
+     * @returns
+     */
 
     await passwordResetServices(decoded.email, password);
 

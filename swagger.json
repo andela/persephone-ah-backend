@@ -29,6 +29,10 @@
     {
       "name": "Password reset",
       "description": "Endpoint to request for password reset"
+    },
+    {
+      "name": "Get all users",
+      "description": "Endpoint to get all users"
     }
   ],
   "paths": {
@@ -274,6 +278,34 @@
           },
           "401": {
             "description": "Error in input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/badAuthenticationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/": {
+      "get": {
+        "tags": ["Get all users"],
+        "summary": "Get API endpoint to get all users",
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved all users",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": ""
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Indicate error in input",
             "content": {
               "application/json": {
                 "schema": {
