@@ -107,4 +107,22 @@ describe('Authentication middleware', () => {
       message: 'You do not have access to this resource, unauthorized'
     });
   });
+
+  it('Should return an error if user is not super admin or admin ', () => {
+    const request = {
+      user: {
+        roleType: null
+      }
+    };
+    const response = new Response();
+    sinon.stub(response, 'status').returnsThis();
+    sinon.stub(response, 'json').returnsThis();
+    const next = () => {};
+    middleware.adminCheck(request, response, next);
+    expect(response.status).to.have.been.calledWith(403);
+    expect(response.json).to.have.been.calledWith({
+      status: 403,
+      message: 'You do not have access to this resource, unauthorized'
+    });
+  });
 });
