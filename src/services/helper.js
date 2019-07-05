@@ -13,10 +13,10 @@ const Helper = {
    * @returns {Response} response object
    */
 
-  errorResponse(response, statusCode) {
+  errorResponse(response, statusCode, error) {
     return response.status(statusCode).json({
       status: 'error',
-      message: 'Unable to communicate with database'
+      message: error
     });
   },
 
