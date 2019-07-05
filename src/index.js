@@ -9,7 +9,8 @@ import Routes from './routes/v1';
 const app = express();
 
 // Normal express config defaults
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use('/uploads', express.static('uploads'));
 app.use(bodyParser.json());
 app.use(logger('dev'));
 Routes(app);
@@ -23,24 +24,21 @@ app.get('/', (request, response) => {
   });
 });
 
-app.use((req, res, next) => {
+app.use((request, response, next) => {
   const error = new Error('You are trying to access a wrong Route');
   error.status = 404;
   next(error);
 });
 
-app.use((error, req, res, next) => {
-  res.status(error.status || 500);
-  res.json({
+app.use((error, request, response, next) => {
+  response.status(error.status || 500);
+  response.json({
     status: error.status || 500,
     error: error.name,
     message: error.message
   });
-  next();
 });
-
 const PORT = process.env.PORT || 3000;
-
 // finally, let's start our server...
 app.listen(PORT, () => {
   console.log(`Listening on port: ${PORT}`);

@@ -5,6 +5,12 @@ export default (sequelize, DataTypes) => {
       allowNull: {
         args: false,
         msg: 'Please enter your First Name'
+      },
+      validate: {
+        isAlpha: {
+          args: true,
+          msg: 'Please enter a valid character'
+        }
       }
     },
     lastName: {
@@ -12,11 +18,23 @@ export default (sequelize, DataTypes) => {
       allowNull: {
         args: false,
         msg: 'Please enter your Last Name'
+      },
+      validate: {
+        isAlpha: {
+          args: true,
+          msg: 'Please enter a valid character'
+        }
       }
     },
     userName: {
       type: DataTypes.STRING,
-      allowNull: true
+      allowNull: true,
+      validate: {
+        isAlphanumeric: {
+          args: true,
+          msg: 'Please enter a valid character'
+        }
+      }
     },
     email: {
       type: DataTypes.STRING,
@@ -77,6 +95,18 @@ export default (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
       defaultValue: 'author'
+    },
+    bio: {
+      type: DataTypes.TEXT,
+      allowNull: true
+    },
+    twitterHandle: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    facebookHandle: {
+      type: DataTypes.STRING,
+      allowNull: true
     }
   });
 
