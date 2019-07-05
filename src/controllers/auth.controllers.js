@@ -34,7 +34,7 @@ export default {
       const value = await signUpService(request.body);
       return Helper.successResponse(response, 201, value.user);
     } catch (error) {
-      return Helper.errorResponse(response, 500);
+      return Helper.errorResponse(response, 500, error);
     }
   },
 
