@@ -1,6 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import swagger from 'swagger-ui-express';
+import cors from 'cors';
 import logger from 'morgan';
 import swaggerConfig from '../swagger.json';
 import Routes from './routes/v1';
@@ -9,6 +10,7 @@ import Routes from './routes/v1';
 const app = express();
 
 // Normal express config defaults
+app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/uploads', express.static('uploads'));
 app.use(bodyParser.json());

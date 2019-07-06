@@ -270,7 +270,18 @@ describe('Auth API endpoints', () => {
   });
 
   describe('POST /users/forgot_password', () => {
+    before(async () => {
+      const user = getUser();
+      const userSignUpResponse = await chai
+        .request(app)
+        .post(`${process.env.API_VERSION}/users/signup`)
+        .send(user);
+
+      userToken = userSignUpResponse.body.data.token;
+    });
+
     const endpoint = `${process.env.API_VERSION}/users/forgot_password`;
+
     it('should send link for password reset', async () => {
       const user = getUser();
       const { email } = user;
@@ -281,9 +292,10 @@ describe('Auth API endpoints', () => {
       const response = await chai
         .request(app)
         .post(endpoint)
+        .set({ Authorization: `Bearer ${userToken}` })
         .send({ email: user.email });
 
-      expect(response).to.have.status(201);
+      expect(response).to.have.status(200);
       expect(response.body.status).to.equal('success');
       expect(response.body.data.message).to.equal(
         'kindly check your mail for password reset instructions'
@@ -294,11 +306,12 @@ describe('Auth API endpoints', () => {
       const response = await chai
         .request(app)
         .post(endpoint)
+        .set({ Authorization: `Bearer ${userToken}` })
         .send({ email: 'randomMal@doesnt.com' });
 
       expect(response).to.have.status(404);
-      expect(response.body.status).to.equal('error');
-      expect(response.body.error.message).to.equal('email does not exist');
+      expect(response.body.status).to.equal('fail');
+      expect(response.body.data.message).to.equal('email does not exist');
     });
 
     it('should return error for wrong email format', async () => {
@@ -307,6 +320,7 @@ describe('Auth API endpoints', () => {
       const response = await chai
         .request(app)
         .post(endpoint)
+        .set({ Authorization: `Bearer ${userToken}` })
         .send({ email });
 
       expect(response).to.have.status(400);
@@ -335,22 +349,38 @@ describe('Auth API endpoints', () => {
       expect(response.body.error.message).to.equal('Authentication error');
     });
 
-    it('should return successful password reset', async () => {
-      const user = getUser();
-      const createdUser = await createUser(user);
+    describe('# reuse of token', () => {
+      let usedToken;
+      it('should return successful password reset', async () => {
+        const user = getUser();
+        const createdUser = await createUser(user);
 
-      const token = await getPasswordResetToken(createdUser.dataValues);
+        const token = await getPasswordResetToken(createdUser.dataValues);
+        usedToken = token;
+        const response = await chai
+          .request(app)
+          .patch(`${endpoint}?token=${token}`)
+          .send({ password: 'Password01' });
 
-      const response = await chai
-        .request(app)
-        .patch(`${endpoint}?token=${token}`)
-        .send({ password: 'Password01' });
+        expect(response).to.have.status(200);
+        expect(response.body.status).to.equal('success');
+        expect(response.body.data.message).to.equal(
+          'password reset was successful'
+        );
+      });
 
-      expect(response).to.have.status(200);
-      expect(response.body.status).to.equal('success');
-      expect(response.body.data.message).to.equal(
-        'password reset was successful'
-      );
+      it('should return error for used token', async () => {
+        const response = await chai
+          .request(app)
+          .patch(`${endpoint}?token=${usedToken}`)
+          .send({ password: 'Password01' });
+
+        expect(response).to.have.status(401);
+        expect(response.body.status).to.equal('error');
+        expect(response.body.error.message).to.equal(
+          'this token has been used kindly request for a new one'
+        );
+      });
     });
 
     it('should return error for invalid token', async () => {
@@ -456,6 +486,55 @@ describe('Auth API endpoints', () => {
       sinon.stub(response, 'status').returnsThis();
       await AuthenticationMiddleWare.profileChecks(request, response);
       expect(response.status).to.have.been.calledWith(500);
+    });
+    describe('Get /users/logout', () => {
+      const baseUrl = `${process.env.API_VERSION}/users/`;
+
+      before(async () => {
+        const user = getUser();
+        const response = await chai
+          .request(app)
+          .post(`${baseUrl}signup`)
+          .send(user);
+        userToken = response.body.data.token;
+      });
+
+      it('should successfully sign out user', async () => {
+        const response = await chai
+          .request(app)
+          .get(`${baseUrl}logout`)
+          .set({ Authorization: `Bearer ${userToken}` });
+
+        expect(response).to.have.status(200);
+        expect(response.body.status).to.equal('success');
+        expect(response.body.data.message).to.equal('logout was successful');
+      });
+
+      it('should return error for logged out error', async () => {
+        const response = await chai
+          .request(app)
+          .get(`${baseUrl}logout`)
+          .set({ Authorization: `Bearer ${userToken}` });
+
+        expect(response).to.have.status(401);
+        expect(response.body.status).to.equal('error');
+        expect(response.body.error.message).to.equal(
+          'kindly sign in as the token used has been logged out'
+        );
+      });
+
+      it('should return error for logged out token used to access forgot_password route', async () => {
+        const response = await chai
+          .request(app)
+          .post(`${baseUrl}forgot_password`)
+          .set({ Authorization: `Bearer ${userToken}` });
+
+        expect(response).to.have.status(401);
+        expect(response.body.status).to.equal('error');
+        expect(response.body.error.message).to.equal(
+          'kindly sign in as the token used has been logged out'
+        );
+      });
     });
   });
 });

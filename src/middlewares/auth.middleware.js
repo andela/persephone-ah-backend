@@ -1,6 +1,8 @@
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 
+import { isTokenInBlackListService } from '../services/auth.service';
+
 dotenv.config();
 
 /**
@@ -39,7 +41,19 @@ export default {
           error: 'You have provide an invalid token'
         });
       }
+
+      const checkIfTokenWasLoggedOut = await isTokenInBlackListService(token);
+
+      if (checkIfTokenWasLoggedOut) {
+        return response.status(401).json({
+          status: 'error',
+          error: {
+            message: 'kindly sign in as the token used has been logged out'
+          }
+        });
+      }
       request.user = decode;
+      request.token = token;
       next();
     } catch (error) {
       return response.status(400).json({
@@ -68,8 +82,19 @@ export default {
         process.env.PASSWORD_RESET_SECRET
       );
 
+      const checkIfTokenHasBeenUsed = await isTokenInBlackListService(token);
+      if (checkIfTokenHasBeenUsed) {
+        return response.status(401).json({
+          status: 'error',
+          error: {
+            message: 'this token has been used kindly request for a new one'
+          }
+        });
+      }
+
       if (decoded) {
         request.body.decoded = decoded;
+        request.body.token = token;
         next();
       }
     } catch (error) {

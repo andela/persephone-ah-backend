@@ -1,12 +1,15 @@
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
+import moment from 'moment';
+import cron from 'node-cron';
 import getToken, { getPasswordResetToken } from '../helpers/jwt.helper';
 import model from '../db/models';
 import sendWelcomeEmail, {
   sendForgotPasswordMail
 } from '../helpers/mail.helper';
 
-const { User } = model;
+const { User, BlackList } = model;
+
 /**
  * @method hashPassword
  * - it hashes a new user password
@@ -28,6 +31,7 @@ export const hashPassword = async password => bcrypt.hash(password, 10);
  *
  * @returns {Object} user object
  */
+
 export const signUpService = async body => {
   const { firstName, lastName, email, password, role } = body;
   const sanitizedEmail = email.toLowerCase();
@@ -100,6 +104,7 @@ export const loginService = async body => {
  * @param {number} userId
  * @returns {object}  Database User Instance
  */
+
 export const findUserById = async userId => await User.findByPk(userId);
 
 /**
@@ -107,13 +112,13 @@ export const findUserById = async userId => await User.findByPk(userId);
  * - it persist a new user to the database
  * - returns a promise
  */
+
 export const isUserExist = async userEmail =>
   User.findOne({ where: { email: userEmail } });
 
 /**
  * @method forgetPasswordServices
- * - Helps generate password reset token and
-     sends mail to the user's email Address containing token and link
+ * - Helps generate password reset token and sends mail to the user's email Address containing token and link
  * @param {object} user - contains required user info to generate password reset token
  * @returns {promise}
  */
@@ -132,12 +137,28 @@ export const forgotPasswordServices = async user => {
 };
 
 /**
+ * @method saveToBlackListServices
+ * - Helps save token in the blacklist table
+ *
+ * @param {string} userToken - jwt token
+ * @param {string} tokenType - user token or password reset token
+ * @returns {object}
+ */
+
+export const saveToBlackListServices = async (userToken, tokenType) => {
+  const result = BlackList.create({ userToken, tokenType });
+  return result;
+};
+
+/**
+ * @method passwordResetServices
  * Helps update user's password
  *
  * @param {string} email - user's email address
  * @param {string} newPassword - new password t be updated
- * @returns {undefined}
+ * @returns {object}
  */
+
 export const passwordResetServices = async (email, newPassword) => {
   const hashedPassword = await hashPassword(newPassword);
 
@@ -152,8 +173,51 @@ export const passwordResetServices = async (email, newPassword) => {
  * @param {string} userName
  * @returns {(object|boolean)} Database User Instance or boolean if user is not found
  */
+
 export const findByUserName = async userName => {
   const result = await User.findOne({ where: { userName } });
   if (!result) return false;
   return result;
 };
+
+/**
+ * @method isTokenInBlackListService
+ * - Helps check the blackList table for specified token
+ *
+ * @param {string} userToken - jwt token
+ * @returns {object}
+ */
+
+export const isTokenInBlackListService = async userToken =>
+  BlackList.findOne({
+    where: { userToken }
+  });
+
+export const getExpiredToken = async () => {
+  const tokens = await BlackList.findAll();
+  const expiredToken = [];
+
+  tokens.forEach(token => {
+    const { userToken, createdAt } = token;
+    const now = moment();
+    const oneDay = 60 * 60 * 24 * 1000;
+
+    if (now - createdAt > oneDay) {
+      expiredToken.push(userToken);
+    }
+  });
+
+  return expiredToken;
+};
+
+cron.schedule('0 0 * * *', () => {
+  getExpiredToken().then(tokens => {
+    tokens.forEach(token => {
+      BlackList.destroy({
+        where: {
+          userToken: token
+        }
+      });
+    });
+  });
+});

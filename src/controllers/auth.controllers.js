@@ -3,10 +3,13 @@ import {
   signUpService,
   isUserExist,
   forgotPasswordServices,
-  passwordResetServices
+  passwordResetServices,
+  saveToBlackListServices
 } from '../services/auth.service';
 import Helper from '../services/helper';
 import upload from '../helpers/image.helper';
+
+const { failResponse, successResponse } = Helper;
 
 export default {
   /**
@@ -77,23 +80,19 @@ export default {
       const result = await isUserExist(request.body.email.toLowerCase());
 
       if (!result) {
-        return response.status(404).json({
-          status: 'error',
-          error: { message: 'email does not exist' }
+        return failResponse(response, 404, {
+          message: 'email does not exist'
         });
       }
 
       forgotPasswordServices(result);
-      return response.status(201).json({
-        status: 'success',
-        data: {
-          message: 'kindly check your mail for password reset instructions'
-        }
+      return successResponse(response, 200, {
+        message: 'kindly check your mail for password reset instructions'
       });
     } catch (error) {
-      return response
-        .status(500)
-        .json({ status: 'error', error: { message: 'internal server error' } });
+      return failResponse(response, 500, {
+        message: 'internal server error'
+      });
     }
   },
 
@@ -108,22 +107,13 @@ export default {
    */
 
   async passwordReset(request, response) {
-    const { password, decoded } = request.body;
-    /**
-     *
-     *
-     * @param {object} request
-     * @param {object} response
-     * @returns
-     */
+    const { password, decoded, token } = request.body;
 
     await passwordResetServices(decoded.email, password);
+    await saveToBlackListServices(token);
 
-    return response.status(200).json({
-      status: 'success',
-      data: {
-        message: 'password reset was successful'
-      }
+    return successResponse(response, 200, {
+      message: 'password reset was successful'
     });
   },
 
@@ -167,5 +157,26 @@ export default {
     } catch (error) {
       next(error);
     }
+  },
+
+  /**
+   * @method logout
+   * Handles the Logic for user logout
+   *  Route: GET: /users/logout
+   * @param {object} request
+   * @param {object} response
+   * @returns {object} JSON API Response
+   */
+
+  async logout(request, response) {
+    const { token } = request;
+
+    const result = await saveToBlackListServices(token);
+    if (result) {
+      return successResponse(response, 200, {
+        message: 'logout was successful'
+      });
+    }
+    return failResponse(response, 500, 'internal error');
   }
 };
