@@ -3,6 +3,7 @@ import crypto from 'crypto';
 import bcrypt from 'bcryptjs';
 
 import models from '../../db/models';
+import getToken from '../../helpers/jwt.helper';
 
 const { User } = models;
 

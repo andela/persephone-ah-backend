@@ -95,6 +95,18 @@ export default (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
       defaultValue: 'author'
+    },
+    bio: {
+      type: DataTypes.TEXT,
+      allowNull: true
+    },
+    twitterHandle: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    facebookHandle: {
+      type: DataTypes.STRING,
+      allowNull: true
     }
   });
 
