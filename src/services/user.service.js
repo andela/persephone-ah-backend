@@ -4,7 +4,7 @@ import getToken from '../helpers/jwt.helper';
 import model from '../db/models';
 import sendWelcomeEmail from '../helpers/mail.helper';
 
-const { User } = model;
+const { User, Follow } = model;
 
 /**
  * @description Get all users details without password and confirmEmailCode
@@ -121,4 +121,80 @@ export const adminDeleteUserService = async userId => {
   const response = `user with email ${user.email} deleted successfully`;
 
   return response;
+};
+
+/**
+ * @method followUserService
+ * - follow user follow another user
+ * - returns true or false
+ *
+ * @param {Object} userId user Id of the currently logged in user
+ * @param {Object} friendUserId user Id of the user to be followed
+ *
+ * @returns {Object} user object */
+
+export const followUserService = async (userId, friendUserId) => {
+  // checks if there is an existing record in the table
+  const checkIsFollowing = await Follow.findOne({
+    where: { userId, friendUserId }
+  });
+
+  if (checkIsFollowing) {
+    const { isFollowing } = checkIsFollowing;
+
+    // update the isFollwing column with the opposite boolean
+    await checkIsFollowing.update({
+      isFollowing: !isFollowing
+    });
+
+    // if isFollowing is true, it's updated to false
+    if (isFollowing) {
+      return 'You have unfollowed this user';
+    }
+
+    // if isFollwing is false, it's updated to true
+    return 'You have followed this user';
+  }
+  await Follow.create({
+    userId,
+    friendUserId
+  });
+  return 'You have followed this user';
+};
+
+/**
+ * @method followUserService
+ * - follow user follow another user
+ * - returns true or false
+ *
+ * @param {Object} userId user Id of the currently logged in user
+ * @param {Object} friendUserId user Id of the user to be followed
+ *
+ * @returns {Object} user object */
+
+export const getUserFollowersService = async userId => {
+  // checks if the user exist in the system
+  const isUserExist = await User.findOne({ where: { id: userId } });
+  if (!isUserExist) {
+    const response = { message: 'Invalid request', status: 400 };
+    throw response;
+  }
+
+  const followers = await Follow.findAll({
+    where: { userId },
+    attributes: ['id'],
+    include: [
+      {
+        model: User,
+        as: 'follower',
+        attributes: ['firstName', 'lastName', 'email', 'userName', 'image']
+      }
+    ]
+  });
+  // checks if the user has no followers
+  if (followers.length === 0) {
+    return 'User has no follower';
+  }
+
+  return followers;
 };

@@ -8,7 +8,9 @@ const {
   getUsers,
   adminCreateUser,
   adminUpdateUser,
-  adminDeleteUser
+  adminDeleteUser,
+  followUser,
+  getFollowers
 } = userController;
 
 const { adminCheck, verifyToken, isSuperAdmin } = authorization;
@@ -17,6 +19,13 @@ const router = express.Router();
 
 router
   .get('/', verifyToken, getUsers)
+  .get(
+    '/follow/:userId',
+    authenticationValidator.validator('userId'),
+    verifyToken,
+    getFollowers
+  );
+router
   .post(
     '/create_admin',
     verifyToken,
@@ -26,20 +35,28 @@ router
     checkValidationResult,
     adminCreateUser
   )
-  .put(
-    '/update/:userId',
+  .post(
+    '/follow',
     verifyToken,
-    adminCheck,
-    validator('userId'),
-    checkValidationResult,
-    adminUpdateUser
-  )
-  .delete(
-    '/:userId',
-    verifyToken,
-    adminCheck,
-    validator('userId'),
-    checkValidationResult,
-    adminDeleteUser
+    authenticationValidator.validator('follow'),
+    authenticationValidator.checkValidationResult,
+    followUser
   );
+
+router.put(
+  '/update/:userId',
+  verifyToken,
+  adminCheck,
+  validator('userId'),
+  checkValidationResult,
+  adminUpdateUser
+);
+router.delete(
+  '/:userId',
+  verifyToken,
+  adminCheck,
+  validator('userId'),
+  checkValidationResult,
+  adminDeleteUser
+);
 export default router;

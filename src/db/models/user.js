@@ -110,5 +110,16 @@ export default (sequelize, DataTypes) => {
     }
   });
 
+  User.associate = models => {
+    User.hasMany(models.Follow, {
+      foreignKey: 'userId',
+      as: 'followers'
+    });
+    User.hasMany(models.Follow, {
+      foreignKey: 'friendUserId',
+      as: 'followersfriend'
+    });
+  };
+
   return User;
 };

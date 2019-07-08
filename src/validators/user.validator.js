@@ -83,6 +83,15 @@ const UserValidator = {
             .withMessage('User ID must be a number')
         ];
 
+      case 'follow':
+        return [
+          check('userId')
+            .isNumeric()
+            .not()
+            .matches('[-, +, %]')
+            .withMessage('User ID must be a number')
+        ];
+
       default:
     }
   },
