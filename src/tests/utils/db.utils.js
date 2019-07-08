@@ -20,6 +20,22 @@ export const getUser = () => ({
   password: 'Author40'
 });
 
+export const superAdminData = {
+  firstName: faker.name.firstName(),
+  lastName: faker.name.lastName(),
+  email: faker.internet.email(),
+  password: 'Author40',
+  role: 'super_admin'
+};
+
+export const adminData = {
+  firstName: faker.name.firstName(),
+  lastName: faker.name.lastName(),
+  email: faker.internet.email(),
+  password: 'Author40',
+  role: 'admin'
+};
+
 export const createUser = user => {
   const hashedPassword = bcrypt.hashSync(user.password, 10);
   const confirmEmailCode = crypto.randomBytes(16).toString('hex');
@@ -29,6 +45,19 @@ export const createUser = user => {
     email: user.email,
     password: hashedPassword,
     confirmEmailCode
+  });
+};
+
+export const createSuperAdmin = () => {
+  const hashedPassword = bcrypt.hashSync('author40', 10);
+  const confirmEmailCode = crypto.randomBytes(16).toString('hex');
+  return User.create({
+    firstName: 'Damilola',
+    lastName: 'Adekoya',
+    email: 'koya@gmail.com',
+    password: hashedPassword,
+    confirmEmailCode,
+    roleType: 'super_admin'
   });
 };
 

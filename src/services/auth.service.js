@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
-import getToken, { getPasswordResetToken } from '../helpers/jwt.helper';
+import { getToken, getPasswordResetToken } from '../helpers/jwt.helper';
 import model from '../db/models';
 import sendWelcomeEmail, {
   sendForgotPasswordMail
