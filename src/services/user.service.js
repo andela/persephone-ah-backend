@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
-import getToken from '../helpers/jwt.helper';
+import { getToken } from '../helpers/jwt.helper';
 import model from '../db/models';
 import sendWelcomeEmail from '../helpers/mail.helper';
 
@@ -17,7 +17,7 @@ const { User, Follow } = model;
 export const getAllUsersService = async () => {
   const users = await User.findAll({
     attributes: {
-      exclude: ['password', 'confirmEmailCode']
+      exclude: ['password', 'confirmEmailCode', 'passwordToken']
     }
   });
   return users;
