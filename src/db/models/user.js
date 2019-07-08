@@ -120,10 +120,6 @@ export default (sequelize, DataTypes) => {
       foreignKey: 'friendUserId',
       as: 'followersfriend'
     });
-  };
-
-  User.associate = models => {
-    // associations can be defined here
     User.hasMany(models.Article, {
       foreignKey: 'userId',
       as: 'articles'

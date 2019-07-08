@@ -49,7 +49,7 @@ export default (sequelize, DataTypes) => {
         }
       },
       averageRating: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.FLOAT,
         default: 0
       },
       numberOfRating: {

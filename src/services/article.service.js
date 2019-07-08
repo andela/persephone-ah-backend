@@ -1,8 +1,10 @@
 import fs from 'fs';
-import models from '../db/models';
+import moment from 'moment';
 import { upload } from '../helpers/image.helper';
+import model from '../db/models';
 
-const { Article, User } = models;
+const { Comment, Article, User, Follow } = model;
+
 /** Istanbul ignore next */
 /**
  * @method createArticleService
@@ -292,4 +294,162 @@ export const unPublishArticleService = async data => {
     publishedAt: null
   });
   return article;
+};
+
+/**
+ * @method createCommentService
+ * - it persist a new comment to the comment table
+ * - returns comment data
+ *
+ * @param {Object} userId userId of the user making the comment
+ * @param {Object} slug slug of the comment
+ * @param {Object} comments details of the comment
+ *
+ * @returns {Object} comment object
+ */
+
+export const createCommentService = async (userId, slug, commentDetails) => {
+  const article = await Article.findOne({
+    where: { slug },
+    raw: true,
+    attributes: ['userId'],
+    include: [
+      {
+        model: User,
+        as: 'author',
+        attributes: ['firstName', 'lastName'],
+        include: [
+          { model: Follow, as: 'followersfriend', attributes: ['isFollowing'] }
+        ]
+      }
+    ]
+  });
+
+  if (!article) {
+    const response = { status: 404, message: 'no article found' };
+    throw response;
+  }
+
+  const articleId = article.id;
+
+  const { body, highlightedText } = commentDetails;
+
+  const date = moment();
+
+  const bodyDetails = { [date]: body };
+
+  const result = await Comment.create({
+    articleId,
+    userId,
+    slug,
+    body: bodyDetails,
+    highlightedText: highlightedText || null
+  });
+
+  const comment = {
+    id: result.id,
+    createdAt: result.createdAt,
+    updatedAt: result.updatedAt,
+    slug: result.slug,
+    body: result.body,
+    highlightedText: result.highlightedText,
+    author: {
+      firstName: article['author.firstName'],
+      lastName: article['author.lastName'],
+      following: article['author.followersfriend.isFollowing']
+        ? article['author.followersfriend.isFollowing']
+        : false
+    }
+  };
+  return comment;
+};
+
+/**
+ * @method createCommentService
+ * - it persist a new comment to the comment table
+ * - returns comment data
+ *
+ * @param {Object} userId userId of the user making the comment
+ * @param {Object} slug slug of the comment
+ * @param {Object} comments details of the comment
+ *
+ * @returns {Object} comment object
+ */
+
+export const getAllArticleCommentsService = async slug => {
+  const article = await Article.findOne({
+    where: { slug },
+    raw: true,
+    attributes: {
+      exclude: [
+        'userId',
+        'numberOfRating',
+        'sumOfRating',
+        'status',
+        'updatedAt'
+      ]
+    }
+  });
+
+  if (!article) {
+    const response = 'article not found';
+    throw response;
+  }
+  const articleId = article.id;
+  const comments = await Comment.findAll({
+    where: { articleId },
+    attributes: ['body', 'highlightedText', 'slug', 'createdAt'],
+    include: [
+      {
+        model: User,
+        as: 'userComment',
+        attributes: ['firstName', 'lastName', 'userName']
+      }
+    ]
+  });
+
+  return { article, comments };
+};
+
+/**
+ * @method deleteCommentService
+ * - it soft delete a comment
+ * - returns article data
+ *
+ * @param {Object} id id of the comment
+ * @param {Object} slug slug of the comment
+ *
+ * @returns {Object} article object
+ */
+
+export const deleteCommentService = async (slug, id, userId) => {
+  const comment = await Comment.findOne({
+    where: { slug, id },
+    attributes: {
+      exclude: ['numberOfRating', 'sumOfRating', 'status', 'updatedAt']
+    }
+  });
+
+  if (!comment) {
+    const response = 'comment not found';
+    throw response;
+  }
+
+  if (comment.dataValues.userId !== userId) {
+    const response = "you can not delete another user's comment";
+    throw response;
+  }
+
+  const { articleId } = comment;
+  const article = await Article.findOne({
+    where: { id: articleId },
+    raw: true,
+    attributes: ['slug']
+  });
+
+  comment.destroy();
+
+  const response = getAllArticleCommentsService(article.slug);
+
+  return response;
 };

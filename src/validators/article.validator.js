@@ -16,6 +16,21 @@ const ArticleValidator = {
             .trim()
         ];
 
+      case 'comment':
+        return [
+          check('body')
+            .isLength({ min: 2 })
+            .withMessage('Please comment cannot be empty')
+            .trim()
+        ];
+      case 'delete-comment':
+        return [
+          check('commentId')
+            .isNumeric()
+            .not()
+            .matches('[-, +, %]')
+            .withMessage('User ID must be a number')
+        ];
       default:
     }
   },
