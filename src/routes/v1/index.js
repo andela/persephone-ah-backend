@@ -1,5 +1,5 @@
 import auth from './auth.route';
-import users from './user.routes';
+import users from './user.route';
 
 export default app => {
   app.use('/api/v1/users', auth);
