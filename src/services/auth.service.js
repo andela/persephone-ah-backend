@@ -7,7 +7,6 @@ import sendWelcomeEmail, {
 } from '../helpers/mail.helper';
 
 const { User } = model;
-
 /**
  * @method hashPassword
  * - it hashes a new user password
@@ -29,26 +28,26 @@ export const hashPassword = async password => bcrypt.hash(password, 10);
  *
  * @returns {Object} user object
  */
-
 export const signUpService = async body => {
   const { firstName, lastName, email, password, role } = body;
   const sanitizedEmail = email.toLowerCase();
   const hashedPassword = await hashPassword(password);
   const confirmEmailCode = crypto.randomBytes(16).toString('hex');
+  const image = process.env.DEFAULT_IMAGE_URL;
   const result = await User.create({
     firstName,
     lastName,
     password: hashedPassword,
     email: sanitizedEmail,
     confirmEmailCode,
+    image,
     roleType: role
   });
-
   const user = {
     firstName: result.firstName,
     lastName: result.lastName,
     email: result.email,
-    img: result.image,
+    image: result.image,
     token: getToken(result)
   };
 
@@ -96,15 +95,18 @@ export const loginService = async body => {
 };
 
 /**
+ * @method findUserById
+ * Queries the database to find a user using the provided id
+ * @param {number} userId
+ * @returns {object}  Database User Instance
+ */
+export const findUserById = async userId => await User.findByPk(userId);
+
+/**
  * @method isUserExist
  * - it persist a new user to the database
  * - returns a promise
- *
- * @param {String} userEmail user's email
- *
- * @returns {Promise}
  */
-
 export const isUserExist = async userEmail =>
   User.findOne({ where: { email: userEmail } });
 
@@ -113,7 +115,7 @@ export const isUserExist = async userEmail =>
  * - Helps generate password reset token and
      sends mail to the user's email Address containing token and link
  * @param {object} user - contains required user info to generate password reset token
- * @returns {undefined}
+ * @returns {promise}
  */
 
 export const forgotPasswordServices = async user => {
@@ -142,4 +144,16 @@ export const passwordResetServices = async (email, newPassword) => {
   const user = await User.findOne({ where: { email } });
 
   user.update({ password: hashedPassword });
+};
+
+/**
+ *@method findByUserName
+ * Queries the database to find user using the provided username
+ * @param {string} userName
+ * @returns {(object|boolean)} Database User Instance or boolean if user is not found
+ */
+export const findByUserName = async userName => {
+  const result = await User.findOne({ where: { userName } });
+  if (!result) return false;
+  return result;
 };

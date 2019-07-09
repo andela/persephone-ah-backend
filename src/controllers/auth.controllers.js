@@ -6,6 +6,7 @@ import {
   passwordResetServices
 } from '../services/auth.service';
 import Helper from '../services/helper';
+import upload from '../helpers/image.helper';
 
 export default {
   /**
@@ -33,7 +34,7 @@ export default {
       const value = await signUpService(request.body);
       return Helper.successResponse(response, 201, value.user);
     } catch (error) {
-      return Helper.errorResponse(response, 500);
+      return Helper.errorResponse(response, 500, error);
     }
   },
 
@@ -124,5 +125,47 @@ export default {
         message: 'password reset was successful'
       }
     });
+  },
+
+  /**
+   *
+   * @description Handles the Logic for Updating a User profile
+   *  Route: PUT: /users/profileupdate
+   * @param {object} request
+   * @param {object} response
+   * @param {function} next
+   * @returns {object}JSON API Response
+   */
+  async profileUpdate(request, response, next) {
+    try {
+      let imagePath;
+      const previousImage = request.foundUser.image;
+      let imageUniqueName;
+      let uploadedImage;
+      if (request.file) {
+        imagePath = request.file.path;
+        imageUniqueName = request.file.originalname;
+        const imageResponse = await upload(imagePath, imageUniqueName);
+        uploadedImage = imageResponse.secure_url;
+      }
+
+      const fields = {
+        ...request.body,
+        image: uploadedImage || previousImage
+      };
+      const updatedUser = await request.foundUser.update(fields);
+
+      return Helper.successResponse(response, 200, {
+        firstName: updatedUser.dataValues.firstName,
+        lastName: updatedUser.dataValues.lastName,
+        bio: updatedUser.dataValues.bio,
+        userName: updatedUser.dataValues.userName,
+        twitterHandle: updatedUser.dataValues.twitterHandle,
+        facebookHandle: updatedUser.dataValues.facebookHandle,
+        image: updatedUser.dataValues.image
+      });
+    } catch (error) {
+      next(error);
+    }
   }
 };
