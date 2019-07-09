@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 import configJson from '../config/config';
 
 dotenv.config();
-
+/* istanbul ignore next */
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV ? process.env.NODE_ENV : 'development';
 
@@ -14,6 +14,7 @@ const db = {};
 
 let sequelize;
 if (config.use_env_variable === 'production') {
+  /* istanbul ignore next */
   sequelize = new Sequelize(process.env.DATABASE_URL, config);
 } else if (process.env.NODE_ENV === 'test') {
   sequelize = new Sequelize(
@@ -22,6 +23,7 @@ if (config.use_env_variable === 'production') {
     process.env.TEST_DATABASE_PASSWORD,
     config
   );
+  /* istanbul ignore next */
 } else {
   sequelize = new Sequelize(
     process.env.DATABASE_NAME,

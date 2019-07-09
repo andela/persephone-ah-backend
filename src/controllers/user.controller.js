@@ -25,6 +25,7 @@ const getUsers = async (request, response) => {
 
     return Helper.successResponse(response, 200, value);
   } catch (error) {
+    /* istanbul ignore next */
     return Helper.failResponse(response, 400, error);
   }
 };

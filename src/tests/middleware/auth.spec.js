@@ -121,7 +121,7 @@ describe('Authentication middleware', () => {
     middleware.adminCheck(request, response, next);
     expect(response.status).to.have.been.calledWith(403);
     expect(response.json).to.have.been.calledWith({
-      status: 403,
+      status: 'fail',
       message: 'You do not have access to this resource, unauthorized'
     });
   });
