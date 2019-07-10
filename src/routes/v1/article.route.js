@@ -50,7 +50,13 @@ router
   .put('/unpublish/:slug', verifyToken, unPublishArticle)
   .put('/:slug', verifyToken, upload.array('image'), updateArticle)
   .delete('/:slug', verifyToken, deleteArticle)
-
+  .post(
+    '/ratings',
+    authorization.verifyToken,
+    validator('rating'),
+    checkValidationResult,
+    articleController.ratings
+  )
   .get('/:slug/comments', allArticleComments)
   .delete(
     '/:slug/comments/:commentId',

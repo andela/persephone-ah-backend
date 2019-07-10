@@ -1,7 +1,7 @@
 import sequelizeSlugify from 'sequelize-slugify';
 import crypto from 'crypto';
 
-export default (sequelize, DataTypes) => {
+module.exports = (sequelize, DataTypes) => {
   const Article = sequelize.define(
     'Article',
     {
@@ -94,6 +94,23 @@ export default (sequelize, DataTypes) => {
       foreignKey: 'userId',
       as: 'author'
     });
+  };
+
+  Article.associate = models => {
+    // associations can be defined here
+    Article.belongsTo(models.User, {
+      foreignKey: 'userId',
+      as: 'author'
+    });
+
+    Article.hasMany(
+      models.Rating,
+      {
+        foreignKey: 'articleId',
+        as: 'ratedArticle'
+      },
+      { onDelete: 'cascade' }
+    );
   };
   return Article;
 };

@@ -223,7 +223,9 @@ describe('User API endpoints', () => {
           email: 'koya@gmail.com',
           password: 'author40'
         });
+
       superAdminToken = response.body.data.token;
+
       expect(response).to.have.status(200);
       expect(response).to.be.an('object');
       expect(response.body.data.email).to.equal('koya@gmail.com');
@@ -244,6 +246,7 @@ describe('User API endpoints', () => {
           firstName: 'John',
           lastName: 'Paul'
         });
+
       expect(response).to.have.status(200);
       expect(response.body).to.be.an('object');
       expect(response.body.status).to.be.equal('success');
@@ -261,6 +264,7 @@ describe('User API endpoints', () => {
           firstName: 'John',
           lastName: 'Paul'
         });
+
       expect(response).to.have.status(400);
       expect(response.body).to.be.an('object');
       expect(response.body.status).to.be.equal('fail');
@@ -282,6 +286,7 @@ describe('User API endpoints', () => {
           firstName: '23',
           lastName: 'Paul'
         });
+
       expect(response).to.have.status(500);
       expect(response.body).to.be.an('object');
       expect(response.body.error).to.be.equal('SequelizeValidationError');

@@ -4,7 +4,7 @@ import bcrypt from 'bcryptjs';
 
 import models from '../../db/models';
 
-const { User } = models;
+const { User, Article } = models;
 
 export const getUserData = {
   firstName: 'james',
@@ -64,6 +64,21 @@ export const createSuperAdmin = () => {
     password: hashedPassword,
     confirmEmailCode,
     roleType: 'super_admin'
+  });
+};
+
+export const mockCreateArticle = userId => {
+  const seed = {
+    title: faker.lorem.sentence(),
+    body: faker.lorem.paragraphs(4),
+    slug: faker.lorem.words(2)
+  };
+
+  return Article.create({
+    userId,
+    title: seed.title,
+    body: seed.body,
+    slug: seed.slug
   });
 };
 
