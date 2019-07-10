@@ -79,7 +79,7 @@ const UserValidator = {
           param('userId')
             .isNumeric()
             .not()
-            .matches('[-, +, %]')
+            .matches('[-, +, %, 0]')
             .withMessage('User ID must be a number')
         ];
 

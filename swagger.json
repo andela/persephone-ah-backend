@@ -1235,6 +1235,109 @@
           "description": "Comment does not exist"
         }
       }
+    },
+    "components": {
+      "schemas": {
+        "AuthenticationInfo": {
+          "type": "object",
+          "properties": {
+            "email": {
+              "type": "string"
+            },
+            "password": {
+              "type": "string"
+            },
+            "token": {
+              "type": "string"
+            }
+          }
+        },
+        "badRequestResponse": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "example": "error"
+            },
+            "errors": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "msg": {
+                    "type": "string",
+                    "example": "please enter your firstName"
+                  },
+                  "params": {
+                    "type": "string",
+                    "example": "firstName"
+                  },
+                  "location": {
+                    "type": "string",
+                    "example": "body"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "badAuthenticationError": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "example": "error"
+            },
+            "error": {
+              "type": "object",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "message": {
+                    "type": "string",
+                    "example": "Authentication invalid"
+                  },
+                  "body": {
+                    "type": "string",
+                    "example": "Invalid or expired Token"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "User": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "example": "1"
+            },
+            "firstName": {
+              "type": "string",
+              "example": "persephone"
+            },
+            "lastName": {
+              "type": "string",
+              "example": "team"
+            },
+            "email": {
+              "type": "string",
+              "example": "persephone@andela.com"
+            },
+            "password": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "securitySchemes": {
+        "bearerAuth": {
+          "type": "apiKey",
+          "name": "Authorization",
+          "in": "header"
+        }
+      }
     }
   },
   "securityDefinitions": {
