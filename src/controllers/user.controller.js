@@ -2,7 +2,9 @@ import {
   getAllUsersService,
   adminCreateUserService,
   adminDeleteUserService,
-  adminUpdateUserService
+  adminUpdateUserService,
+  followUserService,
+  getUserFollowersService
 } from '../services/user.service';
 import { isUserExist } from '../services/auth.service';
 import Helper from '../services/helper';
@@ -108,4 +110,60 @@ const adminDeleteUser = async (request, response) => {
   }
 };
 
-export default { getUsers, adminCreateUser, adminUpdateUser, adminDeleteUser };
+/**
+ * @method followUser
+ * -  user to follow another user
+ * Route: POST: /users/follow
+ *
+ * @param {Object} request request object
+ * @param {Object} response response object
+ *
+ * @returns {Response} response object
+ */
+
+const followUser = async (request, response) => {
+  try {
+    const userId = request.user.id;
+    const friendUserId = request.body.userId;
+
+    const value = await followUserService(
+      userId,
+      parseInt(friendUserId, Number)
+    );
+    return Helper.successResponse(response, 200, value);
+  } catch (error) {
+    return Helper.failResponse(response, 400, 'user does not exist');
+  }
+};
+
+/**
+ * @method getFollowers
+ * -  get the list of a user followers
+ * Route: GET: /users/follow
+ *
+ * @param {Object} request request object
+ * @param {Object} response response object
+ *
+ * @returns {Response} response object
+ */
+
+const getFollowers = async (request, response, next) => {
+  try {
+    const { userId } = request.params;
+
+    const value = await getUserFollowersService(parseInt(userId, Number));
+
+    return Helper.successResponse(response, 200, value);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export default {
+  getUsers,
+  adminCreateUser,
+  adminUpdateUser,
+  adminDeleteUser,
+  followUser,
+  getFollowers
+};

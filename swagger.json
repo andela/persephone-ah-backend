@@ -1,9 +1,9 @@
 {
-  "openapi": "3.0.0",
+  "swagger": "2.0",
   "info": {
-    "version": "1.0",
     "title": "Author's Haven",
-    "description": "Authors Haven - A Social platform for the creative at heart."
+    "description": "Authors Haven - A Social platform for the creative at heart.",
+    "version": "1.0"
   },
   "servers": [
     {
@@ -11,321 +11,371 @@
     },
     {
       "url": "https://persephone-backend.herokuapp.com/api/v1"
+    },
+    {
+      "url": "http://persephone-backend-staging.herokuapp.com/"
     }
   ],
   "tags": [
     {
-      "name": "Sign up",
-      "description": "create new user"
+      "name": "Users",
+      "description": "Users API end point"
     },
     {
-      "name": "Login",
-      "description": "Endpoint to test the server setup"
-    },
-    {
-      "name": "Forgot Password",
-      "description": "Endpoint to get password reset email instruction"
-    },
-    {
-      "name": "Password reset",
-      "description": "Endpoint to request for password reset"
-    },
-    {
-      "name": "Get all users",
-      "description": "Endpoint to get all users"
+      "name": "Auth",
+      "description": "SignUp and Signin users"
     }
   ],
   "paths": {
     "/users/login": {
       "post": {
-        "tags": ["Login"],
+        "tags": ["Auth"],
         "summary": "POST API endpoint for user login",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "email": {
-                    "type": "string"
-                  },
-                  "password": {
-                    "type": "string",
-                    "format": "password"
-                  }
-                }
-              }
-            }
+        "produces": ["application/json"],
+        "consumes": ["application/x-www-form-urlencoded"],
+        "parameters": [
+          {
+            "name": "email",
+            "in": "formData",
+            "description": "The email of the user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "password",
+            "in": "formData",
+            "description": "The password for login in clear text",
+            "required": true,
+            "type": "string"
           }
-        },
+        ],
         "responses": {
           "200": {
-            "description": "User logged in successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthenticationInfo"
-                }
-              }
-            }
+            "description": "successful operation"
           },
           "400": {
-            "description": "Indicate error in input",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/badRequestResponse"
-                }
-              }
-            }
+            "description": "Invalid username/password supplied"
+          },
+          "409": {
+            "description": "Invalid input"
           }
         }
       }
     },
     "/users/signup": {
       "post": {
-        "tags": ["Sign up"],
+        "tags": ["Auth"],
         "summary": "POST API endpoint for signing up new user",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "firstName": {
-                    "type": "string"
-                  },
-                  "lastName": {
-                    "type": "string"
-                  },
-                  "email": {
-                    "type": "string"
-                  },
-                  "password": {
-                    "type": "string",
-                    "format": "password"
-                  }
-                }
-              }
-            }
+        "produces": ["application/json"],
+        "consumes": ["application/x-www-form-urlencoded"],
+        "parameters": [
+          {
+            "name": "firstName",
+            "in": "formData",
+            "description": "user first name",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "lastName",
+            "in": "formData",
+            "description": "user last name",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "email",
+            "in": "formData",
+            "description": "email of the user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "password",
+            "in": "formData",
+            "description": "users password",
+            "required": true,
+            "type": "string"
           }
-        },
+        ],
         "responses": {
           "201": {
-            "description": "New user created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthenticationInfo"
-                }
-              }
-            }
+            "description": "successful operation"
           },
           "400": {
-            "description": "Error in input",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/badRequestResponse"
-                }
-              }
-            }
+            "description": "email exist"
+          },
+          "409": {
+            "description": "Invalid input"
           }
         }
       }
     },
     "/users/forgot_password": {
       "post": {
-        "tags": ["Forgot Password"],
+        "tags": ["Users"],
         "summary": "Post user email for password reset instructions",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "email": {
-                    "type": "string",
-                    "example": "existingUser@mail.com"
-                  }
-                }
-              }
-            }
+        "produces": ["application/json"],
+        "consumes": ["application/x-www-form-urlencoded"],
+        "parameters": [
+          {
+            "name": "email",
+            "in": "formData",
+            "description": "The email of the user",
+            "required": true,
+            "type": "string"
           }
-        },
+        ],
         "responses": {
           "201": {
-            "description": "New user created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string",
-                      "example": "success"
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "example": "kindly check your mail for password reset instructions"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
+            "description": "Email has been sent to reset password"
           },
-          "404": {
-            "description": "User email does not exist",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string",
-                      "example": "error"
-                    },
-                    "error": {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "example": "email does not exist"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
+          "400": {
+            "description": "User email does not exist"
           }
-        }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
       }
     },
-    "/users/password_reset": {
+    "/users": {
       "post": {
-        "tags": ["Password reset"],
+        "tags": ["Users"],
         "summary": "Post user email for password reset instructions",
         "parameters": [
           {
-            "name": "token",
+            "name": "password_reset",
             "in": "query",
             "description": "token sent to user email address",
-            "schema": {
-              "type": "string"
-            }
+            "required": false,
+            "type": "string"
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "password": {
-                    "type": "string",
-                    "format": "password"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "New user created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string",
-                      "example": "success"
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "example": "password reset was successful"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Error in input",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/badRequestResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Error in input",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/badAuthenticationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/users/": {
-      "get": {
-        "tags": ["Get all users"],
-        "summary": "Get API endpoint to get all users",
         "responses": {
           "200": {
-            "description": "Successfully retrieved all users",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": ""
-                }
-              }
-            }
+            "description": "successful operation"
           },
           "400": {
-            "description": "Indicate error in input",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/badAuthenticationError"
-                }
-              }
-            }
+            "description": "Error in input"
+          },
+          "401": {
+            "description": "Not authorized"
+          },
+          "403": {
+            "description": "Auth token not supplied"
           }
-        }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/users/create_users": {
+      "post": {
+        "tags": ["Users"],
+        "summary": "POST API endpoint for Super Admin to create other admins",
+        "produces": ["application/json"],
+        "consumes": ["application/x-www-form-urlencoded"],
+        "parameters": [
+          {
+            "name": "firstName",
+            "in": "formData",
+            "description": "user first name",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "lastName",
+            "in": "formData",
+            "description": "user last name",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "email",
+            "in": "formData",
+            "description": "email of the user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "password",
+            "in": "formData",
+            "description": "users password",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "email exist"
+          },
+          "409": {
+            "description": "Invalid input"
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/users/update/{userId}": {
+      "put": {
+        "tags": ["Users"],
+        "summary": "POST API endpoint for Super Admin to update user information",
+        "produces": ["application/json"],
+        "consumes": ["application/x-www-form-urlencoded"],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "The email of the user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "email",
+            "in": "formData",
+            "description": "email of the user",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "No user found"
+          },
+          "401": {
+            "description": "Not authorized"
+          },
+          "403": {
+            "description": "Auth token not supplied"
+          },
+          "500": {
+            "description": "Auth token expired"
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/users/{userId}": {
+      "delete": {
+        "tags": ["Users"],
+        "summary": "POST API endpoint for Admin to delete user",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "user Id of the user to be deleted",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "409": {
+            "description": "Invalid input"
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/users/follows": {
+      "post": {
+        "tags": ["Users"],
+        "summary": "POST API endpoint for user to follow another user and unfollow another user",
+        "produces": ["application/json"],
+        "consumes": ["application/x-www-form-urlencoded"],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "formData",
+            "description": "The userId of who to be followed",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "User not found"
+          },
+          "409": {
+            "description": "Invalid input"
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/users/follows/{userId}": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "POST API endpoint to view a user followers",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "user Id of the user to view their followers",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "User not found"
+          },
+          "409": {
+            "description": "Invalid input"
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
       }
     }
   },
+  "securityDefinitions": {
+    "JWT": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
   "components": {
-    "securitySchemes": {
-      "bearerAuth": {
-        "type": "apiKey",
-        "name": "Authorization",
-        "in": "header"
-      }
-    },
     "schemas": {
       "AuthenticationInfo": {
         "type": "object",
@@ -400,7 +450,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "example": 1
+            "example": "1"
           },
           "firstName": {
             "type": "string",
@@ -418,6 +468,13 @@
             "type": "string"
           }
         }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "apiKey",
+        "name": "Authorization",
+        "in": "header"
       }
     }
   }
