@@ -1305,37 +1305,14 @@
               }
             }
           }
-        },
-        "User": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "string",
-              "example": "1"
-            },
-            "firstName": {
-              "type": "string",
-              "example": "persephone"
-            },
-            "lastName": {
-              "type": "string",
-              "example": "team"
-            },
-            "email": {
-              "type": "string",
-              "example": "persephone@andela.com"
-            },
-            "password": {
-              "type": "string"
-            }
+        ],
+        "responses": {
+          "400": {
+            "description": "Error in input"
+          },
+          "401": {
+            "description": "Error with authentication"
           }
-        }
-      },
-      "securitySchemes": {
-        "bearerAuth": {
-          "type": "apiKey",
-          "name": "Authorization",
-          "in": "header"
         }
       }
     }

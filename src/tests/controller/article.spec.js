@@ -1222,4 +1222,77 @@ describe('Article API endpoints', () => {
       );
     });
   });
+
+  describe('GET /articles/ratings/:articleId', () => {
+    let article;
+
+    before(async () => {
+      const user = getUser();
+
+      const userResult = await createUser(user);
+
+      article = await createArticle(userResult.id);
+
+      const signupResponse = await chai
+        .request(app)
+        .post(`${API_VERSION}/users/signup`)
+        .send(user);
+      userToken = signupResponse.body.data.token;
+    });
+
+    const endpoint = `${API_VERSION}/articles/ratings`;
+
+    before(async () => {
+      await chai
+        .request(app)
+        .post(endpoint)
+        .set({ Authorization: `Bearer ${userToken}` })
+        .send({ articleId: article.id, rating: 4 });
+    });
+
+    it('should return ratings for a specified article id', async () => {
+      const response = await chai
+        .request(app)
+        .get(`${endpoint}/${article.id}`)
+        .set({ Authorization: `Bearer ${userToken}` });
+
+      expect(response).to.have.status(200);
+      expect(response.body.status).to.equal('success');
+      expect(response.body.data[0].articleId).to.equal(article.id);
+    });
+
+    it('should return error for article id that is less than 1', async () => {
+      const response = await chai
+        .request(app)
+        .get(`${endpoint}/-1`)
+        .set({ Authorization: `Bearer ${userToken}` });
+
+      expect(response).to.have.status(400);
+      expect(response.body.status).to.equal('fail');
+      expect(response.body.data[0].msg).to.equal(
+        'Article ID must be a number and can not be less than 1'
+      );
+    });
+
+    it('should return error for article id that not a number', async () => {
+      const response = await chai
+        .request(app)
+        .get(`${endpoint}/notanumber`)
+        .set({ Authorization: `Bearer ${userToken}` });
+
+      expect(response).to.have.status(400);
+      expect(response.body.status).to.equal('fail');
+      expect(response.body.data[0].msg).to.equal('Invalid value');
+    });
+
+    it('should return error for no token provided', async () => {
+      const response = await chai.request(app).get(`${endpoint}/${article.id}`);
+
+      expect(response).to.have.status(400);
+      expect(response.body.status).to.equal(400);
+      expect(response.body.error).to.equal(
+        'No token provided, you do not have access to this page'
+      );
+    });
+  });
 });
