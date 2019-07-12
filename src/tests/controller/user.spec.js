@@ -279,7 +279,7 @@ describe('User API endpoints', () => {
         .post('/api/v1/users/follow')
         .set('Authorization', `Bearer ${authorToken}`)
         .send({
-          userId: 18
+          userId: 19
         });
       expect(response).to.have.status(200);
       expect(response).to.be.an('object');
@@ -292,7 +292,7 @@ describe('User API endpoints', () => {
         .post('/api/v1/users/follow')
         .set('Authorization', `Bearer ${authorToken}`)
         .send({
-          userId: 18
+          userId: 19
         });
       expect(response).to.have.status(200);
       expect(response).to.be.an('object');
@@ -333,20 +333,7 @@ describe('User API endpoints', () => {
         .post('/api/v1/users/follow')
         .set('Authorization', `Bearer ${authorToken}`)
         .send({
-          userId: 17
-        });
-      expect(response).to.have.status(200);
-      expect(response).to.be.an('object');
-      expect(response.body.data).to.equal('You have followed this user');
-    });
-
-    it('Should follow another user', async () => {
-      const response = await chai
-        .request(app)
-        .post('/api/v1/users/follow')
-        .set('Authorization', `Bearer ${authorToken}`)
-        .send({
-          userId: 18
+          userId: 20
         });
       expect(response).to.have.status(200);
       expect(response).to.be.an('object');
@@ -360,6 +347,19 @@ describe('User API endpoints', () => {
         .set('Authorization', `Bearer ${authorToken}`)
         .send({
           userId: 19
+        });
+      expect(response).to.have.status(200);
+      expect(response).to.be.an('object');
+      expect(response.body.data).to.equal('You have followed this user');
+    });
+
+    it('Should follow another user', async () => {
+      const response = await chai
+        .request(app)
+        .post('/api/v1/users/follow')
+        .set('Authorization', `Bearer ${authorToken}`)
+        .send({
+          userId: 21
         });
       expect(response).to.have.status(200);
       expect(response).to.be.an('object');
@@ -389,7 +389,7 @@ describe('User API endpoints', () => {
     it('Should return user has no follower', async () => {
       const response = await chai
         .request(app)
-        .get('/api/v1/users/follow/18')
+        .get('/api/v1/users/follow/19')
         .set('Authorization', `Bearer ${authorToken}`);
       expect(response).to.have.status(200);
       expect(response).to.be.an('object');

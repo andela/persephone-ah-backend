@@ -6,14 +6,15 @@ import profileUpdateCheck from '../../middlewares/profileUpdateCheck.middleware'
 import upload from '../../middlewares/imageUpload.middleware';
 
 const { validator, checkValidationResult } = authenticationValidator;
-const { verifyToken } = authorization;
+const { verifyToken, verifyPasswordResetToken } = authorization;
 const { profileChecks } = profileUpdateCheck;
 const {
   signUp,
   login,
   forgotPassword,
   passwordReset,
-  profileUpdate
+  profileUpdate,
+  logout
 } = authenticationController;
 
 const router = express.Router();
@@ -22,17 +23,19 @@ router
   .post('/login', validator('login'), checkValidationResult, login)
   .post(
     '/forgot_password',
+    verifyToken,
     validator('forgotPassword'),
     checkValidationResult,
     forgotPassword
   )
   .patch(
     '/password_reset',
-    authorization.verifyPasswordResetToken,
+    verifyPasswordResetToken,
     validator('resetPassword'),
     checkValidationResult,
     passwordReset
-  );
+  )
+  .get('/logout', verifyToken, logout);
 
 router.put(
   '/profileupdate',

@@ -5,17 +5,8 @@
     "description": "Authors Haven - A Social platform for the creative at heart.",
     "version": "1.0"
   },
-  "servers": [
-    {
-      "url": "http://localhost:3000/api/v1"
-    },
-    {
-      "url": "https://persephone-backend.herokuapp.com/api/v1"
-    },
-    {
-      "url": "http://persephone-backend-staging.herokuapp.com/"
-    }
-  ],
+  "host": "persephone-backend-staging.herokuapp.com",
+  "basePath": "/api/v1",
   "tags": [
     {
       "name": "Users",
@@ -24,6 +15,10 @@
     {
       "name": "Auth",
       "description": "SignUp and Signin users"
+    },
+    {
+      "name": "Articles",
+      "description": "articles related route"
     }
   ],
   "paths": {
@@ -109,6 +104,26 @@
             "description": "Invalid input"
           }
         }
+      }
+    },
+    "/users/logout": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Log current token out",
+        "produces": ["application/json"],
+        "responses": {
+          "201": {
+            "description": "Email has been sent to reset password"
+          },
+          "400": {
+            "description": "User email does not exist"
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
       }
     },
     "/users/forgot_password": {
@@ -359,12 +374,7 @@
           "409": {
             "description": "Invalid input"
           }
-        },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
+        }
       }
     }
   },
@@ -373,109 +383,6 @@
       "type": "apiKey",
       "name": "Authorization",
       "in": "header"
-    }
-  },
-  "components": {
-    "schemas": {
-      "AuthenticationInfo": {
-        "type": "object",
-        "properties": {
-          "email": {
-            "type": "string"
-          },
-          "password": {
-            "type": "string"
-          },
-          "token": {
-            "type": "string"
-          }
-        }
-      },
-      "badRequestResponse": {
-        "type": "object",
-        "properties": {
-          "status": {
-            "type": "string",
-            "example": "error"
-          },
-          "errors": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "msg": {
-                  "type": "string",
-                  "example": "please enter your firstName"
-                },
-                "params": {
-                  "type": "string",
-                  "example": "firstName"
-                },
-                "location": {
-                  "type": "string",
-                  "example": "body"
-                }
-              }
-            }
-          }
-        }
-      },
-      "badAuthenticationError": {
-        "type": "object",
-        "properties": {
-          "status": {
-            "type": "string",
-            "example": "error"
-          },
-          "error": {
-            "type": "object",
-            "items": {
-              "type": "object",
-              "properties": {
-                "message": {
-                  "type": "string",
-                  "example": "Authentication invalid"
-                },
-                "body": {
-                  "type": "string",
-                  "example": "Invalid or expired Token"
-                }
-              }
-            }
-          }
-        }
-      },
-      "User": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "example": "1"
-          },
-          "firstName": {
-            "type": "string",
-            "example": "persephone"
-          },
-          "lastName": {
-            "type": "string",
-            "example": "team"
-          },
-          "email": {
-            "type": "string",
-            "example": "persephone@andela.com"
-          },
-          "password": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "securitySchemes": {
-      "bearerAuth": {
-        "type": "apiKey",
-        "name": "Authorization",
-        "in": "header"
-      }
     }
   }
 }
