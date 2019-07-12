@@ -104,18 +104,18 @@ export default (sequelize, DataTypes) => {
       allowNull: true
     }
   });
-
   User.associate = models => {
     // associations can be defined here
     User.hasMany(models.Follow, {
       foreignKey: 'userId',
-      as: 'followers'
+      as: 'followers',
+      onDelete: 'CASCADE'
     });
     User.hasMany(models.Follow, {
       foreignKey: 'friendUserId',
-      as: 'followersfriend'
+      as: 'followersfriend',
+      onDelete: 'CASCADE'
     });
-    // associations can be defined here
     User.hasMany(
       models.Article,
       {

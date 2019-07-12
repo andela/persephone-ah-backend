@@ -39,6 +39,11 @@ export default (sequelize, DataTypes) => {
       highlightedText: {
         type: DataTypes.TEXT,
         allowNull: true
+      },
+      isEdited: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
       }
     },
     { paranoid: true }
@@ -46,12 +51,14 @@ export default (sequelize, DataTypes) => {
   Comment.associate = models => {
     Comment.belongsTo(models.User, {
       foreignKey: 'userId',
-      as: 'userComment'
+      as: 'userComment',
+      onDelete: 'CASCADE'
     });
 
     Comment.belongsTo(models.Article, {
       foreignKey: 'articleId',
-      as: 'articleComment'
+      as: 'articleComment',
+      onDelete: 'CASCADE'
     });
   };
 

@@ -4,6 +4,8 @@ import articleController from '../../controllers/article.controller';
 import PaginationValidator from '../../validators/pagination.validator';
 import authorization from '../../middlewares/auth.middleware';
 import upload from '../../middlewares/imageUpload.middleware';
+import commentController from '../../controllers/comment.controller';
+import commentsCheck from '../../middlewares/commentsCheck.middleware';
 
 const { validator, checkValidationResult } = articleValidator;
 
@@ -27,6 +29,10 @@ const {
   getUserPublishedArticles,
   userGetAllDraftArticles
 } = articleController;
+
+const { getCommentHistory, editComment, getSingleComment } = commentController;
+
+const { editCommentCheck, getArticlesCommentsCheck } = commentsCheck;
 
 const { verifyToken } = authorization;
 
@@ -83,4 +89,24 @@ router
     checkValidationResult,
     articleController.fetchRatings
   );
+
+router.get(
+  '/:slug/comments/:id',
+  verifyToken,
+  getArticlesCommentsCheck,
+  getSingleComment
+);
+router.get(
+  '/:slug/comments/:id/history',
+  verifyToken,
+  getArticlesCommentsCheck,
+  getCommentHistory
+);
+router.patch(
+  '/:slug/comments/:id/edit',
+  verifyToken,
+  editCommentCheck,
+  editComment
+);
+
 export default router;
