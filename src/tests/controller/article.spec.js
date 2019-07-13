@@ -1223,7 +1223,7 @@ describe('Article API endpoints', () => {
     });
   });
 
-  describe('GET /articles/ratings/:articleId', () => {
+  describe('GET /articles/:articleId/ratings', () => {
     let article;
 
     before(async () => {
@@ -1240,12 +1240,10 @@ describe('Article API endpoints', () => {
       userToken = signupResponse.body.data.token;
     });
 
-    const endpoint = `${API_VERSION}/articles/ratings`;
-
     before(async () => {
       await chai
         .request(app)
-        .post(endpoint)
+        .post(`${API_VERSION}/articles/ratings`)
         .set({ Authorization: `Bearer ${userToken}` })
         .send({ articleId: article.id, rating: 4 });
     });
@@ -1253,7 +1251,7 @@ describe('Article API endpoints', () => {
     it('should return ratings for a specified article id', async () => {
       const response = await chai
         .request(app)
-        .get(`${endpoint}/${article.id}`)
+        .get(`${API_VERSION}/articles/${article.id}/ratings`)
         .set({ Authorization: `Bearer ${userToken}` });
 
       expect(response).to.have.status(200);
@@ -1264,7 +1262,7 @@ describe('Article API endpoints', () => {
     it('should return error for article id that is less than 1', async () => {
       const response = await chai
         .request(app)
-        .get(`${endpoint}/-1`)
+        .get(`${API_VERSION}/articles/-1/ratings`)
         .set({ Authorization: `Bearer ${userToken}` });
 
       expect(response).to.have.status(400);
@@ -1277,7 +1275,7 @@ describe('Article API endpoints', () => {
     it('should return error for article id that not a number', async () => {
       const response = await chai
         .request(app)
-        .get(`${endpoint}/notanumber`)
+        .get(`${API_VERSION}/articles/notNumber/ratings`)
         .set({ Authorization: `Bearer ${userToken}` });
 
       expect(response).to.have.status(400);
@@ -1286,7 +1284,9 @@ describe('Article API endpoints', () => {
     });
 
     it('should return error for no token provided', async () => {
-      const response = await chai.request(app).get(`${endpoint}/${article.id}`);
+      const response = await chai
+        .request(app)
+        .get(`${API_VERSION}/articles/${article.id}/ratings`);
 
       expect(response).to.have.status(400);
       expect(response.body.status).to.equal(400);
