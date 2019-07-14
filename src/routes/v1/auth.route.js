@@ -38,7 +38,7 @@ router
   .get('/logout', verifyToken, logout);
 
 router.put(
-  '/profileupdate',
+  '/',
   verifyToken,
   upload.single('image'),
   profileChecks,

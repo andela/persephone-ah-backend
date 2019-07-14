@@ -5,6 +5,7 @@ import sinonChai from 'sinon-chai';
 import { getArticleData, Response, getUser } from '../utils/db.utils';
 import articlesController from '../../controllers/article.controller';
 import app from '../../index';
+import * as imageHelper from '../../helpers/image.helper';
 
 const {
   createArticle,
@@ -23,6 +24,7 @@ let secondUserToken;
 let createdArticle;
 let secondArticle;
 let thirdArticle;
+let mockImage;
 
 describe('Articles API endpoints', () => {
   before(done => {
@@ -85,7 +87,14 @@ describe('Articles API endpoints', () => {
   });
 
   describe('POST /articles', () => {
+    after(() => {
+      mockImage.restore();
+    });
+
     it('Should successfully create an article', done => {
+      mockImage = sinon
+        .stub(imageHelper, 'upload')
+        .resolves('./src/tests/testFiles/default_avatar.png');
       chai
         .request(app)
         .post(`${process.env.API_VERSION}/articles`)
@@ -455,6 +464,10 @@ describe('Articles API endpoints', () => {
   });
 
   describe('PUT update article /articles/:slug', () => {
+    after(() => {
+      mockImage.restore();
+    });
+
     it('Should return an error if slug is invalid', done => {
       chai
         .request(app)
@@ -507,6 +520,9 @@ describe('Articles API endpoints', () => {
     });
 
     it('Should successfully update a single article', done => {
+      mockImage = sinon
+        .stub(imageHelper, 'upload')
+        .resolves('./src/tests/testFiles/default_avatar.png');
       chai
         .request(app)
         .put(`${process.env.API_VERSION}/articles/${createdArticle.slug}`)

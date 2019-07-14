@@ -1,5 +1,4 @@
 import cloudinary from 'cloudinary';
-import fs from 'fs';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -17,7 +16,8 @@ cloudinary.config({
  * @returns {object} uploaded image response
  */
 
-const upload = async (path, uniqueFilename, destination) => {
+// eslint-disable-next-line import/prefer-default-export
+export const upload = async (path, uniqueFilename, destination) => {
   let publicId;
   let tags;
   /* istanbul ignore next */
@@ -37,11 +37,8 @@ const upload = async (path, uniqueFilename, destination) => {
     path,
     { public_id: publicId, tags }, // directory and tags are optional
     image => {
-      // remove file from server
-      fs.unlinkSync(path);
       // return image details
       return image;
     }
   );
 };
-export default upload;

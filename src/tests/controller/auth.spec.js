@@ -9,6 +9,7 @@ import AuthenticationMiddleWare from '../../middlewares/profileUpdateCheck.middl
 import app from '../../index';
 import models from '../../db/models';
 import { getPasswordResetToken } from '../../helpers/jwt.helper';
+import * as imageHelper from '../../helpers/image.helper';
 
 dotenv.config();
 
@@ -19,6 +20,7 @@ chai.use(sinonChai);
 let userToken;
 let secondUserToken;
 let deletedUserToken;
+let mockImage;
 before(done => {
   chai
     .request(app)
@@ -415,20 +417,21 @@ describe('Auth API endpoints', () => {
     });
   });
 
-  describe('PUT users/profileupdate', () => {
+  describe('PUT users', () => {
+    after(() => {
+      mockImage.restore();
+    });
+
     it('Should update the provided user profile details', async () => {
       const response = await chai
         .request(app)
-        .put(`${process.env.API_VERSION}/users/profileupdate`)
+        .put(`${process.env.API_VERSION}/users`)
         .set('Authorization', `Bearer ${userToken}`)
-        .field('bio', 'My name is my name')
-        .field('userName', 'aboyhasnoname')
-        .field('firstName', 'newname')
-        .attach(
-          'image',
-          './src/tests/testFiles/default_avatar.png',
-          'image.jpeg'
-        );
+        .send({
+          bio: 'My name is my name',
+          userName: 'aboyhasnoname',
+          firstName: 'newname'
+        });
       expect(response).to.have.status(200);
       expect(response.body.status).to.be.equal('success');
       expect(response.body.data.bio).to.be.equal('My name is my name');
@@ -444,10 +447,36 @@ describe('Auth API endpoints', () => {
       );
     });
 
+    it('Should update the provided user profile image', async () => {
+      mockImage = sinon
+        .stub(imageHelper, 'upload')
+        .resolves('./src/tests/testFiles/default_avatar.png');
+      const response = await chai
+        .request(app)
+        .put(`${process.env.API_VERSION}/users`)
+        .set('Authorization', `Bearer ${userToken}`)
+        .field('twitterHandle', 'myhandle')
+        .attach(
+          'image',
+          './src/tests/testFiles/default_avatar.png',
+          'image.jpeg'
+        );
+      expect(response).to.have.status(200);
+      expect(response.body.data).to.have.keys(
+        'bio',
+        'userName',
+        'firstName',
+        'lastName',
+        'twitterHandle',
+        'facebookHandle',
+        'image'
+      );
+    });
+
     it('Should return an error if an update is about to happen on a non-existent account', async () => {
       const response = await chai
         .request(app)
-        .put(`${process.env.API_VERSION}/users/profileupdate`)
+        .put(`${process.env.API_VERSION}/users`)
         .set('Authorization', `Bearer ${deletedUserToken}`)
         .send({
           bio: 'My name is my name',
@@ -462,10 +491,107 @@ describe('Auth API endpoints', () => {
       );
     });
 
+    it('Should return an error if a user tries to update their profile with empty firstName', async () => {
+      const response = await chai
+        .request(app)
+        .put(`${process.env.API_VERSION}/users`)
+        .set('Authorization', `Bearer ${userToken}`)
+        .send({
+          firstName: ''
+        });
+
+      expect(response).to.have.status(400);
+      expect(response.body.status).to.be.equal('fail');
+      expect(response.body.data).to.be.equal('firstName cannot be empty');
+    });
+
+    it('Should return an error if a user tries to update their profile with empty lastName', async () => {
+      const response = await chai
+        .request(app)
+        .put(`${process.env.API_VERSION}/users`)
+        .set('Authorization', `Bearer ${userToken}`)
+        .send({
+          lastName: ''
+        });
+
+      expect(response).to.have.status(400);
+      expect(response.body.status).to.be.equal('fail');
+      expect(response.body.data).to.be.equal('lastName cannot be empty');
+    });
+
+    it('Should return an error if a user tries to update their profile with empty bio', async () => {
+      const response = await chai
+        .request(app)
+        .put(`${process.env.API_VERSION}/users`)
+        .set('Authorization', `Bearer ${userToken}`)
+        .send({
+          bio: ''
+        });
+
+      expect(response).to.have.status(400);
+      expect(response.body.status).to.be.equal('fail');
+      expect(response.body.data).to.be.equal('bio cannot be empty');
+    });
+
+    it('Should return an error if a user tries to update their profile with empty twitterHandle', async () => {
+      const response = await chai
+        .request(app)
+        .put(`${process.env.API_VERSION}/users`)
+        .set('Authorization', `Bearer ${userToken}`)
+        .send({
+          twitterHandle: ''
+        });
+
+      expect(response).to.have.status(400);
+      expect(response.body.status).to.be.equal('fail');
+      expect(response.body.data).to.be.equal('twitterHandle cannot be empty');
+    });
+
+    it('Should return an error if a user tries to update their profile with empty facebookhandle', async () => {
+      const response = await chai
+        .request(app)
+        .put(`${process.env.API_VERSION}/users`)
+        .set('Authorization', `Bearer ${userToken}`)
+        .send({
+          facebookHandle: ''
+        });
+
+      expect(response).to.have.status(400);
+      expect(response.body.status).to.be.equal('fail');
+      expect(response.body.data).to.be.equal('facebookHandle cannot be empty');
+    });
+
+    it('Should return an error if a user tries to update their profile with empty userName', async () => {
+      const response = await chai
+        .request(app)
+        .put(`${process.env.API_VERSION}/users`)
+        .set('Authorization', `Bearer ${userToken}`)
+        .send({
+          userName: ''
+        });
+      expect(response).to.have.status(400);
+      expect(response.body.status).to.be.equal('fail');
+      expect(response.body.data).to.be.equal('userName cannot be empty');
+    });
+
+    it('Should return an error if a user tries to update without providing an update field', async () => {
+      const response = await chai
+        .request(app)
+        .put(`${process.env.API_VERSION}/users`)
+        .set('Authorization', `Bearer ${userToken}`)
+        .send({});
+
+      expect(response).to.have.status(400);
+      expect(response.body.status).to.be.equal('fail');
+      expect(response.body.data.message).to.be.equal(
+        'Field(s) to update cannot be empty'
+      );
+    });
+
     it('Should return an error if a new user tries to take an existing username', async () => {
       const response = await chai
         .request(app)
-        .put(`${process.env.API_VERSION}/users/profileupdate`)
+        .put(`${process.env.API_VERSION}/users`)
         .set('Authorization', `Bearer ${secondUserToken}`)
         .send({
           userName: 'aboyhasnoname'
@@ -487,54 +613,60 @@ describe('Auth API endpoints', () => {
       await AuthenticationMiddleWare.profileChecks(request, response);
       expect(response.status).to.have.been.calledWith(500);
     });
-    describe('Get /users/logout', () => {
-      const baseUrl = `${process.env.API_VERSION}/users/`;
+  });
+  describe('Get /users/logout', () => {
+    const baseUrl = `${process.env.API_VERSION}/users/`;
 
-      before(async () => {
-        const user = getUser();
-        const response = await chai
-          .request(app)
-          .post(`${baseUrl}signup`)
-          .send(user);
-        userToken = response.body.data.token;
-      });
+    before(async () => {
+      const user = getUser();
+      const response = await chai
+        .request(app)
+        .post(`${baseUrl}signup`)
+        .send(user);
+      userToken = response.body.data.token;
+    });
 
-      it('should successfully sign out user', async () => {
-        const response = await chai
-          .request(app)
-          .get(`${baseUrl}logout`)
-          .set({ Authorization: `Bearer ${userToken}` });
+    it('should successfully sign out user', async () => {
+      const response = await chai
+        .request(app)
+        .get(`${baseUrl}logout`)
+        .set({ Authorization: `Bearer ${userToken}` });
 
-        expect(response).to.have.status(200);
-        expect(response.body.status).to.equal('success');
-        expect(response.body.data.message).to.equal('logout was successful');
-      });
+      expect(response).to.have.status(200);
+      expect(response.body.status).to.equal('success');
+      expect(response.body.data.message).to.equal('logout was successful');
+    });
 
-      it('should return error for logged out error', async () => {
-        const response = await chai
-          .request(app)
-          .get(`${baseUrl}logout`)
-          .set({ Authorization: `Bearer ${userToken}` });
+    it('should return error for logged out error', async () => {
+      const response = await chai
+        .request(app)
+        .get(`${baseUrl}logout`)
+        .set({ Authorization: `Bearer ${userToken}` });
 
-        expect(response).to.have.status(401);
-        expect(response.body.status).to.equal('error');
-        expect(response.body.error.message).to.equal(
-          'kindly sign in as the token used has been logged out'
-        );
-      });
+      expect(response).to.have.status(401);
+      expect(response.body.status).to.equal('error');
+      expect(response.body.error.message).to.equal(
+        'kindly sign in as the token used has been logged out'
+      );
+    });
 
-      it('should return error for logged out token used to access forgot_password route', async () => {
-        const response = await chai
-          .request(app)
-          .post(`${baseUrl}forgot_password`)
-          .set({ Authorization: `Bearer ${userToken}` });
+    it('should return error for logged out token used to access forgot_password route', async () => {
+      const response = await chai
+        .request(app)
+        .post(`${baseUrl}forgot_password`)
+        .set({ Authorization: `Bearer ${userToken}` });
 
-        expect(response).to.have.status(401);
-        expect(response.body.status).to.equal('error');
-        expect(response.body.error.message).to.equal(
-          'kindly sign in as the token used has been logged out'
-        );
-      });
+      expect(response).to.have.status(401);
+      expect(response.body.status).to.equal('error');
+      expect(response.body.error.message).to.equal(
+        'kindly sign in as the token used has been logged out'
+      );
+    });
+
+    it('should call the next middleware function on unhandled error in during profile update', async () => {
+      const nextCallback = sinon.spy();
+      authenticationController.profileUpdate({}, {}, nextCallback);
+      sinon.assert.calledOnce(nextCallback);
     });
   });
 });

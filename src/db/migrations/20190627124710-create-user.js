@@ -64,6 +64,18 @@ module.exports = {
         allowNull: true,
         defaultValue: 'author'
       },
+      bio: {
+        type: Sequelize.TEXT,
+        allowNull: true
+      },
+      facebookHandle: {
+        type: Sequelize.STRING,
+        allowNull: true
+      },
+      twitterHandle: {
+        type: Sequelize.STRING,
+        allowNull: true
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

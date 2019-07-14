@@ -1,3 +1,4 @@
+import fs from 'fs';
 import {
   loginService,
   signUpService,
@@ -7,7 +8,7 @@ import {
   saveToBlackListServices
 } from '../services/auth.service';
 import Helper from '../services/helper';
-import upload from '../helpers/image.helper';
+import { upload } from '../helpers/image.helper';
 
 const { failResponse, successResponse } = Helper;
 
@@ -120,7 +121,7 @@ export default {
   /**
    *
    * @description Handles the Logic for Updating a User profile
-   *  Route: PUT: /users/profileupdate
+   *  Route: PUT: /users
    * @param {object} request
    * @param {object} response
    * @param {function} next
@@ -141,10 +142,18 @@ export default {
           'avatar'
         );
         uploadedImage = imageResponse.secure_url;
+        fs.unlinkSync(imagePath);
       }
 
       const fields = {
-        ...request.body,
+        firstName: request.body.firstName || request.foundUser.firstName,
+        lastName: request.body.lastName || request.foundUser.lastName,
+        bio: request.body.bio || request.foundUser.bio,
+        userName: request.body.userName || request.foundUser.userName,
+        twitterHandle:
+          request.body.twitterHandle || request.foundUser.twitterHandle,
+        facebookHandle:
+          request.body.facebookHandle || request.foundUser.facebookHandle,
         image: uploadedImage || previousImage
       };
       const updatedUser = await request.foundUser.update(fields);
