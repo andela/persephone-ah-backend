@@ -64,4 +64,34 @@ export const sendForgotPasswordMail = async (
     .send();
 };
 
+/**
+ * @method sendBlockedArticle
+ * - it sends a mail to the user that their article has been taken down.
+ *
+ * @param {String} recipientName user's name object
+ * @param {String} recipientMail user's email
+ * @param {String} subject subject of mail
+ * @param {String} type type of mail template to use via friendly-mail
+ * @param {String} url with token embedded
+ *
+ * @returns {Promise}
+ */
+
+export const sendBlockedArticle = async (
+  recipientName,
+  recipientMail,
+  subject,
+  type,
+  articleTitle
+) => {
+  return new Mail(type)
+    .to(recipientMail)
+    .subject(subject)
+    .data({
+      name: recipientName,
+      articleTitle
+    })
+    .send();
+};
+
 export default sendWelcomeEmail;

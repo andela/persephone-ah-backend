@@ -64,6 +64,13 @@ const ArticleValidator = {
               'Article ID must be a number and can not be less than 1'
             )
         ];
+      case 'remove-article':
+        return [
+          check('reason')
+            .isLength({ min: 2 })
+            .withMessage('Please reason cannot be empty')
+            .trim()
+        ];
       default:
     }
   },

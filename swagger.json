@@ -24,10 +24,16 @@
   "paths": {
     "/users/login": {
       "post": {
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "summary": "POST API endpoint for user login",
-        "produces": ["application/json"],
-        "consumes": ["application/x-www-form-urlencoded"],
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
         "parameters": [
           {
             "name": "email",
@@ -59,10 +65,16 @@
     },
     "/users/signup": {
       "post": {
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "summary": "POST API endpoint for signing up new user",
-        "produces": ["application/json"],
-        "consumes": ["application/x-www-form-urlencoded"],
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
         "parameters": [
           {
             "name": "firstName",
@@ -108,9 +120,13 @@
     },
     "/users/logout": {
       "get": {
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "summary": "Log current token out",
-        "produces": ["application/json"],
+        "produces": [
+          "application/json"
+        ],
         "responses": {
           "201": {
             "description": "Email has been sent to reset password"
@@ -128,10 +144,16 @@
     },
     "/users/forgot_password": {
       "post": {
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "summary": "Post user email for password reset instructions",
-        "produces": ["application/json"],
-        "consumes": ["application/x-www-form-urlencoded"],
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
         "parameters": [
           {
             "name": "email",
@@ -158,7 +180,9 @@
     },
     "/users": {
       "post": {
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "summary": "Post user email for password reset instructions",
         "parameters": [
           {
@@ -192,10 +216,16 @@
     },
     "/users/create_users": {
       "post": {
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "summary": "POST API endpoint for Super Admin to create other admins",
-        "produces": ["application/json"],
-        "consumes": ["application/x-www-form-urlencoded"],
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
         "parameters": [
           {
             "name": "firstName",
@@ -246,10 +276,16 @@
     },
     "/users/update/{userId}": {
       "put": {
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "summary": "POST API endpoint for Super Admin to update user information",
-        "produces": ["application/json"],
-        "consumes": ["application/x-www-form-urlencoded"],
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
         "parameters": [
           {
             "name": "userId",
@@ -292,7 +328,9 @@
     },
     "/users/{userId}": {
       "delete": {
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "summary": "POST API endpoint for Admin to delete user",
         "parameters": [
           {
@@ -320,10 +358,16 @@
     },
     "/users/follows": {
       "post": {
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "summary": "POST API endpoint for user to follow another user and unfollow another user",
-        "produces": ["application/json"],
-        "consumes": ["application/x-www-form-urlencoded"],
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
         "parameters": [
           {
             "name": "userId",
@@ -353,7 +397,9 @@
     },
     "/users/follows/{userId}": {
       "get": {
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "summary": "POST API endpoint to view a user followers",
         "parameters": [
           {
@@ -377,12 +423,398 @@
         }
       }
     },
+    "/articles": {
+      "post": {
+        "tags": [
+          "Articles"
+        ],
+        "summary": "POST API endpoint for creating articles",
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded",
+          "multipart/form-data"
+        ],
+        "parameters": [
+          {
+            "name": "title",
+            "in": "formData",
+            "description": "title of the article",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "description",
+            "in": "formData",
+            "description": "description of the article",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "formData",
+            "description": "body of the article",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "image",
+            "in": "formData",
+            "description": "images",
+            "required": false,
+            "type": "file"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "email exist"
+          },
+          "409": {
+            "description": "Invalid input"
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/articles/draft": {
+      "get": {
+        "tags": [
+          "Articles"
+        ],
+        "summary": "GET API endpoint for getting a personal drafted articles",
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "responses": {
+          "201": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "no articles found"
+          },
+          "409": {
+            "description": "Invalid input"
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/articles/publish": {
+      "get": {
+        "tags": [
+          "Articles"
+        ],
+        "summary": "GET API endpoint for getting a personal published articles",
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "responses": {
+          "201": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "no articles found"
+          },
+          "409": {
+            "description": "Invalid input"
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/articles/publish/{userId}": {
+      "get": {
+        "tags": [
+          "Articles"
+        ],
+        "summary": "GET API endpoint for getting a user published articles",
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "userId of the author you want to fetch their articles",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "no articles found"
+          },
+          "409": {
+            "description": "Invalid input"
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/articles/publish/{slug}": {
+      "put": {
+        "tags": [
+          "Articles"
+        ],
+        "summary": "PUT API endpoint for publishing an article",
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "description": "slug of the article to publish",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "no articles found"
+          },
+          "409": {
+            "description": "Invalid input"
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/articles/unpublish/{slug}": {
+      "put": {
+        "tags": [
+          "Articles"
+        ],
+        "summary": "PUT API endpoint for unpublishing an article",
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "description": "slug of the article to unpublish",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "no articles found"
+          },
+          "409": {
+            "description": "Invalid input"
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/articles/{slug}": {
+      "get": {
+        "tags": [
+          "Articles"
+        ],
+        "summary": "GET API endpoint for viewing a particular article",
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "description": "slug of the article to view",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "no articles found"
+          },
+          "409": {
+            "description": "Invalid input"
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Articles"
+        ],
+        "summary": "PUT API endpoint for updating a particular article",
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded",
+          "multipart/form-data"
+        ],
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "description": "slug of the article to update",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "title",
+            "in": "formData",
+            "description": "title of the article to update",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "description",
+            "in": "formData",
+            "description": "desription of the article to update",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "formData",
+            "description": "body of the article to update",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "image",
+            "in": "formData",
+            "description": "body of the article to update",
+            "required": true,
+            "type": "file"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "no articles found"
+          },
+          "409": {
+            "description": "Invalid input"
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Articles"
+        ],
+        "summary": "DELETE API endpoint for deleting a particular article",
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "description": "slug of the article to delete",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "no articles found"
+          },
+          "409": {
+            "description": "Invalid input"
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
     "/articles/{slug}/comments": {
       "post": {
-        "tags": ["Articles"],
+        "tags": [
+          "Articles"
+        ],
         "summary": "POST API endpoint for creating comment on an article",
-        "produces": ["application/json"],
-        "consumes": ["application/x-www-form-urlencoded"],
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
         "parameters": [
           {
             "name": "slug",
@@ -430,10 +862,16 @@
         ]
       },
       "get": {
-        "tags": ["Articles"],
+        "tags": [
+          "Articles"
+        ],
         "summary": "GET API endpoint for getting all comment on an article",
-        "produces": ["application/json"],
-        "consumes": ["application/x-www-form-urlencoded"],
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
         "parameters": [
           {
             "name": "slug",
@@ -460,10 +898,16 @@
     },
     "/articles/{slug}/comments/{id}": {
       "delete": {
-        "tags": ["Articles"],
+        "tags": [
+          "Articles"
+        ],
         "summary": "DELETE API endpoint for deleting a comment on an article",
-        "produces": ["application/json"],
-        "consumes": ["application/x-www-form-urlencoded"],
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
         "parameters": [
           {
             "name": "slug",
@@ -494,62 +938,131 @@
           }
         ]
       }
-    }
-  },
-  "/articles/ratings": {
-    "post": {
-      "tags": ["Articles"],
-      "summary": "Post endpoint to rate an article",
-      "parameters": [
-        {
-          "name": "articleId",
-          "in": "formData",
-          "description": "user Id of the user to view their followers",
-          "required": true,
-          "type": "integer"
-        },
-        {
-          "name": "rating",
-          "in": "formData",
-          "description": "Rating for the article between 1 - 5",
-          "required": true,
-          "type": "integer",
-          "example": "4"
-        }
-      ],
-      "responses": {
-        "200": {
-          "description": "successful operation"
-        },
-        "400": {
-          "description": "User not found"
-        },
-        "409": {
-          "description": "Invalid input"
+    },
+    "/articles/ratings": {
+      "post": {
+        "tags": [
+          "Articles"
+        ],
+        "summary": "Post endpoint to rate an article",
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "parameters": [
+          {
+            "name": "articleId",
+            "in": "formData",
+            "description": "user Id of the user to view their followers",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "rating",
+            "in": "formData",
+            "description": "Rating for the article between 1 - 5",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "User not found"
+          },
+          "409": {
+            "description": "Invalid input"
+          }
         }
       }
     },
-    "get": {
-      "tags": ["Articles"],
-      "summary": "Post endpoint to rate an article",
-      "produces": ["application/json"],
-      "consumes": ["application/x-www-form-urlencoded"],
-      "parameters": [
-        {
-          "name": "articleId",
-          "in": "path",
-          "description": "id of the article's ratings to be fetched",
-          "required": true,
-          "type": "integer"
-        }
-      ],
-      "responses": {
-        "400": {
-          "description": "Error in input"
+    "/articles/{slug}/reports": {
+      "post": {
+        "tags": [
+          "Articles"
+        ],
+        "summary": "Post endpoint to report an article",
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "description": "slug of the article",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "reason",
+            "in": "formData",
+            "description": "reason for reporting an article",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "User not found"
+          },
+          "409": {
+            "description": "Invalid input"
+          }
         },
-        "401": {
-          "description": "Error with authentication"
-        }
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/articles/{slug}/remove-article": {
+      "delete": {
+        "tags": [
+          "Articles"
+        ],
+        "summary": "Post endpoint to remove an article",
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "description": "slug of the article",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "User not found"
+          },
+          "409": {
+            "description": "Invalid input"
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
       }
     }
   },

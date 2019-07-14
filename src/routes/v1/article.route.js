@@ -6,6 +6,7 @@ import authorization from '../../middlewares/auth.middleware';
 import upload from '../../middlewares/imageUpload.middleware';
 import commentController from '../../controllers/comment.controller';
 import commentsCheck from '../../middlewares/commentsCheck.middleware';
+import reportController from '../../controllers/report.controller';
 
 const { validator, checkValidationResult } = articleValidator;
 
@@ -34,7 +35,9 @@ const { getCommentHistory, editComment, getSingleComment } = commentController;
 
 const { editCommentCheck, getArticlesCommentsCheck } = commentsCheck;
 
-const { verifyToken } = authorization;
+const { verifyToken, adminCheck } = authorization;
+
+const { createReport, removeArticle } = reportController;
 
 const router = express.Router();
 router
@@ -88,6 +91,20 @@ router
     validator('fetchRating'),
     checkValidationResult,
     articleController.fetchRatings
+  )
+  .post(
+    '/:slug/reports',
+    verifyToken,
+    validator('remove-article'),
+    checkValidationResult,
+    createReport
+  )
+  .delete(
+    '/:slug/remove-article',
+    verifyToken,
+    adminCheck,
+    checkValidationResult,
+    removeArticle
   );
 
 router.get(

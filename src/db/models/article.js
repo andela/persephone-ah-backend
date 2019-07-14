@@ -75,6 +75,7 @@ export default (sequelize, DataTypes) => {
         default: false
       }
     },
+    { paranoid: true },
     {
       getterMethods: {
         hash() {
@@ -104,11 +105,17 @@ export default (sequelize, DataTypes) => {
       as: 'author',
       onDelete: 'CASCADE'
     });
-
-    Article.hasMany(models.Rating, {
+    Article.hasMany(
+      models.Rating,
+      {
+        foreignKey: 'articleId',
+        as: 'ratedArticle'
+      },
+      { onDelete: 'cascade' }
+    );
+    Article.hasMany(models.Report, {
       foreignKey: 'articleId',
-      as: 'ratedArticle'
-      // onDelete: 'CASCADE'
+      as: 'articleReports'
     });
   };
   return Article;

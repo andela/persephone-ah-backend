@@ -25,6 +25,22 @@ let mockImage;
 const { expect } = chai;
 
 describe('Auth API endpoints', () => {
+  before(done => {
+    chai
+      .request(app)
+      .post(`${process.env.API_VERSION}/users/signup`)
+      .send({
+        firstName: 'tobe',
+        lastName: 'deleted',
+        email: 'deleted@user.com',
+        password: 'NewUser20'
+      })
+      .end((err, res) => {
+        const { token } = res.body.data;
+        deletedUserToken = token;
+        done(err);
+      });
+  });
   describe('POST /users/signup', () => {
     before(done => {
       chai
@@ -204,6 +220,7 @@ describe('Auth API endpoints', () => {
       expect(response.status).to.have.been.calledWith(500);
     });
   });
+
   describe('POST /users/login', () => {
     it('Should log user in successfully', async () => {
       const user = getUser();
