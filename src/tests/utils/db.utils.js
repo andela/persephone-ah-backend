@@ -3,7 +3,6 @@ import crypto from 'crypto';
 import bcrypt from 'bcryptjs';
 
 import models from '../../db/models';
-import getToken from '../../helpers/jwt.helper';
 
 const { User } = models;
 
@@ -13,6 +12,12 @@ export const getUserData = {
   email: 'author@email.com',
   password: 'Doejohn40'
 };
+
+export const getArticleData = () => ({
+  title: 'new article',
+  description: 'this is a description',
+  body: 'this is a description this is a description'
+});
 
 export const getUser = () => ({
   firstName: faker.name.firstName(),
@@ -76,9 +81,7 @@ export class Response {
    * @memberof Response
    * @returns {object} this
    */
-  status() {
-    return this;
-  }
+  status() {}
 
   /**
    *

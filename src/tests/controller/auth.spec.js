@@ -53,10 +53,10 @@ describe('Auth API endpoints', () => {
           email: 'new@user.com',
           password: 'NewUser20'
         })
-        .end((err, res) => {
-          const { token } = res.body.data;
+        .end((error, response) => {
+          const { token } = response.body.data;
           userToken = token;
-          done(err);
+          done(error);
         });
     });
 
@@ -70,10 +70,10 @@ describe('Auth API endpoints', () => {
           email: 'second@user.com',
           password: 'NewUser20'
         })
-        .end((err, res) => {
-          const { token } = res.body.data;
+        .end((error, response) => {
+          const { token } = response.body.data;
           secondUserToken = token;
-          done(err);
+          done(error);
         });
     });
 

@@ -135,7 +135,11 @@ export default {
       if (request.file) {
         imagePath = request.file.path;
         imageUniqueName = request.file.originalname;
-        const imageResponse = await upload(imagePath, imageUniqueName);
+        const imageResponse = await upload(
+          imagePath,
+          imageUniqueName,
+          'avatar'
+        );
         uploadedImage = imageResponse.secure_url;
       }
 
@@ -155,6 +159,7 @@ export default {
         image: updatedUser.dataValues.image
       });
     } catch (error) {
+      /* istanbul ignore next */
       next(error);
     }
   },

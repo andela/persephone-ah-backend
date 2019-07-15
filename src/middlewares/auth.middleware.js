@@ -10,7 +10,7 @@ dotenv.config();
  *  Middleware Utils module
  *
  */
-
+/* istanbul ignore next */
 export default {
   /**
    * @method verifyToken
@@ -151,7 +151,7 @@ export default {
   },
 
   /**
-   * @method isSuperAdmin
+   * @method adminCheck
    * - it checks if user is a super_admin
    * - returns next()
    *
@@ -170,7 +170,7 @@ export default {
       )
     ) {
       return response.status(403).json({
-        status: 403,
+        status: 'fail',
         message: 'You do not have access to this resource, unauthorized'
       });
     }

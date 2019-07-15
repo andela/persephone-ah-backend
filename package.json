@@ -4,7 +4,7 @@
   "description": "A Social platform for the creative at heart",
   "main": "index.js",
   "scripts": {
-    "test": "NODE_ENV=test npm run migration-rollback && npm run db-migration && nyc mocha src/**/*.spec.js --require @babel/register --exit --timeout 100000|| true",
+    "test": "NODE_ENV=test npm run db:drop && npm run migration-rollback && npm run db-migration && nyc mocha src/**/*.spec.js --require @babel/register --exit --timeout 100000|| true",
     "test-watch": "nodemon --exec \"npm test\"",
     "start": "nodemon --exec babel-node src/index.js",
     "build": "npm run db-migration && npm run clean && npm run babel-build",
@@ -13,7 +13,8 @@
     "heroku-postbuild": "echo skip post-build",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "db-migration": "sequelize db:migrate",
-    "migration-rollback": "sequelize db:migrate:undo:all"
+    "migration-rollback": "sequelize db:migrate:undo:all",
+    "db:drop": "sequelize db:drop && sequelize db:create"
   },
   "author": "Andela Simulations Programme",
   "license": "MIT",
@@ -46,6 +47,7 @@
     "pg-hstore": "^2.3.3",
     "sequelize": "^5.8.12",
     "sequelize-cli": "^5.5.0",
+    "sequelize-slugify": "^0.7.0",
     "sequelize-test-helpers": "^1.1.2",
     "sinon": "^7.3.2",
     "sinon-chai": "^3.3.0",
