@@ -3,7 +3,7 @@ import chaiHttp from 'chai-http';
 import dotenv from 'dotenv';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
-import getToken from '../../helpers/jwt.helper';
+import { getToken } from '../../helpers/jwt.helper';
 import middleware from '../../middlewares/auth.middleware';
 import { Response } from '../utils/db.utils';
 
@@ -121,7 +121,7 @@ describe('Authentication middleware', () => {
     middleware.adminCheck(request, response, next);
     expect(response.status).to.have.been.calledWith(403);
     expect(response.json).to.have.been.calledWith({
-      status: 403,
+      status: 'fail',
       message: 'You do not have access to this resource, unauthorized'
     });
   });

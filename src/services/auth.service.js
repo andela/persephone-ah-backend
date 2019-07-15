@@ -2,7 +2,7 @@ import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import moment from 'moment';
 import cron from 'node-cron';
-import getToken, { getPasswordResetToken } from '../helpers/jwt.helper';
+import { getToken, getPasswordResetToken } from '../helpers/jwt.helper';
 import model from '../db/models';
 import sendWelcomeEmail, {
   sendForgotPasswordMail
@@ -105,7 +105,7 @@ export const loginService = async body => {
  * @returns {object}  Database User Instance
  */
 
-export const findUserById = async userId => await User.findByPk(userId);
+export const findUserById = async userId => User.findByPk(userId);
 
 /**
  * @method isUserExist

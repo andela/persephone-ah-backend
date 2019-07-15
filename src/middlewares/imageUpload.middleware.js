@@ -7,6 +7,7 @@ const fileFilter = (request, file, callback) => {
   if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
     callback(null, true);
   } else {
+    /* istanbul ignore next */
     callback(error, false);
   }
 };

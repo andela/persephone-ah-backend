@@ -17,6 +17,7 @@ lib-cov
 
 # Coverage directory used by tools like nyc
 .nyc_output
+coverage
 
 # Grunt intermediate storage (http://gruntjs.com/creating-plugins#storing-task-files)
 .grunt
@@ -27,6 +28,7 @@ lib-cov
 # Compiled binary addons (http://nodejs.org/api/addons.html)
 build/Release
 dist
+uploads
 
 # Dependency directory
 node_modules

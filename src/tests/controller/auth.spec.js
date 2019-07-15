@@ -53,10 +53,10 @@ describe('Auth API endpoints', () => {
           email: 'new@user.com',
           password: 'NewUser20'
         })
-        .end((err, res) => {
-          const { token } = res.body.data;
+        .end((error, response) => {
+          const { token } = response.body.data;
           userToken = token;
-          done(err);
+          done(error);
         });
     });
 
@@ -70,10 +70,10 @@ describe('Auth API endpoints', () => {
           email: 'second@user.com',
           password: 'NewUser20'
         })
-        .end((err, res) => {
-          const { token } = res.body.data;
+        .end((error, response) => {
+          const { token } = response.body.data;
           secondUserToken = token;
-          done(err);
+          done(error);
         });
     });
 
@@ -135,6 +135,72 @@ describe('Auth API endpoints', () => {
     });
 
     it('Should not allow invalid firstName user input', done => {
+      chai
+        .request(app)
+        .post('/api/v1/users/signup')
+        .send({
+          email: 'sandy@gmail.com',
+          password: 'samsss',
+          firstName: 23,
+          lastName: 'ghghghg'
+        })
+        .end((error, response) => {
+          expect(response.status).to.equal(400);
+          expect(response.body).to.have.property('status');
+          expect(response.body).to.have.property('data');
+          expect(response.body.status).to.equal('fail');
+          expect(response.body.data[0].msg).to.equal(
+            'First name must be only alphabetical chars'
+          );
+          done();
+        });
+    });
+
+    it('Should not allow invalid lastName user input', done => {
+      chai
+        .request(app)
+        .post('/api/v1/users/signup')
+        .send({
+          email: 'sandy@gmail.com',
+          password: 'samsss',
+          firstName: 'gfhshs',
+          lastName: 34
+        })
+        .end((error, response) => {
+          expect(response.status).to.equal(400);
+          expect(response.body).to.have.property('status');
+          expect(response.body).to.have.property('data');
+          expect(response.body.status).to.equal('fail');
+          expect(response.body.data[0].msg).to.equal(
+            'Last name must be only alphabetical chars'
+          );
+          done();
+        });
+    });
+
+    it('Should not allow invalid password user input', done => {
+      chai
+        .request(app)
+        .post('/api/v1/users/signup')
+        .send({
+          email: 'sandy@gmail.com',
+          password: 'fgfg',
+          firstName: 'gfhshs',
+          lastName: 'hfjsk'
+        })
+        .end((error, response) => {
+          expect(response.status).to.equal(400);
+          expect(response.body).to.have.property('status');
+          expect(response.body).to.have.property('data');
+          expect(response.body.status).to.equal('fail');
+          expect(response.body.data[0].msg).to.equal(
+            'Password can not be less than 8 characters'
+          );
+          done();
+        });
+    });
+
+    it('Should not allow duplicated user register', done => {
       chai
         .request(app)
         .post('/api/v1/users/signup')
@@ -429,6 +495,7 @@ describe('Auth API endpoints', () => {
           './src/tests/testFiles/default_avatar.png',
           'image.jpeg'
         );
+
       expect(response).to.have.status(200);
       expect(response.body.status).to.be.equal('success');
       expect(response.body.data.bio).to.be.equal('My name is my name');
@@ -454,7 +521,6 @@ describe('Auth API endpoints', () => {
           userName: 'aboyhasnoname',
           firstName: 'newname'
         });
-
       expect(response).to.have.status(404);
       expect(response.body.status).to.be.equal('fail');
       expect(response.body.data.message).to.be.equal(
