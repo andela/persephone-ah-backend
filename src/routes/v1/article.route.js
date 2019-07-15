@@ -123,7 +123,11 @@ router
     verifyToken,
     validator('commentLike'),
     checkValidationResult,
-    likeComment
+    likeComment,
+    authorization.verifyToken,
+    validator('fetchRating'),
+    checkValidationResult,
+    articleController.fetchRatings
   );
 
 router.get(

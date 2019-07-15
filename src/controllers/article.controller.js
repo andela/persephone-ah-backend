@@ -413,5 +413,15 @@ export default {
       });
     }
     if (result) return Helper.successResponse(response, 200, result);
+
+    if (result.length < 1) {
+      return Helper.successResponse(
+        response,
+        200,
+        'specified article does not have any ratings'
+      );
+    }
+
+    return Helper.successResponse(response, 200, result);
   }
 };

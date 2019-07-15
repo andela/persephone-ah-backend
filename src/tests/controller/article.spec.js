@@ -236,33 +236,37 @@ describe('Article API endpoints', () => {
           expect(response.body.data.body).to.equal(
             'this is a description this is a description'
           );
+          done();
+        });
+    });
+
+    it('Should successfully create an article', done => {
+      chai
+        .request(app)
+        .post(`${process.env.API_VERSION}/articles`)
+        .set({ Authorization: `Bearer ${userToken}` })
+        .field('title', 'first article')
+        .field('description', 'this is a description')
+        .field('body', 'this is a description this is a description')
+        .end((error, response) => {
+          expect(response.status).to.equal(201);
+          expect(response).to.be.an('Object');
+          expect(response.body).to.have.property('status');
+          expect(response.body).to.have.property('data');
+          expect(response.body.status).to.equal('success');
+          expect(response.body.data.title).to.equal('first article');
+          expect(response.body.data.description).to.equal(
+            'this is a description'
+          );
+          expect(response.body.data.body).to.equal(
+            'this is a description this is a description'
+          );
           createdArticle = response.body.data;
           done();
         });
     });
 
     it('Should return an error if request is empty', done => {
-      chai
-        .request(app)
-        .post(`${process.env.API_VERSION}/articles`)
-        .send({})
-        .set({ Authorization: `Bearer ${userToken}` })
-        .end((error, response) => {
-          expect(response.status).to.equal(400);
-          expect(response).to.be.an('Object');
-          expect(response.body).to.have.property('status');
-          expect(response.body).to.have.property('data');
-          expect(response.body.status).to.equal('fail');
-          expect(response.body.data[0].msg).to.equal(
-            'Please enter your title for this post'
-          );
-          expect(response.body.data[1].msg).to.equal(
-            'Please enter valid content for this article'
-          );
-          done();
-        });
-    });
-    it('Should return an error if user is not authorized', done => {
       chai
         .request(app)
         .post(`${process.env.API_VERSION}/articles`)
