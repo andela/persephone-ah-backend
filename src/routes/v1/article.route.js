@@ -9,6 +9,8 @@ import commentsCheck from '../../middlewares/commentsCheck.middleware';
 import reportController from '../../controllers/report.controller';
 import { pageViewCount } from '../../middlewares/pageViewCount.middleware';
 import stats from '../../controllers/readingStat.controller';
+import bookmarkController from '../../controllers/bookmark.controller';
+import bookmarksCheckMiddleware from '../../middlewares/bookmarkCheck.middleware';
 
 const { validator, checkValidationResult } = articleValidator;
 const { verifyToken, isAuthor, adminCheck } = authorization;
@@ -37,11 +39,15 @@ const {
 } = articleController;
 
 const { getCommentHistory, editComment, getSingleComment } = commentController;
-
 const { editCommentCheck, getArticlesCommentsCheck } = commentsCheck;
 
+const {
+  createBookmark,
+  getUserBookmarks,
+  removeUserBookmark
+} = bookmarkController;
 const { createReport, removeArticle } = reportController;
-
+const { bookmarkCheck } = bookmarksCheckMiddleware;
 const router = express.Router();
 router.get('/stats', verifyToken, readingStats);
 router
@@ -61,6 +67,7 @@ router
     createComment
   )
   .get('/draft', verifyToken, userGetAllDraftArticles)
+  .get('/bookmarks', verifyToken, getUserBookmarks)
   .get('/publish', verifyToken, userGetAllPublishedArticles)
   .get('/publish/:userId', getUserPublishedArticles)
   .get(
@@ -136,6 +143,13 @@ router.patch(
   verifyToken,
   editCommentCheck,
   editComment
+);
+router.post('/:slug/bookmarks', verifyToken, bookmarkCheck, createBookmark);
+router.delete(
+  '/:slug/bookmarks',
+  verifyToken,
+  bookmarkCheck,
+  removeUserBookmark
 );
 
 export default router;

@@ -357,6 +357,26 @@ describe('Article API endpoints', () => {
         });
     });
 
+    it('Should successfully publish articles by user', done => {
+      chai
+        .request(app)
+        .put(
+          `${process.env.API_VERSION}/articles/publish/${secondArticle.slug}`
+        )
+        .set({ Authorization: `Bearer ${userToken}` })
+        .end((error, response) => {
+          expect(response.status).to.equal(200);
+          expect(response).to.be.an('Object');
+          expect(response.body).to.have.property('status');
+          expect(response.body).to.have.property('data');
+          expect(response.body.status).to.equal('success');
+          expect(response.body.data.message).to.equal(
+            'Article published successfully'
+          );
+          done();
+        });
+    });
+
     it('Should return an error if slug is invalid', done => {
       chai
         .request(app)
@@ -620,14 +640,14 @@ describe('Article API endpoints', () => {
     it('Should successfully fetch a single article', done => {
       chai
         .request(app)
-        .get(`${process.env.API_VERSION}/articles/${createdArticle.slug}`)
+        .get(`${process.env.API_VERSION}/articles/${secondArticle.slug}`)
         .end((error, response) => {
           expect(response.status).to.equal(200);
           expect(response).to.be.an('Object');
           expect(response.body).to.have.property('status');
           expect(response.body).to.have.property('data');
           expect(response.body.status).to.equal('success');
-          expect(response.body.data.title).to.equal('first article');
+          expect(response.body.data.title).to.equal('new article');
           expect(response.body.data.description).to.equal(
             'this is a description'
           );

@@ -28,6 +28,14 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
+      likesCount: {
+        type: Sequelize.INTEGER,
+        defaultValue: 0
+      },
+      viewsCount: {
+        type: Sequelize.INTEGER,
+        defaultValue: 0
+      },
       body: {
         type: Sequelize.TEXT,
         allowNull: false
@@ -53,14 +61,6 @@ module.exports = {
       sumOfRating: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        defaultValue: 0
-      },
-      likesCount: {
-        type: Sequelize.INTEGER,
-        defaultValue: 0
-      },
-      viewsCount: {
-        type: Sequelize.INTEGER,
         defaultValue: 0
       },
       isPublished: {

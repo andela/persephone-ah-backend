@@ -18,17 +18,27 @@
     },
     {
       "name": "Articles",
-      "description": "All endpoint about articles"
+      "description": "articles related route"
+    },
+    {
+      "name": "Profiles",
+      "description": "User profile"
     }
   ],
   "schemes": ["https", "http"],
   "paths": {
     "/users/login": {
       "post": {
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "summary": "POST API endpoint for user login",
-        "produces": ["application/json"],
-        "consumes": ["application/x-www-form-urlencoded"],
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
         "parameters": [
           {
             "name": "email",
@@ -60,10 +70,16 @@
     },
     "/users/signup": {
       "post": {
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "summary": "POST API endpoint for signing up new user",
-        "produces": ["application/json"],
-        "consumes": ["application/x-www-form-urlencoded"],
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
         "parameters": [
           {
             "name": "firstName",
@@ -161,10 +177,16 @@
     },
     "/users/forgot_password": {
       "post": {
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "summary": "Post user email for password reset instructions",
-        "produces": ["application/json"],
-        "consumes": ["application/x-www-form-urlencoded"],
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
         "parameters": [
           {
             "name": "email",
@@ -187,7 +209,9 @@
     },
     "/users": {
       "post": {
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "summary": "Post user email for password reset instructions",
         "produces": ["application/json"],
         "consumes": ["application/x-www-form-urlencoded"],
@@ -258,10 +282,16 @@
     },
     "/users/create_users": {
       "post": {
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "summary": "POST API endpoint for Super Admin to create other admins",
-        "produces": ["application/json"],
-        "consumes": ["application/x-www-form-urlencoded"],
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
         "parameters": [
           {
             "name": "firstName",
@@ -308,10 +338,16 @@
     },
     "/users/update/{userId}": {
       "put": {
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "summary": "POST API endpoint for Super Admin to update user information",
-        "produces": ["application/json"],
-        "consumes": ["application/x-www-form-urlencoded"],
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
         "parameters": [
           {
             "name": "userId",
@@ -350,7 +386,9 @@
     },
     "/users/{userId}": {
       "delete": {
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "summary": "POST API endpoint for Admin to delete user",
         "produces": ["application/json"],
         "parameters": [
@@ -375,10 +413,16 @@
     },
     "/users/follows": {
       "post": {
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "summary": "POST API endpoint for user to follow another user and unfollow another user",
-        "produces": ["application/json"],
-        "consumes": ["application/x-www-form-urlencoded"],
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
         "parameters": [
           {
             "name": "userId",
@@ -404,7 +448,9 @@
     },
     "/users/follows/{userId}": {
       "get": {
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "summary": "POST API endpoint to view a user followers",
         "parameters": [
           {
@@ -576,6 +622,13 @@
             "description": "slug of the article to publish",
             "required": true,
             "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "comment ID",
+            "required": true,
+            "type": "integer"
           }
         ],
         "responses": {

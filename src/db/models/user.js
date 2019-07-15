@@ -121,6 +121,13 @@ export default (sequelize, DataTypes) => {
       as: 'likes'
     });
     // associations can be defined here
+
+    User.belongsToMany(models.Article, {
+      through: 'Bookmark',
+      as: 'bookmarks',
+      foreignKey: 'userId',
+      otherKey: 'articleId'
+    });
     User.hasMany(
       models.Article,
       {

@@ -20,6 +20,11 @@ export const getArticleData = () => ({
   body: 'this is a description this is a description'
 });
 
+export const publishArticleData = async () => {
+  const article = await Article.create(getArticleData());
+  await article.update({ isPublished: true });
+  return article;
+};
 export const getUser = () => ({
   firstName: faker.name.firstName(),
   lastName: faker.name.lastName(),

@@ -23,12 +23,6 @@ export default (sequelize, DataTypes) => {
           }
         }
       },
-      slug: {
-        type: DataTypes.STRING,
-        allowNull: {
-          args: false
-        }
-      },
       description: {
         type: DataTypes.STRING,
         allowNull: {
@@ -61,6 +55,12 @@ export default (sequelize, DataTypes) => {
       viewsCount: {
         type: DataTypes.INTEGER,
         default: 0
+      },
+      slug: {
+        type: DataTypes.STRING,
+        allowNull: {
+          args: false
+        }
       },
       numberOfRating: {
         type: DataTypes.INTEGER,
@@ -117,6 +117,12 @@ export default (sequelize, DataTypes) => {
     Article.hasMany(models.Report, {
       foreignKey: 'articleId',
       as: 'articleReports'
+    });
+    Article.belongsToMany(models.User, {
+      through: 'Bookmark',
+      as: 'bookmarks',
+      foreignKey: 'articleId',
+      otherKey: 'userId'
     });
   };
   return Article;
