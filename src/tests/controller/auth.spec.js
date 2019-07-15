@@ -223,7 +223,6 @@ describe('Auth API endpoints', () => {
       expect(response.status).to.have.been.calledWith(500);
     });
   });
-
   describe('POST /users/login', () => {
     it('Should log user in successfully', async () => {
       const user = getUser();
@@ -670,7 +669,6 @@ describe('Auth API endpoints', () => {
       sinon.assert.calledOnce(nextCallback);
     });
   });
-
   describe('GET /users/verify/:confirmEmailCode', () => {
     it('Should verify user successfully', async () => {
       const userDetails = getUser();
