@@ -645,16 +645,36 @@ export const likeCommentService = async (slug, commentId, userId) => {
  * @param {integer} articleId
  */
 
-export const fetchRatingsService = async articleId => {
+export const fetchRatingsService = async (articleId, queryParams) => {
   const articleExist = await Article.findByPk(articleId);
 
   if (!articleExist) return `Article with id: ${articleId} does not exist`;
+  const { limit, offset } = paginationQueryMetadata(
+    queryParams.query.page,
+    queryParams.query.limit
+  );
 
-  const ratings = await Rating.findAll({
+  const ratings = await Rating.findAndCountAll({
+    limit,
+    offset,
     where: { articleId },
     attributes: {
       exclude: ['createdAt', 'updatedAt']
-    }
+    },
+    include: [
+      {
+        model: User,
+        as: 'rater',
+        attributes: ['firstName', 'lastName', 'image', 'userName']
+      }
+    ]
   });
-  return ratings;
+  const pageResponse = pageMetadata(
+    queryParams.query.page,
+    queryParams.query.limit,
+    ratings.count,
+    `/articles/${articleId}/ratings`
+  );
+  const allRatings = ratings.rows;
+  return { pageResponse, allRatings };
 };

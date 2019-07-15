@@ -221,7 +221,6 @@ describe('Auth API endpoints', () => {
       expect(response.status).to.have.been.calledWith(500);
     });
   });
-
   describe('POST /users/login', () => {
     it('Should log user in successfully', async () => {
       const user = getUser();

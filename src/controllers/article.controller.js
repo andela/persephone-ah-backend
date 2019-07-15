@@ -377,7 +377,7 @@ export default {
     let { articleId } = request.params;
     articleId = parseInt(articleId, 10);
 
-    const result = await fetchRatingsService(articleId);
+    const result = await fetchRatingsService(articleId, request, response);
 
     if (result === `Article with id: ${articleId} does not exist`) {
       return Helper.failResponse(response, 404, result);

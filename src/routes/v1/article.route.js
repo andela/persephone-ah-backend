@@ -102,6 +102,8 @@ router
     verifyToken,
     validator('fetchRating'),
     checkValidationResult,
+    paginationValidator()('pagination'),
+    ValidationResult,
     articleController.fetchRatings
   )
   .post(

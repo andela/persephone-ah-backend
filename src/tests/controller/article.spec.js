@@ -261,12 +261,58 @@ describe('Article API endpoints', () => {
           expect(response.body.data.body).to.equal(
             'this is a description this is a description'
           );
+          done();
+        });
+    });
+
+    it('Should successfully create an article', done => {
+      chai
+        .request(app)
+        .post(`${process.env.API_VERSION}/articles`)
+        .set({ Authorization: `Bearer ${userToken}` })
+        .field('title', 'first article')
+        .field('description', 'this is a description')
+        .field('body', 'this is a description this is a description')
+        .end((error, response) => {
+          expect(response.status).to.equal(201);
+          expect(response).to.be.an('Object');
+          expect(response.body).to.have.property('status');
+          expect(response.body).to.have.property('data');
+          expect(response.body.status).to.equal('success');
+          expect(response.body.data.title).to.equal('first article');
+          expect(response.body.data.description).to.equal(
+            'this is a description'
+          );
+          expect(response.body.data.body).to.equal(
+            'this is a description this is a description'
+          );
           createdArticle = response.body.data;
           done();
         });
     });
 
     it('Should return an error if request is empty', done => {
+      chai
+        .request(app)
+        .post(`${process.env.API_VERSION}/articles`)
+        .send({})
+        .set({ Authorization: `Bearer ${userToken}` })
+        .end((error, response) => {
+          expect(response.status).to.equal(400);
+          expect(response).to.be.an('Object');
+          expect(response.body).to.have.property('status');
+          expect(response.body).to.have.property('data');
+          expect(response.body.status).to.equal('fail');
+          expect(response.body.data[0].msg).to.equal(
+            'Please enter your title for this post'
+          );
+          expect(response.body.data[1].msg).to.equal(
+            'Please enter valid content for this article'
+          );
+          done();
+        });
+    });
+    it('Should return an error if user is not authorized', done => {
       chai
         .request(app)
         .post(`${process.env.API_VERSION}/articles`)
@@ -545,7 +591,7 @@ describe('Article API endpoints', () => {
           done();
         });
     });
-    it('Should use return no articles on this page if page given in query does not exist', done => {
+    it('Should use return no content on this page if page given in query does not exist', done => {
       chai
         .request(app)
         .get(`${process.env.API_VERSION}/articles?page=20&limit=10`)
@@ -553,7 +599,7 @@ describe('Article API endpoints', () => {
           expect(response.body).to.have.property('data');
           expect(response.body.status).to.equal('success');
           expect(response.body.data.pageResponse).to.equal(
-            'No articles on this page'
+            'No content on this page'
           );
           done();
         });
@@ -641,6 +687,26 @@ describe('Article API endpoints', () => {
     });
   });
   describe('GET single article /articles/:slug', () => {
+    it('Should successfully publish articles by user', done => {
+      chai
+        .request(app)
+        .put(
+          `${process.env.API_VERSION}/articles/publish/${secondArticle.slug}`
+        )
+        .set({ Authorization: `Bearer ${userToken}` })
+        .end((error, response) => {
+          expect(response.status).to.equal(200);
+          expect(response).to.be.an('Object');
+          expect(response.body).to.have.property('status');
+          expect(response.body).to.have.property('data');
+          expect(response.body.status).to.equal('success');
+          expect(response.body.data.message).to.equal(
+            'Article published successfully'
+          );
+          done();
+        });
+    });
+
     it('Should successfully fetch a single article', done => {
       chai
         .request(app)
@@ -1207,10 +1273,9 @@ describe('Article API endpoints', () => {
         .request(app)
         .get(`${API_VERSION}/articles/${article.id}/ratings`)
         .set({ Authorization: `Bearer ${userToken}` });
-
       expect(response).to.have.status(200);
       expect(response.body.status).to.equal('success');
-      expect(response.body.data[0].articleId).to.equal(article.id);
+      expect(response.body.data.allRatings[0].articleId).to.equal(article.id);
     });
 
     it('should return error for article id that is less than 1', async () => {
@@ -1218,7 +1283,6 @@ describe('Article API endpoints', () => {
         .request(app)
         .get(`${API_VERSION}/articles/-1/ratings`)
         .set({ Authorization: `Bearer ${userToken}` });
-
       expect(response).to.have.status(400);
       expect(response.body.status).to.equal('fail');
       expect(response.body.data[0].msg).to.equal(
@@ -1231,7 +1295,6 @@ describe('Article API endpoints', () => {
         .request(app)
         .get(`${API_VERSION}/articles/notNumber/ratings`)
         .set({ Authorization: `Bearer ${userToken}` });
-
       expect(response).to.have.status(400);
       expect(response.body.status).to.equal('fail');
       expect(response.body.data[0].msg).to.equal('Invalid value');
