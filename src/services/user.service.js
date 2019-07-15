@@ -1,26 +1,47 @@
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import { getToken } from '../helpers/jwt.helper';
+import Helper from './helper';
 import model from '../db/models';
 import sendWelcomeEmail from '../helpers/mail.helper';
+import { paginationQueryMetadata, pageMetadata } from '../helpers/pagination';
 
 const { User, Follow } = model;
 
 /**
- * @description Get all users details without password and confirmEmailCode
- *Route: GET: /users/
-
- * @returns {Object} users object
+ * @description Get all users' details
+ *
+ * @param {Object} queryParams query parameters
+ * @param {Object} returnValue returnValue object
+ *
+ * @returns {Object} all users' details and page metadata
  */
 
-// eslint-disable-next-line import/prefer-default-export
-export const getAllUsersService = async () => {
-  const users = await User.findAll({
+export const getAllUsersService = async (queryParams, returnValue) => {
+  const { limit, offset } = paginationQueryMetadata(
+    queryParams.query.page,
+    queryParams.query.limit
+  );
+  const users = await User.findAndCountAll({
+    limit,
+    offset,
     attributes: {
-      exclude: ['password', 'confirmEmailCode']
+      exclude: ['password', 'confirmEmailCode', 'passwordToken']
     }
   });
-  return users;
+  const pageResponse = pageMetadata(
+    queryParams.query.page,
+    queryParams.query.limit,
+    users.count,
+    '/users'
+  );
+  if (users.count === 0) {
+    return Helper.failResponse(returnValue, 404, {
+      message: 'No user in the database'
+    });
+  }
+  const allUsers = users.rows;
+  return { pageResponse, allUsers };
 };
 
 /**

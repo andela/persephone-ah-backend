@@ -17,8 +17,7 @@ const { User } = model;
  */
 
 const socialCallback = async (accessToken, refreshToken, profile, done) => {
-  const { id, displayName, emails, provider, photos } = profile;
-
+  const { id, displayName, emails, provider, photos, username } = profile;
   if (!emails) {
     const userWithNoEmail = { noEmail: true };
     return done(null, userWithNoEmail);
@@ -30,12 +29,14 @@ const socialCallback = async (accessToken, refreshToken, profile, done) => {
   const [user] = await User.findOrCreate({
     where: { email: userEmail },
     defaults: {
-      firstName: names[0] || 'Firstname',
-      lastName: names[1] || 'Lastname',
+      firstName: names[0] || `${provider}Firstname`,
+      lastName: names[1] || `${provider}Lastname`,
       password: hashedPassword,
       email: userEmail,
       socialAuth: provider,
-      image: profileImage
+      image: profileImage,
+      passwordToken: true,
+      twitterHandle: username ? `@${username}` : null
     }
   });
   return done(null, user.dataValues);
@@ -58,6 +59,6 @@ const socialRedirect = async (request, response) => {
   }
 
   const token = await getToken(request.user);
-  return Helper.successResponse(response, 200, token);
+  return Helper.successResponse(response, 200, { token });
 };
 export { socialCallback, socialRedirect };

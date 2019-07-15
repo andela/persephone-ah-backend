@@ -21,7 +21,10 @@ router
   );
 
 router
-  .get('/google', passport.authenticate('google', { scope: ['email'] }))
+  .get(
+    '/google',
+    passport.authenticate('google', { scope: ['email', 'profile'] })
+  )
   .get('/google/callback', passport.authenticate('google'), socialRedirect);
 
 export default router;

@@ -39,9 +39,9 @@ describe('User API endpoints', () => {
         .set({ Authorization: `Bearer ${userToken}` })
         .end((error, response) => {
           expect(response.status).to.be.equal(200);
-          expect(response.body.data).to.be.an('array');
-          expect(response.body.data[0]).to.have.property('id');
-          expect(response.body.data[0]).to.have.property('firstName');
+          expect(response.body.data).to.be.an('object');
+          expect(response.body.data).to.have.property('pageResponse');
+          expect(response.body.data).to.have.property('allUsers');
           done();
         });
     });

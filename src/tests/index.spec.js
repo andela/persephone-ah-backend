@@ -9,3 +9,6 @@ import './controller/auth.spec';
 import './controller/user.spec';
 import './controller/article.spec';
 import './controller/social.spec';
+import './helpers/pagination.spec';
+import './services/user-service.spec';
+import './validators/validator.spec';

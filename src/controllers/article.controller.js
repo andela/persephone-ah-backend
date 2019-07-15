@@ -121,7 +121,7 @@ export default {
    */
   async getAllPublishedArticles(request, response) {
     try {
-      const article = await getAllPublishedArticleService();
+      const article = await getAllPublishedArticleService(request, response);
       return Helper.successResponse(response, 200, article);
     } catch (error) {
       return Helper.failResponse(response, 500, error);

@@ -21,12 +21,10 @@ import Helper from '../services/helper';
  */
 const getUsers = async (request, response) => {
   try {
-    const value = await getAllUsersService();
-
+    const value = await getAllUsersService(request, response);
     return Helper.successResponse(response, 200, value);
   } catch (error) {
-    /* istanbul ignore next */
-    return Helper.failResponse(response, 400, error);
+    return Helper.failResponse(response, 400, error.message);
   }
 };
 /**

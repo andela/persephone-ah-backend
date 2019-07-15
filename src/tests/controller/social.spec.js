@@ -77,11 +77,9 @@ describe('SocialController', () => {
       sinon.stub(jwtHelper, 'getToken').returns(tokenMock);
       await socialRedirect(requestMock, responseMock);
 
-      expect(Helper.successResponse).calledOnceWith(
-        responseMock,
-        200,
-        tokenMock
-      );
+      expect(Helper.successResponse).calledOnceWith(responseMock, 200, {
+        token: tokenMock
+      });
     });
   });
 });
