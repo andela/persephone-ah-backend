@@ -64,5 +64,12 @@ router
     validator('delete-comment'),
     checkValidationResult,
     deleteComment
+  )
+  .get(
+    '/:articleId/ratings',
+    authorization.verifyToken,
+    validator('fetchRating'),
+    checkValidationResult,
+    articleController.fetchRatings
   );
 export default router;

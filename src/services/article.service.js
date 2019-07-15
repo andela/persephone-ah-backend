@@ -529,3 +529,24 @@ export const articleRatingsService = async (articleId, rating, userId) => {
     return error;
   }
 };
+
+/**
+ * @method fetchRatingsService
+ * - helps fetch all ratings on an article
+ *
+ * @param {integer} articleId
+ */
+
+export const fetchRatingsService = async articleId => {
+  const articleExist = await Article.findByPk(articleId);
+
+  if (!articleExist) return `Article with id: ${articleId} does not exist`;
+
+  const ratings = await Rating.findAll({
+    where: { articleId },
+    attributes: {
+      exclude: ['createdAt', 'updatedAt']
+    }
+  });
+  return ratings;
+};

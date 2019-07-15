@@ -12,8 +12,10 @@ import {
   unPublishArticleService,
   updateArticleService,
   deleteArticleService,
-  articleRatingsService
+  articleRatingsService,
+  fetchRatingsService
 } from '../services/article.service';
+
 import Helper from '../services/helper';
 import models from '../db/models';
 
@@ -368,5 +370,18 @@ export default {
       );
     }
     return Helper.successResponse(response, 201, result);
+  },
+
+  async fetchRatings(request, response) {
+    let { articleId } = request.params;
+    articleId = parseInt(articleId, 10);
+
+    const result = await fetchRatingsService(articleId);
+
+    if (result === `Article with id: ${articleId} does not exist`) {
+      return Helper.failResponse(response, 404, result);
+    }
+
+    return Helper.successResponse(response, 200, result);
   }
 };
