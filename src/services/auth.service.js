@@ -2,7 +2,7 @@ import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import moment from 'moment';
 import cron from 'node-cron';
-import getToken, { getPasswordResetToken } from '../helpers/jwt.helper';
+import { getToken, getPasswordResetToken } from '../helpers/jwt.helper';
 import model from '../db/models';
 import sendWelcomeEmail, {
   sendForgotPasswordMail

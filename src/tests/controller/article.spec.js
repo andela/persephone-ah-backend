@@ -422,11 +422,13 @@ describe('User API endpoints', () => {
           expect(response.body).to.have.property('status');
           expect(response.body).to.have.property('data');
           expect(response.body.status).to.equal('success');
-          expect(response.body.data[0].title).to.equal('new article');
-          expect(response.body.data[0].description).to.equal(
+          expect(response.body.data.allArticles[0].title).to.equal(
+            'new article'
+          );
+          expect(response.body.data.allArticles[0].description).to.equal(
             'this is a description'
           );
-          expect(response.body.data[0].body).to.equal(
+          expect(response.body.data.allArticles[0].body).to.equal(
             'this is a description this is a description'
           );
           done();
