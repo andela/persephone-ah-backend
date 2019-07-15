@@ -175,7 +175,6 @@ export default {
   },
 
   /**
-<<<<<<< HEAD
    * @method logout
    * Handles the Logic for user logout
    *  Route: GET: /users/logout
@@ -194,8 +193,9 @@ export default {
       });
     }
     return failResponse(response, 500, 'internal error');
-=======
-   * @method verifyEmail
+  },
+
+  /** @method verifyEmail
    * - It verifies user email
    * Route: POST: /users/verify/:confirmEmailCode
    *
@@ -228,6 +228,5 @@ export default {
     } catch (error) {
       return Helper.failResponse(response, 500, error.message);
     }
->>>>>>> 7db6f2b...  ft(verify): User verification functionality
   }
 };
