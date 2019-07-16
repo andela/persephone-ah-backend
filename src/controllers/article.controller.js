@@ -1,3 +1,5 @@
+import Helper from '../services/helper';
+import models from '../db/models';
 import {
   createCommentService,
   getAllArticleCommentsService,
@@ -13,8 +15,6 @@ import {
   updateArticleService,
   deleteArticleService
 } from '../services/article.service';
-import Helper from '../services/helper';
-import models from '../db/models';
 
 const { Article } = models;
 

@@ -126,6 +126,42 @@
         ]
       }
     },
+    "/auth/facebook": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Api endpoint to enable user to signin with facebook",
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "Auto generated"
+          }
+        }
+      }
+    },
+    "/auth/twitter": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Api endpoint to enable user to signin with twitter",
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "Auto generated"
+          }
+        }
+      }
+    },
+    "/auth/google": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Api endpoint to enable user to signin with google",
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "Auto generated"
+          }
+        }
+      }
+    },
     "/users/forgot_password": {
       "post": {
         "tags": ["Users"],
@@ -181,6 +217,41 @@
           },
           "403": {
             "description": "Auth token not supplied"
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      },
+      "get": {
+        "tags": ["Users"],
+        "summary": "Api endpoint to get all users",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "type": "integer",
+            "description": "The current page"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "type": "integer",
+            "description": "Number of items on a page"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "Error in operation"
+          },
+          "404": {
+            "description": "Users not found"
           }
         },
         "security": [
