@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 import faker from 'faker';
 import crypto from 'crypto';
 import bcrypt from 'bcryptjs';

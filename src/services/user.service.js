@@ -3,8 +3,8 @@ import crypto from 'crypto';
 import { getToken } from '../helpers/jwt.helper';
 import Helper from './helper';
 import model from '../db/models';
-import sendWelcomeEmail from '../helpers/mail.helper';
 import { paginationQueryMetadata, pageMetadata } from '../helpers/pagination';
+import { sendWelcomeEmail } from '../helpers/mail.helper';
 
 const { User, Follow } = model;
 

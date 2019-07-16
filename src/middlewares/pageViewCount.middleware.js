@@ -21,7 +21,8 @@ export const pageViewCount = async (request, response, next) => {
   // checks if article exists
   const findArticle = await Article.findOne({
     where: {
-      slug
+      slug,
+      isPublished: true
     }
   });
   let decode;
@@ -35,7 +36,7 @@ export const pageViewCount = async (request, response, next) => {
   } catch (error) {
     return Helper.failResponse(response, 500, error);
   }
-  if (!isAuthor) {
+  if (!isAuthor && findArticle) {
     // increment views count
     await findArticle.increment('viewsCount', {
       by: 1

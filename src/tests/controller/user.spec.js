@@ -53,7 +53,6 @@ describe('User API endpoints', () => {
         });
     });
   });
-
   describe('POST /users/follow/', () => {
     it('Should log user in successfully to test follow feature', async () => {
       const user = getUser();

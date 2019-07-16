@@ -8,10 +8,12 @@ import commentController from '../../controllers/comment.controller';
 import commentsCheck from '../../middlewares/commentsCheck.middleware';
 import reportController from '../../controllers/report.controller';
 import { pageViewCount } from '../../middlewares/pageViewCount.middleware';
+import stats from '../../controllers/readingStat.controller';
 
 const { validator, checkValidationResult } = articleValidator;
 const { verifyToken, isAuthor, adminCheck } = authorization;
 
+const { readingStats } = stats;
 const {
   validator: paginationValidator,
   checkValidationResult: ValidationResult
@@ -41,6 +43,7 @@ const { editCommentCheck, getArticlesCommentsCheck } = commentsCheck;
 const { createReport, removeArticle } = reportController;
 
 const router = express.Router();
+router.get('/stats', verifyToken, readingStats);
 router
   .post(
     '/',
@@ -60,7 +63,6 @@ router
   .get('/draft', verifyToken, userGetAllDraftArticles)
   .get('/publish', verifyToken, userGetAllPublishedArticles)
   .get('/publish/:userId', getUserPublishedArticles)
-  .get('/:slug', getArticle)
   .get(
     '/',
     paginationValidator()('pagination'),

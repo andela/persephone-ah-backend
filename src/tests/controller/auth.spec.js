@@ -9,6 +9,9 @@ import AuthenticationMiddleWare from '../../middlewares/profileUpdateCheck.middl
 import app from '../../index';
 import { getPasswordResetToken } from '../../helpers/jwt.helper';
 import * as imageHelper from '../../helpers/image.helper';
+import model from '../../db/models';
+
+const { User } = model;
 
 dotenv.config();
 
@@ -488,10 +491,9 @@ describe('Auth API endpoints', () => {
         .set('Authorization', `Bearer ${deletedUserToken}`)
         .send({
           bio: 'My name is my name',
-          userName: 'aboyhasnoname',
+          userName: 'aboyhasnon',
           firstName: 'newname'
         });
-
       expect(response).to.have.status(404);
       expect(response.body.status).to.be.equal('fail');
       expect(response.body.data.message).to.be.equal(

@@ -21,7 +21,7 @@ describe('src/models/article', () => {
       'slug',
       'isPublished',
       'isDeleted',
-      'averageRating',
+      'viewsCount',
       'sumOfRating',
       'numberOfRating',
       'image'

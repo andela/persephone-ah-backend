@@ -68,7 +68,7 @@ export const createArticleService = async data => {
 export const getArticleService = async data => {
   const articleSlug = data.params.slug;
   const article = await Article.findOne({
-    where: { slug: articleSlug },
+    where: { slug: articleSlug, isPublished: true },
     include: [
       {
         model: User,

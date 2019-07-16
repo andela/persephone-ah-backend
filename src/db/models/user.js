@@ -120,9 +120,6 @@ export default (sequelize, DataTypes) => {
       foreignKey: 'userId',
       as: 'likes'
     });
-  };
-
-  User.associate = models => {
     // associations can be defined here
     User.hasMany(
       models.Article,

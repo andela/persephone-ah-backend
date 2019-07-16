@@ -52,19 +52,14 @@ export default (sequelize, DataTypes) => {
         type: DataTypes.TEXT,
         allowNull: {
           args: true
-        },
+        }
+      },
       likesCount: {
         type: DataTypes.INTEGER,
-        allowNull: false,
         default: 0
       },
       viewsCount: {
         type: DataTypes.INTEGER,
-        allowNull: false,
-        default: 0
-      },
-      averageRating: {
-        type: DataTypes.FLOAT,
         default: 0
       },
       numberOfRating: {
