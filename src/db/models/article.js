@@ -48,10 +48,6 @@ export default (sequelize, DataTypes) => {
           args: true
         }
       },
-      likesCount: {
-        type: DataTypes.INTEGER,
-        default: 0
-      },
       viewsCount: {
         type: DataTypes.INTEGER,
         default: 0

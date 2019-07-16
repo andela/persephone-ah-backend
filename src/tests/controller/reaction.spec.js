@@ -1,10 +1,14 @@
 import chai from 'chai';
 import chaiHttp from 'chai-http';
-import { getArticleData, getUser } from '../utils/db.utils';
-
+import sinon from 'sinon';
+import sinonChai from 'sinon-chai';
+import { getArticleData, Response, getUser } from '../utils/db.utils';
+import reactionsController from '../../controllers/reaction.controller';
 import app from '../../index';
 
+const { articlesLike } = reactionsController;
 chai.use(chaiHttp);
+chai.use(sinonChai);
 
 const { expect } = chai;
 

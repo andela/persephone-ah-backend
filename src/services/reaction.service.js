@@ -3,12 +3,13 @@ import models from '../db/models';
 
 const { Article, Reaction } = models;
 /**
- * @method articleService
+ * @method articleReaction
  * - user can like or dislike article
+ * - returns true or false
  *
  * @param {Object} data request object
  *
- * @returns {Object} message object
+ * @returns {Object} user object
  * */
 
 export const reactionService = async data => {
