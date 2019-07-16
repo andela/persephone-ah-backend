@@ -2,18 +2,30 @@ import chai from 'chai';
 import chaiHttp from 'chai-http';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
-import { getArticleData, Response, getUser } from '../utils/db.utils';
-import articlesController from '../../controllers/article.controller';
+import dotenv from 'dotenv';
+import faker from 'faker';
+import {
+  getArticleData,
+  Response,
+  getUser,
+  createUser
+} from '../utils/db.utils';
+import articleController from '../../controllers/article.controller';
 import app from '../../index';
 import * as imageHelper from '../../helpers/image.helper';
+import models from '../../db/models';
 
 const {
   createArticle,
   getArticle,
   updateArticle,
   deleteArticle,
-  publishArticle
-} = articlesController;
+  publishArticle,
+  userGetAllDraftArticles,
+  userGetAllPublishedArticles,
+  getUserPublishedArticles,
+  unPublishArticle
+} = articleController;
 chai.use(chaiHttp);
 chai.use(sinonChai);
 
@@ -25,8 +37,38 @@ let createdArticle;
 let secondArticle;
 let thirdArticle;
 let mockImage;
+let sixthArticle;
 
-describe('Articles API endpoints', () => {
+dotenv.config();
+
+const API = process.env.API_VERSION;
+
+const { Article } = models;
+
+chai.use(chaiHttp);
+chai.use(sinonChai);
+let authorUserId;
+let author;
+let commentId;
+let commentSlug;
+let secondCommentId;
+let secondCommentSlug;
+
+describe('User API endpoints', () => {
+  before(async () => {
+    const userA = getUser();
+    const userB = getUser();
+    author = await createUser(userA);
+    await createUser(userB);
+    authorUserId = author.dataValues.id;
+  });
+  before('sign up a random user', async () => {
+    const randomUser = getUser();
+    await chai
+      .request(app)
+      .post('/api/v1/users/signup')
+      .send(randomUser);
+  });
   before(done => {
     const randomUser = getUser();
     chai
@@ -84,6 +126,24 @@ describe('Articles API endpoints', () => {
       .end(() => {
         done();
       });
+  });
+
+  before(async () => {
+    sixthArticle = await Article.create({
+      userId: authorUserId,
+      title: faker.lorem.sentence(10, 1),
+      description: faker.lorem.sentence(15, 3),
+      slug: faker.lorem.slug(3),
+      body: faker.lorem.paragraphs(50)
+    });
+
+    await Article.create({
+      userId: authorUserId,
+      title: faker.lorem.sentence(10, 1),
+      description: faker.lorem.sentence(15, 3),
+      slug: faker.lorem.slug(3),
+      body: faker.lorem.paragraphs(50)
+    });
   });
 
   describe('POST /articles', () => {
@@ -202,6 +262,16 @@ describe('Articles API endpoints', () => {
           done();
         });
     });
+
+    it('Should return an error 500', async () => {
+      const requests = {
+        body: {}
+      };
+      const response = new Response();
+      sinon.stub(response, 'status').returnsThis();
+      await userGetAllDraftArticles(requests, response);
+      expect(response.status).to.have.been.calledWith(500);
+    });
   });
 
   describe('PUT Publish Articles by user /articles/publish/:slug', () => {
@@ -293,6 +363,16 @@ describe('Articles API endpoints', () => {
           done();
         });
     });
+
+    it('Should return an error 500', async () => {
+      const requests = {
+        body: {}
+      };
+      const response = new Response();
+      sinon.stub(response, 'status').returnsThis();
+      await userGetAllPublishedArticles(requests, response);
+      expect(response.status).to.have.been.calledWith(500);
+    });
   });
 
   describe('GET All published Articles by a specific user /articles/publish/:userId', () => {
@@ -318,6 +398,16 @@ describe('Articles API endpoints', () => {
           );
           done();
         });
+    });
+
+    it('Should return an error 500', async () => {
+      const requests = {
+        body: {}
+      };
+      const response = new Response();
+      sinon.stub(response, 'status').returnsThis();
+      await getUserPublishedArticles(requests, response);
+      expect(response.status).to.have.been.calledWith(500);
     });
   });
 
@@ -411,6 +501,16 @@ describe('Articles API endpoints', () => {
       const response = new Response();
       sinon.stub(response, 'status').returnsThis();
       await publishArticle(request, response);
+      expect(response.status).to.have.been.calledWith(500);
+    });
+
+    it('Should return an error 500', async () => {
+      const requests = {
+        body: {}
+      };
+      const response = new Response();
+      sinon.stub(response, 'status').returnsThis();
+      await unPublishArticle(requests, response);
       expect(response.status).to.have.been.calledWith(500);
     });
   });
@@ -621,6 +721,201 @@ describe('Articles API endpoints', () => {
       sinon.stub(response, 'status').returnsThis();
       await deleteArticle(request, response);
       expect(response.status).to.have.been.calledWith(500);
+    });
+  });
+
+  describe('POST /:slug/comments', async () => {
+    it('should create a comment', async () => {
+      const response = await chai
+        .request(app)
+        .post(`${API}/articles/${sixthArticle.slug}/comments`)
+        .set({ Authorization: `Bearer ${secondUserToken}` })
+        .send({
+          body: 'I love this article'
+        });
+      expect(response.status).to.be.equal(201);
+      expect(response.body.data).to.be.an('object');
+      expect(response.body.data.author.firstName).to.be.equal(
+        author.dataValues.firstName
+      );
+      expect(response.body.data.author.lastName).to.be.equal(
+        author.dataValues.lastName
+      );
+    });
+    it('should create a comment', async () => {
+      const response = await chai
+        .request(app)
+        .post(`${API}/articles/${sixthArticle.slug}/comments`)
+        .set({ Authorization: `Bearer ${secondUserToken}` })
+        .send({
+          body: 'I love this article'
+        });
+      expect(response.status).to.be.equal(201);
+      expect(response.body.data).to.be.an('object');
+      expect(response.body.data.author.firstName).to.be.equal(
+        author.dataValues.firstName
+      );
+      expect(response.body.data.author.lastName).to.be.equal(
+        author.dataValues.lastName
+      );
+    });
+    it('should create a comment', async () => {
+      const response = await chai
+        .request(app)
+        .post(`${API}/articles/${sixthArticle.slug}/comments`)
+        .set({ Authorization: `Bearer ${userToken}` })
+        .send({
+          body: faker.lorem.sentence(8, 2),
+          highlightedText: faker.lorem.sentence(12, 4)
+        });
+
+      commentId = response.body.data.id;
+      commentSlug = response.body.data.slug;
+      expect(response.status).to.be.equal(201);
+      expect(response.body.data).to.be.an('object');
+      expect(response.body.data.author.firstName).to.be.equal(
+        author.dataValues.firstName
+      );
+      expect(response.body.data.author.lastName).to.be.equal(
+        author.dataValues.lastName
+      );
+    });
+    it('should create a comment', async () => {
+      const response = await chai
+        .request(app)
+        .post(`${API}/articles/${sixthArticle.slug}/comments`)
+        .set({ Authorization: `Bearer ${userToken}` })
+        .send({
+          body: faker.lorem.sentence(8, 2),
+          highlightedText: faker.lorem.sentence(12, 4)
+        });
+      secondCommentId = response.body.data.id;
+      secondCommentSlug = response.body.data.slug;
+      expect(response.status).to.be.equal(201);
+      expect(response.body.data).to.be.an('object');
+      expect(response.body.data.author.firstName).to.be.equal(
+        author.dataValues.firstName
+      );
+      expect(response.body.data.author.lastName).to.be.equal(
+        author.dataValues.lastName
+      );
+    });
+
+    it('should return 404 for a non existing article', async () => {
+      const response = await chai
+        .request(app)
+        .post(`${API}/articles/damilola-adekoya/comments`)
+        .set({ Authorization: `Bearer ${userToken}` })
+        .send({
+          body: faker.lorem.sentence(8, 2),
+          highlightedText: faker.lorem.sentence(12, 4)
+        });
+      expect(response.status).to.be.equal(404);
+      expect(response.body).to.be.an('object');
+      expect(response.body.message).to.be.equal('no article found');
+    });
+
+    it('Should return an error 500', async () => {
+      const requests = {};
+      const response = new Response();
+      sinon.stub(response, 'status').returnsThis();
+      await articleController.createComment(requests, response);
+      expect(response.status).to.have.been.calledWith(500);
+    });
+  });
+
+  describe('GET /:slug/comments', () => {
+    it('should get all the comments of an article', async () => {
+      const response = await chai
+        .request(app)
+        .get(`${API}/articles/${sixthArticle.slug}/comments`)
+        .set({ Authorization: `Bearer ${userToken}` });
+      expect(response.status).to.be.equal(201);
+      expect(response.body.data).to.be.an('object');
+      expect(response.body.data.article.id).to.be.equal(
+        sixthArticle.dataValues.id
+      );
+      expect(response.body.data.article.title).to.be.equal(
+        sixthArticle.dataValues.title
+      );
+      expect(response.body.data.article.slug).to.be.equal(
+        sixthArticle.dataValues.slug
+      );
+      expect(response.body.data.article.description).to.be.equal(
+        sixthArticle.dataValues.description
+      );
+    });
+
+    it('should return article not found', async () => {
+      const response = await chai
+        .request(app)
+        .get(`${API}/articles/damilola-persephone/comments`)
+        .set({ Authorization: `Bearer ${userToken}` });
+      expect(response.status).to.be.equal(400);
+      expect(response.body).to.be.an('object');
+      expect(response.body.status).to.be.equal('fail');
+      expect(response.body.data).to.be.equal('article not found');
+    });
+  });
+
+  describe('DELETE /:slug/comments/:id', async () => {
+    it('should delete a comment', async () => {
+      const response = await chai
+        .request(app)
+        .delete(`${API}/articles/${commentSlug}/comments/${commentId}`)
+        .set({ Authorization: `Bearer ${userToken}` });
+      expect(response.status).to.be.equal(200);
+      expect(response.body.status).to.be.equal('success');
+      expect(response.body.data).to.be.an('object');
+      expect(response.body.data.article.id).to.be.equal(
+        sixthArticle.dataValues.id
+      );
+      expect(response.body.data.article.title).to.be.equal(
+        sixthArticle.dataValues.title
+      );
+      expect(response.body.data.article.slug).to.be.equal(
+        sixthArticle.dataValues.slug
+      );
+      expect(response.body.data.article.description).to.be.equal(
+        sixthArticle.dataValues.description
+      );
+    });
+
+    it('should return comment not found', async () => {
+      const response = await chai
+        .request(app)
+        .delete(`${API}/articles/some-slug/comments/34`)
+        .set({ Authorization: `Bearer ${userToken}` });
+      expect(response.status).to.be.equal(400);
+      expect(response.body.status).to.be.equal('fail');
+      expect(response.body).to.be.an('object');
+      expect(response.body.data).to.be.equal('comment not found');
+    });
+
+    it('should not allow a user delete another user comment', async () => {
+      const response = await chai
+        .request(app)
+        .delete(
+          `${API}/articles/${secondCommentSlug}/comments/${secondCommentId}`
+        )
+        .set({ Authorization: `Bearer ${secondUserToken}` });
+      expect(response.status).to.be.equal(400);
+      expect(response.body.status).to.be.equal('fail');
+      expect(response.body).to.be.an('object');
+      expect(response.body.data).to.be.equal(
+        "you can not delete another user's comment"
+      );
+    });
+
+    it('should delete a comment', async () => {
+      const response = await chai
+        .request(app)
+        .delete(`${API}/articles/${commentSlug}/comments/damilola`)
+        .set({ Authorization: `Bearer ${userToken}` });
+      expect(response.status).to.be.equal(400);
+      expect(response.body.status).to.be.equal('fail');
+      expect(response.body.data).to.be.an('array');
+      expect(response.body.data[0].msg).to.be.equal('Invalid value');
     });
   });
 });

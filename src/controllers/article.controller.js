@@ -1,4 +1,7 @@
 import {
+  createCommentService,
+  getAllArticleCommentsService,
+  deleteCommentService,
   createArticleService,
   getArticleService,
   userGetDraftArticleService,
@@ -14,7 +17,7 @@ import Helper from '../services/helper';
 import models from '../db/models';
 
 const { Article } = models;
-/* istanbul ignore next */
+
 export default {
   /**
    * @method createArticle
@@ -119,11 +122,13 @@ export default {
    * @param {Object} response request object
    * @returns {Response} response object
    */
+
   async getAllPublishedArticles(request, response) {
     try {
       const article = await getAllPublishedArticleService();
       return Helper.successResponse(response, 200, article);
     } catch (error) {
+      /* instanbul ignore next */
       return Helper.failResponse(response, 500, error);
     }
   },
@@ -255,6 +260,81 @@ export default {
       });
     } catch (error) {
       return Helper.failResponse(response, 500, error);
+    }
+  },
+  /**
+   * @method createComment
+   * - user make comment on an article
+   * - validate user input
+   * - returns comment and user who made the article
+   * Route: POST: /users/signup
+   *
+   * @param {Object} request request object
+   * @param {Object} response response object
+   *
+   * @returns {Response} response object
+   */
+
+  async createComment(request, response) {
+    try {
+      const userId = request.user.id;
+      const { slug } = request.params;
+
+      const value = await createCommentService(userId, slug, request.body);
+      return Helper.successResponse(response, 201, value);
+    } catch (error) {
+      if (error.status === 404) {
+        return Helper.errorResponse(response, error.status, error.message);
+      }
+      return Helper.errorResponse(response, 500, error);
+    }
+  },
+
+  /**
+   * @method allArticleComments
+   * - get all the comments of an article
+   * - returns an article and all the comments attached to the article
+   * Route: GET: /articles/signup
+   *
+   * @param {Object} request request object
+   * @param {Object} response response object
+   *
+   * @returns {Response} response object
+   */
+
+  async allArticleComments(request, response) {
+    try {
+      const { slug } = request.params;
+
+      const value = await getAllArticleCommentsService(slug);
+      return Helper.successResponse(response, 201, value);
+    } catch (error) {
+      return Helper.failResponse(response, 400, error);
+    }
+  },
+
+  /**
+   * @method deleteComment
+   * - delete a comment
+   * - returns the article
+   * Route: DELETE: /articles/:slug/comments/:id
+   *
+   * @param {Object} request request object
+   * @param {Object} response response object
+   *
+   * @returns {Response} response object
+   */
+
+  async deleteComment(request, response) {
+    try {
+      const { slug } = request.params;
+      const { commentId } = request.params;
+      const userId = request.user.id;
+
+      const value = await deleteCommentService(slug, commentId, userId);
+      return Helper.successResponse(response, 200, value);
+    } catch (error) {
+      return Helper.failResponse(response, 400, error);
     }
   }
 };

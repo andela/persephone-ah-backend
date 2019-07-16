@@ -1,12 +1,15 @@
 import express from 'express';
-import ArticleValidator from '../../validators/article.validator';
+import articleValidator from '../../validators/article.validator';
 import articleController from '../../controllers/article.controller';
 import authorization from '../../middlewares/auth.middleware';
 import upload from '../../middlewares/imageUpload.middleware';
 
-const { validator, checkValidationResult } = ArticleValidator;
-const { verifyToken } = authorization;
+const { validator, checkValidationResult } = articleValidator;
+
 const {
+  createComment,
+  allArticleComments,
+  deleteComment,
   createArticle,
   getArticle,
   getAllPublishedArticles,
@@ -19,6 +22,8 @@ const {
   userGetAllDraftArticles
 } = articleController;
 
+const { verifyToken } = authorization;
+
 const router = express.Router();
 router
   .post(
@@ -29,6 +34,13 @@ router
     checkValidationResult,
     createArticle
   )
+  .post(
+    '/:slug/comments',
+    verifyToken,
+    validator('comment'),
+    checkValidationResult,
+    createComment
+  )
   .get('/draft', verifyToken, userGetAllDraftArticles)
   .get('/publish', verifyToken, userGetAllPublishedArticles)
   .get('/publish/:userId', getUserPublishedArticles)
@@ -37,6 +49,14 @@ router
   .put('/publish/:slug', verifyToken, publishArticle)
   .put('/unpublish/:slug', verifyToken, unPublishArticle)
   .put('/:slug', verifyToken, upload.array('image'), updateArticle)
-  .delete('/:slug', verifyToken, deleteArticle);
+  .delete('/:slug', verifyToken, deleteArticle)
 
+  .get('/:slug/comments', allArticleComments)
+  .delete(
+    '/:slug/comments/:commentId',
+    verifyToken,
+    validator('delete-comment'),
+    checkValidationResult,
+    deleteComment
+  );
 export default router;

@@ -105,7 +105,6 @@ export const loginService = async body => {
  * @returns {object}  Database User Instance
  */
 
-
 export const findUserById = async userId => User.findByPk(userId);
 
 /**

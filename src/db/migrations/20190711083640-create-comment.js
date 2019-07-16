@@ -1,6 +1,6 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('Articles', {
+    return queryInterface.createTable('Comments', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -13,52 +13,34 @@ module.exports = {
         references: {
           model: 'Users',
           key: 'id',
-          as: 'author'
+          as: 'authorComment'
         }
       },
-      title: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
-      description: {
-        type: Sequelize.STRING,
-        allowNull: true
+      articleId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'Articles',
+          key: 'id',
+          as: 'articleComment'
+        }
       },
       slug: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
         allowNull: false
       },
       body: {
-        type: Sequelize.TEXT,
+        type: Sequelize.JSON,
         allowNull: false
       },
-      image: {
+      highlightedText: {
         type: Sequelize.TEXT,
         allowNull: true
       },
-      averageRating: {
-        type: Sequelize.FLOAT,
-        allowNull: false,
-        defaultValue: 0
-      },
-      numberOfRating: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        defaultValue: 0
-      },
-      sumOfRating: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        defaultValue: 0
-      },
-      isPublished: {
+      isEdit: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
         defaultValue: false
-      },
-      publishedAt: {
-        type: Sequelize.STRING,
-        allowNull: true
       },
       isDeleted: {
         type: Sequelize.BOOLEAN,
@@ -72,10 +54,15 @@ module.exports = {
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE
+      },
+      deletedAt: {
+        allowNull: true,
+        type: Sequelize.DATE,
+        paranoid: true
       }
     });
   },
   down: queryInterface => {
-    return queryInterface.dropTable('articles');
+    return queryInterface.dropTable('Comments');
   }
 };

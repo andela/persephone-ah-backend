@@ -18,7 +18,7 @@
     },
     {
       "name": "Articles",
-      "description": "articles related route"
+      "description": "All endpoint about articles"
     }
   ],
   "paths": {
@@ -375,6 +375,124 @@
             "description": "Invalid input"
           }
         }
+      }
+    },
+    "/articles/{slug}/comments": {
+      "post": {
+        "tags": ["Articles"],
+        "summary": "POST API endpoint for creating comment on an article",
+        "produces": ["application/json"],
+        "consumes": ["application/x-www-form-urlencoded"],
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "description": "slug of the article to be commented on",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "body",
+            "in": "formData",
+            "description": "body of the comment",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "highlightedText",
+            "in": "formData",
+            "description": "highlightedText",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "No user found"
+          },
+          "401": {
+            "description": "Not authorized"
+          },
+          "403": {
+            "description": "Auth token not supplied"
+          },
+          "500": {
+            "description": "Auth token expired"
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      },
+      "get": {
+        "tags": ["Articles"],
+        "summary": "GET API endpoint for getting all comment on an article",
+        "produces": ["application/json"],
+        "consumes": ["application/x-www-form-urlencoded"],
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "description": "slug of the article to view all comments",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "article not found"
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/articles/{slug}/comments/{id}": {
+      "delete": {
+        "tags": ["Articles"],
+        "summary": "DELETE API endpoint for deleting a comment on an article",
+        "produces": ["application/json"],
+        "consumes": ["application/x-www-form-urlencoded"],
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "description": "slug of the article",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of the comment to be deleted",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "article not found"
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
       }
     }
   },
