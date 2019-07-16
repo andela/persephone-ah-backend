@@ -34,7 +34,7 @@ export default (sequelize, DataTypes) => {
       slug: {
         type: DataTypes.STRING,
         allowNull: false,
-        unique: true
+        unique: false
       },
       highlightedText: {
         type: DataTypes.TEXT,

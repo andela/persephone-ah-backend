@@ -70,6 +70,13 @@ const ArticleValidator = {
             .withMessage('Please reason cannot be empty')
             .trim()
         ];
+      case 'commentLike':
+        return [
+          param('commentId')
+            .isNumeric()
+            .isInt({ gt: 0 })
+            .withMessage('Comment ID must be greater than 0')
+        ];
       default:
     }
   },

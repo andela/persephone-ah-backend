@@ -9,6 +9,7 @@ import commentsCheck from '../../middlewares/commentsCheck.middleware';
 import reportController from '../../controllers/report.controller';
 
 const { validator, checkValidationResult } = articleValidator;
+const { verifyToken, adminCheck } = authorization;
 
 const {
   validator: paginationValidator,
@@ -28,14 +29,13 @@ const {
   userGetAllPublishedArticles,
   unPublishArticle,
   getUserPublishedArticles,
-  userGetAllDraftArticles
+  userGetAllDraftArticles,
+  likeComment
 } = articleController;
 
 const { getCommentHistory, editComment, getSingleComment } = commentController;
 
 const { editCommentCheck, getArticlesCommentsCheck } = commentsCheck;
-
-const { verifyToken, adminCheck } = authorization;
 
 const { createReport, removeArticle } = reportController;
 
@@ -72,7 +72,7 @@ router
   .delete('/:slug', verifyToken, deleteArticle)
   .post(
     '/ratings',
-    authorization.verifyToken,
+    verifyToken,
     validator('rating'),
     checkValidationResult,
     articleController.ratings
@@ -87,7 +87,7 @@ router
   )
   .get(
     '/:articleId/ratings',
-    authorization.verifyToken,
+    verifyToken,
     validator('fetchRating'),
     checkValidationResult,
     articleController.fetchRatings
@@ -105,6 +105,13 @@ router
     adminCheck,
     checkValidationResult,
     removeArticle
+  )
+  .get(
+    '/:slug/comments/:commentId/reactions',
+    verifyToken,
+    validator('commentLike'),
+    checkValidationResult,
+    likeComment
   );
 
 router.get(

@@ -21,6 +21,7 @@
       "description": "All endpoint about articles"
     }
   ],
+  "schemes": ["https", "http"],
   "paths": {
     "/users/login": {
       "post": {
@@ -119,11 +120,7 @@
             "description": "User email does not exist"
           }
         },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
+        "security": []
       }
     },
     "/auth/facebook": {
@@ -185,17 +182,15 @@
             "description": "User email does not exist"
           }
         },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
+        "security": []
       }
     },
     "/users": {
       "post": {
         "tags": ["Users"],
         "summary": "Post user email for password reset instructions",
+        "produces": ["application/json"],
+        "consumes": ["application/x-www-form-urlencoded"],
         "parameters": [
           {
             "name": "password_reset",
@@ -308,11 +303,7 @@
             "description": "Invalid input"
           }
         },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
+        "security": []
       }
     },
     "/users/update/{userId}": {
@@ -354,17 +345,14 @@
             "description": "Auth token expired"
           }
         },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
+        "security": []
       }
     },
     "/users/{userId}": {
       "delete": {
         "tags": ["Users"],
         "summary": "POST API endpoint for Admin to delete user",
+        "produces": ["application/json"],
         "parameters": [
           {
             "name": "userId",
@@ -382,11 +370,7 @@
             "description": "Invalid input"
           }
         },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
+        "security": []
       }
     },
     "/users/follows": {
@@ -415,11 +399,7 @@
             "description": "Invalid input"
           }
         },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
+        "security": []
       }
     },
     "/users/follows/{userId}": {
@@ -445,7 +425,8 @@
           "409": {
             "description": "Invalid input"
           }
-        }
+        },
+        "security": []
       }
     },
     "/articles": {
@@ -510,11 +491,7 @@
             "description": "Invalid input"
           }
         },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
+        "security": []
       }
     },
     "/articles/draft": {
@@ -534,11 +511,7 @@
             "description": "Invalid input"
           }
         },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
+        "security": []
       }
     },
     "/articles/publish": {
@@ -558,11 +531,7 @@
             "description": "Invalid input"
           }
         },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
+        "security": []
       }
     },
     "/articles/publish/{userId}": {
@@ -591,14 +560,10 @@
             "description": "Invalid input"
           }
         },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
+        "security": []
       }
     },
-    "/articles/publish/{slug}": {
+    "/articles/{slug}/publish": {
       "put": {
         "tags": ["Articles"],
         "summary": "PUT API endpoint for publishing an article",
@@ -624,14 +589,10 @@
             "description": "Invalid input"
           }
         },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
+        "security": []
       }
     },
-    "/articles/unpublish/{slug}": {
+    "/articles/{slug}/unpublish": {
       "put": {
         "tags": ["Articles"],
         "summary": "PUT API endpoint for unpublishing an article",
@@ -657,11 +618,7 @@
             "description": "Invalid input"
           }
         },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
+        "security": []
       }
     },
     "/articles/{slug}": {
@@ -690,11 +647,7 @@
             "description": "Invalid input"
           }
         },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
+        "security": []
       },
       "put": {
         "tags": ["Articles"],
@@ -752,11 +705,7 @@
             "description": "Invalid input"
           }
         },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
+        "security": []
       },
       "delete": {
         "tags": ["Articles"],
@@ -783,11 +732,7 @@
             "description": "Invalid input"
           }
         },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
+        "security": []
       }
     },
     "/articles/{slug}/comments": {
@@ -836,11 +781,7 @@
             "description": "Auth token expired"
           }
         },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
+        "security": []
       },
       "get": {
         "tags": ["Articles"],
@@ -864,11 +805,7 @@
             "description": "article not found"
           }
         },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
+        "security": []
       }
     },
     "/articles/{slug}/comments/{id}": {
@@ -901,11 +838,35 @@
             "description": "article not found"
           }
         },
-        "security": [
+        "security": []
+      },
+      "get": {
+        "tags": ["Articles"],
+        "summary": "API endpoint to view specific comment record",
+        "parameters": [
           {
-            "JWT": []
+            "name": "slug",
+            "in": "path",
+            "description": "Article slug",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "comment ID",
+            "required": true,
+            "type": "integer"
           }
-        ]
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "404": {
+            "description": "Comment does not exist"
+          }
+        }
       }
     },
     "/articles/ratings": {
@@ -976,11 +937,7 @@
             "description": "Invalid input"
           }
         },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
+        "security": []
       }
     },
     "/articles/{slug}/remove-article": {
@@ -1009,309 +966,132 @@
             "description": "Invalid input"
           }
         },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      }
-    }
-  },
-  "/users/": {
-    "put": {
-      "tags": ["Users"],
-      "summary": "API endpoint for users to update their profile details",
-      "produces": ["application/json"],
-      "consumes": ["application/x-www-form-urlencoded", "multipart/form-data"],
-      "parameters": [
-        {
-          "name": "firstName",
-          "in": "formData",
-          "description": "The new user's firstname",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "name": "lastName",
-          "in": "formData",
-          "description": "The new user's lastname",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "name": "userName",
-          "in": "formData",
-          "description": "The new username of the user",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "name": "bio",
-          "in": "formData",
-          "description": "biography of the user",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "name": "image",
-          "in": "formData",
-          "description": "user profile photo",
-          "required": false,
-          "type": "file"
-        }
-      ],
-      "responses": {
-        "200": {
-          "description": "successful operation"
-        },
-        "401": {
-          "description": "Not authorized"
-        },
-        "403": {
-          "description": "Auth token not supplied"
-        },
-        "404": {
-          "description": "User account does not exist"
-        },
-        "409": {
-          "description": "Username has already been taken"
-        },
-        "500": {
-          "description": "Auth token expired"
-        }
-      },
-      "security": [
-        {
-          "JWT": []
-        }
-      ]
-    }
-  },
-  "/profiles/{userName}": {
-    "get": {
-      "tags": ["Profiles"],
-      "summary": "API endpoint to view user profile",
-      "parameters": [
-        {
-          "name": "userName",
-          "in": "path",
-          "description": "username of the user to be viewed",
-          "required": true,
-          "type": "string"
-        }
-      ],
-      "responses": {
-        "200": {
-          "description": "successful operation"
-        },
-        "404": {
-          "description": "User does not exist"
-        }
-      }
-    }
-  },
-  "/articles/{slug}/comments/{id}": {
-    "get": {
-      "tags": ["Articles"],
-      "summary": "API endpoint to view specific comment record",
-      "parameters": [
-        {
-          "name": "slug",
-          "in": "path",
-          "description": "Article slug",
-          "required": true,
-          "type": "string"
-        },
-        {
-          "name": "id",
-          "in": "path",
-          "description": "comment ID",
-          "required": true,
-          "type": "integer"
-        }
-      ],
-      "responses": {
-        "200": {
-          "description": "successful operation"
-        },
-        "404": {
-          "description": "Comment does not exist"
-        }
-      }
-    }
-  },
-  "/articles/{slug}/comments": {
-    "get": {
-      "tags": ["Articles"],
-      "summary": "API endpoint to view all comments for an article",
-      "parameters": [
-        {
-          "name": "slug",
-          "in": "path",
-          "description": "Article slug",
-          "required": true,
-          "type": "string"
-        }
-      ],
-      "responses": {
-        "200": {
-          "description": "successful operation"
-        },
-        "404": {
-          "description": "Article does not exist"
-        }
-      }
-    }
-  },
-  "/articles/{slug}/comments/{id}/history": {
-    "get": {
-      "tags": ["Articles"],
-      "summary": "API endpoint to view the edit history of a comment",
-      "parameters": [
-        {
-          "name": "slug",
-          "in": "path",
-          "description": "Article slug",
-          "required": true,
-          "type": "string"
-        },
-        {
-          "name": "id",
-          "in": "path",
-          "description": "comment ID",
-          "required": true,
-          "type": "integer"
-        }
-      ],
-      "responses": {
-        "200": {
-          "description": "successful operation"
-        },
-        "404": {
-          "description": "Comment does not exist"
-        }
-      }
-    }
-  },
-  "/articles/{slug}/comments/{id}/edit": {
-    "patch": {
-      "tags": ["Articles"],
-      "summary": "API endpoint to edit a comment",
-      "consumes": ["application/x-www-form-urlencoded"],
-      "parameters": [
-        {
-          "name": "slug",
-          "in": "path",
-          "description": "Article slug",
-          "required": true,
-          "type": "string"
-        },
-        {
-          "name": "id",
-          "in": "path",
-          "description": "comment ID",
-          "required": true,
-          "type": "integer"
-        },
-        {
-          "name": "comment",
-          "in": "formData",
-          "description": "new comment",
-          "required": true,
-          "type": "string"
-        }
-      ],
-      "responses": {
-        "200": {
-          "description": "Comment updated successfully"
-        },
-        "400": {
-          "description": "Comment cannot be empty"
-        },
-        "403": {
-          "description": "You don't have permission to edit this comment"
-        },
-        "404": {
-          "description": "Comment does not exist"
-        }
+        "security": []
       }
     },
-    "components": {
-      "schemas": {
-        "AuthenticationInfo": {
-          "type": "object",
-          "properties": {
-            "email": {
-              "type": "string"
-            },
-            "password": {
-              "type": "string"
-            },
-            "token": {
-              "type": "string"
-            }
-          }
-        },
-        "badRequestResponse": {
-          "type": "object",
-          "properties": {
-            "status": {
-              "type": "string",
-              "example": "error"
-            },
-            "errors": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "msg": {
-                    "type": "string",
-                    "example": "please enter your firstName"
-                  },
-                  "params": {
-                    "type": "string",
-                    "example": "firstName"
-                  },
-                  "location": {
-                    "type": "string",
-                    "example": "body"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "badAuthenticationError": {
-          "type": "object",
-          "properties": {
-            "status": {
-              "type": "string",
-              "example": "error"
-            },
-            "error": {
-              "type": "object",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "message": {
-                    "type": "string",
-                    "example": "Authentication invalid"
-                  },
-                  "body": {
-                    "type": "string",
-                    "example": "Invalid or expired Token"
-                  }
-                }
-              }
-            }
+    "/profiles/{userName}": {
+      "get": {
+        "tags": ["Profiles"],
+        "summary": "API endpoint to view user profile",
+        "parameters": [
+          {
+            "name": "userName",
+            "in": "path",
+            "description": "username of the user to be viewed",
+            "required": true,
+            "type": "string"
           }
         ],
         "responses": {
-          "400": {
-            "description": "Error in input"
+          "200": {
+            "description": "successful operation"
           },
-          "401": {
-            "description": "Error with authentication"
+          "404": {
+            "description": "User does not exist"
+          }
+        }
+      }
+    },
+    "/articles/{slug}/comments/{id}/history": {
+      "get": {
+        "tags": ["Articles"],
+        "summary": "API endpoint to view the edit history of a comment",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "description": "Article slug",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "comment ID",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "404": {
+            "description": "Comment does not exist"
+          }
+        }
+      }
+    },
+    "/articles/{slug}/comments/{id}/edit": {
+      "patch": {
+        "tags": ["Articles"],
+        "summary": "API endpoint to edit a comment",
+        "consumes": ["application/x-www-form-urlencoded"],
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "description": "Article slug",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "comment ID",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "comment",
+            "in": "formData",
+            "description": "new comment",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Comment updated successfully"
+          },
+          "400": {
+            "description": "Comment cannot be empty"
+          },
+          "403": {
+            "description": "You don't have permission to edit this comment"
+          },
+          "404": {
+            "description": "Comment does not exist"
+          }
+        }
+      }
+    },
+    "/articles/{slug}/comments/{id}/reactions": {
+      "get": {
+        "tags": ["Articles"],
+        "summary": "API endpoint to like and unlike a comment on an article",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "description": "Article slug",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "comment ID",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "404": {
+            "description": "Comment does not exist"
           }
         }
       }
