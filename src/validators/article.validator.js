@@ -31,6 +31,27 @@ const ArticleValidator = {
             .matches('[-, +, %]')
             .withMessage('User ID must be a number')
         ];
+      case 'rating':
+        return [
+          check('articleId')
+            .isNumeric()
+            .isInt({ gt: 0 })
+            .withMessage('Article ID must be greater than 0')
+            .not()
+            .matches('[-, +, %]')
+            .withMessage('Article ID must be a number'),
+          check('rating')
+            .isNumeric()
+            .isInt({ gt: 0 })
+            .withMessage('Rating must be greater than 0')
+            .not()
+            .matches('[-, +, %]')
+            .withMessage('Rating must be a number'),
+          check('rating')
+            .not()
+            .isInt({ gt: 5 })
+            .withMessage('Rating cannot be greater than 5')
+        ];
       default:
     }
   },

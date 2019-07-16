@@ -461,6 +461,7 @@ describe('Auth API endpoints', () => {
           './src/tests/testFiles/default_avatar.png',
           'image.jpeg'
         );
+
       expect(response).to.have.status(200);
       expect(response.body.data).to.have.keys(
         'bio',

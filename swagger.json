@@ -496,6 +496,40 @@
       }
     }
   },
+  "/articles/ratings": {
+    "post": {
+      "tags": ["Articles"],
+      "summary": "Post endpoint to rate an article",
+      "parameters": [
+        {
+          "name": "articleId",
+          "in": "formData",
+          "description": "user Id of the user to view their followers",
+          "required": true,
+          "type": "integer"
+        },
+        {
+          "name": "rating",
+          "in": "formData",
+          "description": "Rating for the article between 1 - 5",
+          "required": true,
+          "type": "integer",
+          "example": "4"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "successful operation"
+        },
+        "400": {
+          "description": "User not found"
+        },
+        "409": {
+          "description": "Invalid input"
+        }
+      }
+    }
+  },
   "securityDefinitions": {
     "JWT": {
       "type": "apiKey",

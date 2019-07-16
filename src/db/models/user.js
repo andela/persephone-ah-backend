@@ -120,10 +120,23 @@ export default (sequelize, DataTypes) => {
       foreignKey: 'friendUserId',
       as: 'followersfriend'
     });
-    User.hasMany(models.Article, {
-      foreignKey: 'userId',
-      as: 'articles'
-    });
+    // associations can be defined here
+    User.hasMany(
+      models.Article,
+      {
+        foreignKey: 'userId',
+        as: 'author'
+      },
+      { onDelete: 'cascade' }
+    );
+    User.hasMany(
+      models.Rating,
+      {
+        foreignKey: 'userId',
+        as: 'rater'
+      },
+      { onDelete: 'cascade' }
+    );
   };
   return User;
 };

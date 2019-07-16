@@ -8,7 +8,8 @@ import {
   getArticleData,
   Response,
   getUser,
-  createUser
+  createUser,
+  mockCreateArticle
 } from '../utils/db.utils';
 import articleController from '../../controllers/article.controller';
 import app from '../../index';
@@ -28,6 +29,8 @@ const {
 } = articleController;
 chai.use(chaiHttp);
 chai.use(sinonChai);
+
+const { API_VERSION } = process.env;
 
 const { expect } = chai;
 
@@ -916,6 +919,126 @@ describe('User API endpoints', () => {
       expect(response.body.status).to.be.equal('fail');
       expect(response.body.data).to.be.an('array');
       expect(response.body.data[0].msg).to.be.equal('Invalid value');
+    });
+  });
+
+  describe('/articles/ratings', () => {
+    before(async () => {
+      const user = getUser();
+
+      const signupResponse = await chai
+        .request(app)
+        .post(`${API_VERSION}/users/signup`)
+        .send(user);
+      userToken = signupResponse.body.data.token;
+    });
+    const endpoint = `${API_VERSION}/articles/ratings`;
+
+    describe('# error and success article rating case', () => {
+      let article;
+
+      it('should create a new rating for a specified article', async () => {
+        const user = getUser();
+
+        const userResult = await createUser(user);
+
+        article = await mockCreateArticle(userResult.id);
+
+        const response = await chai
+          .request(app)
+          .post(endpoint)
+          .set({ Authorization: `Bearer ${userToken}` })
+          .send({ articleId: article.id, rating: 4 });
+
+        expect(response).to.have.status(201);
+        expect(response.body.status).to.equal('success');
+        expect(response.body.data.articleId).to.equal(article.id);
+      });
+
+      it('should return error that user can not rate more than once', async () => {
+        const response = await chai
+          .request(app)
+          .post(endpoint)
+          .set({ Authorization: `Bearer ${userToken}` })
+          .send({ articleId: article.id, rating: 4 });
+
+        expect(response).to.have.status(400);
+        expect(response.body.status).to.equal('fail');
+        expect(response.body.data).to.equal(
+          'you are only allowed to rate this article once'
+        );
+      });
+    });
+
+    it('should return error for invalid token', async () => {
+      const user = getUser();
+
+      const userResult = await createUser(user);
+
+      const article = await mockCreateArticle(userResult.id);
+
+      const response = await chai
+        .request(app)
+        .post(endpoint)
+        .set({ Authorization: `Bearer ${userToken}touchtoken` })
+        .send({ articleId: article.id, rating: 0 });
+
+      expect(response).to.have.status(400);
+      expect(response.body.status).to.equal(400);
+      expect(response.body.error).to.equal('invalid signature');
+    });
+
+    it('should return error for rating that is less than one', async () => {
+      const user = getUser();
+
+      const userResult = await createUser(user);
+
+      const article = await mockCreateArticle(userResult.id);
+
+      const response = await chai
+        .request(app)
+        .post(endpoint)
+        .set({ Authorization: `Bearer ${userToken}` })
+        .send({ articleId: article.id, rating: 0 });
+
+      expect(response).to.have.status(400);
+      expect(response.body.status).to.equal('fail');
+      expect(response.body.data[0].msg).to.equal(
+        'Rating must be greater than 0'
+      );
+    });
+
+    it('should return error for no token provided', async () => {
+      const user = getUser();
+
+      const userResult = await createUser(user);
+
+      const article = await mockCreateArticle(userResult.id);
+
+      const response = await chai
+        .request(app)
+        .post(endpoint)
+        .send({ articleId: article.id, rating: 4 });
+
+      expect(response).to.have.status(400);
+      expect(response.body.status).to.equal(400);
+      expect(response.body.error).to.equal(
+        'No token provided, you do not have access to this page'
+      );
+    });
+
+    it('should return error for article id that is less than 1', async () => {
+      const response = await chai
+        .request(app)
+        .post(endpoint)
+        .set({ Authorization: `Bearer ${userToken}` })
+        .send({ articleId: 0, rating: 4 });
+
+      expect(response).to.have.status(400);
+      expect(response.body.status).to.equal('fail');
+      expect(response.body.data[0].msg).to.equal(
+        'Article ID must be greater than 0'
+      );
     });
   });
 });

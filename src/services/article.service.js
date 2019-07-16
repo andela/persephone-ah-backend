@@ -3,8 +3,7 @@ import moment from 'moment';
 import { upload } from '../helpers/image.helper';
 import model from '../db/models';
 
-const { Comment, Article, User, Follow } = model;
-
+const { Comment, Article, User, Follow, Rating } = model;
 /** Istanbul ignore next */
 /**
  * @method createArticleService
@@ -452,4 +451,81 @@ export const deleteCommentService = async (slug, id, userId) => {
   const response = getAllArticleCommentsService(article.slug);
 
   return response;
+};
+
+/**
+ * @method updateArticleRating
+ * - Helps update the article table
+ *
+ * @param {integer} articleId - Id of the article to be rated
+ * @param {integer} rating the rating value from from 1 - 5
+ * @param {integer} userId - id of the user rating the article
+ *
+ * @return {Promise}
+ */
+
+const updateArticlesRating = async (
+  sumOfRating,
+  numberOfRating,
+  averageRating,
+  id
+) => {
+  const article = await Article.findByPk(id);
+  return article.update({
+    sumOfRating,
+    numberOfRating,
+    averageRating
+  });
+};
+
+/**
+ * @method articleRatingsService
+ * @description Helps handle the ratings endpoint
+ * Route: POST: /articles/ratings
+ *
+ * @param {integer} articleId - Id of the article to be rated
+ * @param {integer} rating the rating value from from 1 - 5
+ * @param {integer} userId - id of the user rating the article
+ *
+ * @return {Promise}
+ */
+
+export const articleRatingsService = async (articleId, rating, userId) => {
+  rating = parseInt(rating, 10);
+  try {
+    const article = await Article.findByPk(articleId);
+
+    if (!article) {
+      return 'The article specified does not exist';
+    }
+
+    let { sumOfRating, numberOfRating, averageRating } = article.dataValues;
+
+    sumOfRating = sumOfRating ? sumOfRating + rating : rating;
+    numberOfRating = numberOfRating ? numberOfRating + 1 : 1;
+    averageRating = averageRating
+      ? parseFloat((sumOfRating / numberOfRating).toFixed(1))
+      : sumOfRating;
+
+    const ratings = await Rating.findOne({ where: { userId, articleId } });
+    if (ratings) {
+      return null;
+    }
+
+    const result = await Rating.create({
+      userId,
+      articleId,
+      rating
+    });
+
+    await updateArticlesRating(
+      sumOfRating,
+      numberOfRating,
+      averageRating,
+      articleId
+    );
+    return result;
+  } catch (error) {
+    return error;
+  }
 };

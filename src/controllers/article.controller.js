@@ -11,7 +11,8 @@ import {
   publishArticleService,
   unPublishArticleService,
   updateArticleService,
-  deleteArticleService
+  deleteArticleService,
+  articleRatingsService
 } from '../services/article.service';
 import Helper from '../services/helper';
 import models from '../db/models';
@@ -336,5 +337,36 @@ export default {
     } catch (error) {
       return Helper.failResponse(response, 400, error);
     }
+  },
+
+  /**
+   * @method ratings
+   * @description handles the logic of create article
+   * Route: POST: /articles/ratings
+   * @param {Object} request request object
+   * @param {Object} response request object
+   * @returns {Response} response object
+   */
+
+  async ratings(request, response) {
+    const { articleId, rating } = request.body;
+    const userId = request.user.id;
+
+    const result = await articleRatingsService(articleId, rating, userId);
+
+    if (result === 'The article specified does not exist') {
+      return Helper.failResponse(response, 404, {
+        message: 'The article specified does not exist'
+      });
+    }
+
+    if (!result) {
+      return Helper.failResponse(
+        response,
+        400,
+        'you are only allowed to rate this article once'
+      );
+    }
+    return Helper.successResponse(response, 201, result);
   }
 };
