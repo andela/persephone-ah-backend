@@ -195,7 +195,10 @@ export default {
     }
     return failResponse(response, 500, 'internal error');
   },
+<<<<<<< HEAD
 
+=======
+>>>>>>> 5ae09b0... feature(reaction): User can like or dilikes an article
   /** @method verifyEmail
    * - It verifies user email
    * Route: POST: /users/verify/:confirmEmailCode
@@ -215,6 +218,7 @@ export default {
           message: 'No verification token provided'
         });
       }
+<<<<<<< HEAD
       const isBlackListed = await isTokenInBlackListService(confirmEmailCode);
       if (isBlackListed) {
         return Helper.failResponse(response, 400, {
@@ -222,6 +226,14 @@ export default {
         });
       }
       const user = await isVerifyUser(confirmEmailCode);
+=======
+      const user = await isVerifyUser(confirmEmailCode);
+      if (!user) {
+        return Helper.failResponse(response, 400, {
+          message: 'You have provided an invalid token'
+        });
+      }
+>>>>>>> 5ae09b0... feature(reaction): User can like or dilikes an article
       await user.update({ confirmEmailCode: null });
 
       return Helper.successResponse(response, 200, {

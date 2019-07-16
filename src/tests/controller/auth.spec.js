@@ -7,13 +7,11 @@ import { getUserData, Response, createUser, getUser } from '../utils/db.utils';
 import authenticationController from '../../controllers/auth.controllers';
 import AuthenticationMiddleWare from '../../middlewares/profileUpdateCheck.middleware';
 import app from '../../index';
-import models from '../../db/models';
 import { getPasswordResetToken } from '../../helpers/jwt.helper';
 import * as imageHelper from '../../helpers/image.helper';
 
 dotenv.config();
 
-const { User } = models;
 const { signUp } = authenticationController;
 chai.use(chaiHttp);
 chai.use(sinonChai);

@@ -24,6 +24,7 @@ export const createArticleService = async data => {
   const uploadedImage = [];
   const images = data.files;
   const imagePaths = [];
+
   const loopUpload = async image => {
     // eslint-disable-next-line no-restricted-syntax
     for (const imageItem of image) {
