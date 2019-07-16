@@ -195,6 +195,38 @@ export const getUserFollowersService = async userId => {
   if (followers.length === 0) {
     return 'User has no follower';
   }
-
   return followers;
+};
+
+/**
+ * Queries the database to get a user profile
+ * @method getUserProfile
+ * Route: GET profiles/:username
+ * @param {string} username
+ * @returns {object|boolean} response object or false if no user is found
+ */
+
+export const getUserProfile = async (username, id) => {
+  let isfollowing = false;
+  const user = await User.findOne({
+    where: { userName: username }
+  });
+  if (user) {
+    const follower = await Follow.findOne({
+      where: { friendUserId: user.dataValues.id, userId: id }
+    });
+    if (follower) {
+      isfollowing = follower.dataValues.isFollowing;
+    }
+    const response = {
+      firstName: user.dataValues.firstName,
+      lastName: user.dataValues.lastName,
+      userName: username,
+      bio: user.dataValues.bio,
+      image: user.dataValues.image,
+      following: isfollowing
+    };
+    return response;
+  }
+  return false;
 };

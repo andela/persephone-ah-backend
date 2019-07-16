@@ -1,5 +1,6 @@
+import fs from 'fs';
 import models from '../db/models';
-import upload from '../helpers/image.helper';
+import { upload } from '../helpers/image.helper';
 
 const { Article, User } = models;
 /** Istanbul ignore next */
@@ -18,7 +19,7 @@ export const createArticleService = async data => {
 
   const uploadedImage = [];
   const images = data.files;
-
+  const imagePaths = [];
   const loopUpload = async image => {
     // eslint-disable-next-line no-restricted-syntax
     for (const imageItem of image) {
@@ -27,11 +28,15 @@ export const createArticleService = async data => {
       // eslint-disable-next-line no-await-in-loop
       const imageResponse = await upload(imagePath, imageUniqueName, 'post');
       uploadedImage.push(imageResponse.secure_url);
+      imagePaths.push(imagePath);
     }
   };
 
   if (images) {
     await loopUpload(images);
+    imagePaths.forEach(path => {
+      fs.unlinkSync(path);
+    });
   }
   const finalUploads = JSON.stringify(Object.assign({}, uploadedImage));
   const article = await Article.create({

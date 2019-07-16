@@ -4,7 +4,8 @@ import {
   adminDeleteUserService,
   adminUpdateUserService,
   followUserService,
-  getUserFollowersService
+  getUserFollowersService,
+  getUserProfile
 } from '../services/user.service';
 import { isUserExist } from '../services/auth.service';
 import Helper from '../services/helper';
@@ -160,11 +161,36 @@ const getFollowers = async (request, response, next) => {
   }
 };
 
+/**
+ * @method viewProfile
+ * Route: GET profiles/:username
+ * Handles the logic to view a user's profile
+ * @param {object} request
+ * @param {object} response
+ * @returns {object} API response object
+ */
+
+const viewProfile = async (request, response, next) => {
+  try {
+    const { username } = request.params;
+    const user = await getUserProfile(username, request.user.id);
+    if (!user) {
+      return Helper.failResponse(response, 404, {
+        message: 'User does not exist'
+      });
+    }
+    return Helper.successResponse(response, 200, user);
+  } catch (error) {
+    return next(error);
+  }
+};
+
 export default {
   getUsers,
   adminCreateUser,
   adminUpdateUser,
   adminDeleteUser,
   followUser,
-  getFollowers
+  getFollowers,
+  viewProfile
 };
