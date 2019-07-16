@@ -115,6 +115,12 @@ export const findUserById = async userId => User.findByPk(userId);
 
 /**
  * @method isUserExist
+ * - it persist a new user to the database
+ * - returns a promise
+export const findUserById = async userId => User.findByPk(userId);
+
+/**
+ * @method isUserExist
  * - it check if user exist in the database
  * - returns a promise
  *
@@ -231,6 +237,7 @@ cron.schedule('0 0 * * *', () => {
     });
   });
 });
+
 /**
  *  @method isVerifyUser
  * - it check if user confimation code is in the database

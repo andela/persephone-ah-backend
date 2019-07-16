@@ -60,6 +60,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         default: 0
       },
+      likesCount: {
+        type: DataTypes.INTEGER,
+        default: 0
+      },
       isPublished: {
         type: DataTypes.BOOLEAN,
         default: false

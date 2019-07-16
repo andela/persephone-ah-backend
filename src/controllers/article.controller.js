@@ -36,7 +36,7 @@ export default {
       const article = await createArticleService(request);
       return Helper.successResponse(response, 201, article);
     } catch (error) {
-      return Helper.failResponse(response, 500, error);
+      return Helper.failResponse(response, 500, error.message);
     }
   },
 

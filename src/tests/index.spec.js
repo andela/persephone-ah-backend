@@ -12,3 +12,4 @@ import './controller/social.spec';
 import './helpers/pagination.spec';
 import './services/user-service.spec';
 import './validators/validator.spec';
+import './controller/reaction.spec';
