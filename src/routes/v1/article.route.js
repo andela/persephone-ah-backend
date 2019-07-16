@@ -7,9 +7,10 @@ import upload from '../../middlewares/imageUpload.middleware';
 import commentController from '../../controllers/comment.controller';
 import commentsCheck from '../../middlewares/commentsCheck.middleware';
 import reportController from '../../controllers/report.controller';
+import { pageViewCount } from '../../middlewares/pageViewCount.middleware';
 
 const { validator, checkValidationResult } = articleValidator;
-const { verifyToken, adminCheck } = authorization;
+const { verifyToken, isAuthor, adminCheck } = authorization;
 
 const {
   validator: paginationValidator,
@@ -66,6 +67,8 @@ router
     ValidationResult,
     getAllPublishedArticles
   )
+  .get('/:slug', isAuthor, pageViewCount, getArticle)
+  .get('/', getAllPublishedArticles)
   .put('/publish/:slug', verifyToken, publishArticle)
   .put('/unpublish/:slug', verifyToken, unPublishArticle)
   .put('/:slug', verifyToken, upload.array('image'), updateArticle)
