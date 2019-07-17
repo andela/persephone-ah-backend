@@ -241,5 +241,8 @@ cron.schedule('0 0 * * *', () => {
  * @returns {Promise}
  */
 
-export const isVerifyUser = async emailConfirmCode =>
-  User.findOne({ where: { confirmEmailCode: emailConfirmCode } });
+export const isVerifyUser = async emailConfirmCode => {
+  await saveToBlackListServices(emailConfirmCode, 'emailConfirmationCode');
+  const user = User.findOne({ where: { confirmEmailCode: emailConfirmCode } });
+  return user;
+};

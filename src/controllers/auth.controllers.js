@@ -6,6 +6,7 @@ import {
   forgotPasswordServices,
   passwordResetServices,
   saveToBlackListServices,
+  isTokenInBlackListService,
   isVerifyUser
 } from '../services/auth.service';
 import Helper from '../services/helper';
@@ -214,12 +215,13 @@ export default {
           message: 'No verification token provided'
         });
       }
-      const user = await isVerifyUser(confirmEmailCode);
-      if (!user) {
+      const isBlackListed = await isTokenInBlackListService(confirmEmailCode);
+      if (isBlackListed) {
         return Helper.failResponse(response, 400, {
-          message: 'You have provided an invalid token'
+          message: 'This token has expired'
         });
       }
+      const user = await isVerifyUser(confirmEmailCode);
       await user.update({ confirmEmailCode: null });
 
       return Helper.successResponse(response, 200, {
