@@ -18,6 +18,7 @@ import app from '../../index';
 import * as imageHelper from '../../helpers/image.helper';
 import models from '../../db/models';
 
+const { User } = models;
 const {
   createArticle,
   getArticle,
@@ -68,23 +69,29 @@ describe('Article API endpoints', () => {
     await createUser(userB);
     authorUserId = author.dataValues.id;
   });
-  before('sign up a random user', async () => {
-    const randomUser = getUser();
-    await chai
-      .request(app)
-      .post('/api/v1/users/signup')
-      .send(randomUser);
-  });
-  before(done => {
-    const randomUser = getUser();
-    chai
+
+  before(async () => {
+    const verifiedUser = {
+      firstName: 'verified',
+      lastName: 'user',
+      password: 'Sewtywei12',
+      email: 'user@verified.com'
+    };
+    const response = await chai
       .request(app)
       .post(`${process.env.API_VERSION}/users/signup`)
-      .send(randomUser)
-      .end((error, response) => {
-        userToken = response.body.data.token;
-        done();
-      });
+      .send(verifiedUser);
+
+    userToken = response.body.data.token;
+
+    const { confirmEmailCode } = await User.findOne({
+      where: { email: verifiedUser.email }
+    });
+    // verify this user
+    await chai
+      .request(app)
+      .get(`${process.env.API_VERSION}/users/verify/${confirmEmailCode}`)
+      .set({ Authorization: `Bearer ${userToken}` });
   });
 
   before(done => {
@@ -287,28 +294,6 @@ describe('Article API endpoints', () => {
             'this is a description this is a description'
           );
           createdArticle = response.body.data;
-          done();
-        });
-    });
-
-    it('Should return an error if request is empty', done => {
-      chai
-        .request(app)
-        .post(`${process.env.API_VERSION}/articles`)
-        .send({})
-        .set({ Authorization: `Bearer ${userToken}` })
-        .end((error, response) => {
-          expect(response.status).to.equal(400);
-          expect(response).to.be.an('Object');
-          expect(response.body).to.have.property('status');
-          expect(response.body).to.have.property('data');
-          expect(response.body.status).to.equal('fail');
-          expect(response.body.data[0].msg).to.equal(
-            'Please enter your title for this post'
-          );
-          expect(response.body.data[1].msg).to.equal(
-            'Please enter valid content for this article'
-          );
           done();
         });
     });

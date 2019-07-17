@@ -13,10 +13,9 @@ import {
 } from '../utils/db.utils';
 import userController from '../../controllers/user.controller';
 import app from '../../index';
-import models from '../../db/models';
 
 dotenv.config();
-const { User, Comment, Article, Rating, Follow } = models;
+
 const { expect } = chai;
 
 chai.use(chaiHttp);
@@ -25,11 +24,6 @@ let superAdminToken;
 
 describe('POST /users/create_admin', () => {
   before(async () => {
-    await Rating.destroy({ where: {}, force: true });
-    await Comment.destroy({ where: {}, force: true });
-    await Article.destroy({ where: {}, force: true });
-    await Follow.destroy({ where: {}, force: true });
-    await User.destroy({ where: {}, force: true });
     await createSuperAdmin();
   });
 
@@ -42,7 +36,6 @@ describe('POST /users/create_admin', () => {
         password: 'author40'
       });
     superAdminToken = response.body.data.token;
-    // console.log(response.body);
     expect(response).to.have.status(200);
     expect(response).to.be.an('object');
     expect(response.body.data.email).to.equal('koya@gmail.com');
@@ -87,13 +80,6 @@ describe('POST /users/create_admin', () => {
   });
 });
 describe('DELETE /users/:userId', () => {
-  before(async () => {
-    //   await Comment.destroy({ where: {}, cascade: true });
-    //   await Article.destroy({ where: {}, cascade: true });
-    //   await User.destroy({ where: {}, force: true });
-    // await createSuperAdmin();
-  });
-
   it('Should log user in successfully', async () => {
     const response = await chai
       .request(app)
@@ -147,13 +133,6 @@ describe('DELETE /users/:userId', () => {
   });
 });
 describe('PUT /users/update/:userId', () => {
-  // before(async () => {
-  //   await Comment.destroy({ where: {}, cascade: true });
-  //   await Article.destroy({ where: {}, cascade: true });
-  //   await User.destroy({ where: {}, force: true });
-  //   await createSuperAdmin();
-  // });
-
   it('Should log user in successfully', async () => {
     const response = await chai
       .request(app)

@@ -22,29 +22,6 @@ let userToken;
 let secondUserToken;
 let deletedUserToken;
 let mockImage;
-let loginUser;
-
-before(async () => {
-  loginUser = getUser();
-  await createUser(loginUser);
-});
-
-before(done => {
-  chai
-    .request(app)
-    .post(`${process.env.API_VERSION}/users/signup`)
-    .send({
-      firstName: 'tobe',
-      lastName: 'deleted',
-      email: 'deleted@user.com',
-      password: 'NewUser20'
-    })
-    .end((err, res) => {
-      const { token } = res.body.data;
-      deletedUserToken = token;
-      done(err);
-    });
-});
 
 const { expect } = chai;
 
@@ -246,23 +223,26 @@ describe('Auth API endpoints', () => {
   });
   describe('POST /users/login', () => {
     it('Should log user in successfully', async () => {
+      const user = getUser();
+      await createUser(user);
       const response = await chai
         .request(app)
         .post(`${process.env.API_VERSION}/users/login`)
-        .send(loginUser);
-      console.log();
+        .send(user);
       expect(response).to.have.status(200);
       expect(response).to.be.an('object');
-      expect(response.body.data.email).to.equal(loginUser.email);
+      expect(response.body.data.email).to.equal(user.email);
     });
 
     it('should return error for a wrong email', async () => {
+      const user = getUser();
+      await createUser(user);
       const response = await chai
         .request(app)
         .post(`${process.env.API_VERSION}/users/login`)
         .send({
           email: 'wrong@email.com',
-          password: loginUser.password
+          password: user.password
         });
       expect(response).to.have.status(400);
       expect(response).to.be.a('object');
@@ -270,11 +250,13 @@ describe('Auth API endpoints', () => {
     });
 
     it('should return error for a wrong password', async () => {
+      const user = getUser();
+      await createUser(user);
       const response = await chai
         .request(app)
         .post(`${process.env.API_VERSION}/users/login`)
         .send({
-          email: loginUser.email,
+          email: user.email,
           password: 'limah000'
         });
       expect(response).to.have.status(400);
@@ -707,5 +689,21 @@ describe('Auth API endpoints', () => {
           );
         });
     });
+  });
+});
+describe('GET /users/verify/:confirmEmailCode', () => {
+  it('Should verify user successfully', async () => {
+    const userDetails = getUser();
+    const { confirmEmailCode } = await createUser(userDetails);
+    chai
+      .request(app)
+      .get(`/api/v1/users/verify/${confirmEmailCode}`)
+      .end((error, response) => {
+        expect(response.status).to.equal(200);
+        expect(response.body.status).to.equal('success');
+        expect(response.body.data.message).to.equal(
+          'User successfully verified'
+        );
+      });
   });
 });
