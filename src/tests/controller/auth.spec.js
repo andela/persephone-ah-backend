@@ -22,6 +22,29 @@ let userToken;
 let secondUserToken;
 let deletedUserToken;
 let mockImage;
+let loginUser;
+
+before(async () => {
+  loginUser = getUser();
+  await createUser(loginUser);
+});
+
+before(done => {
+  chai
+    .request(app)
+    .post(`${process.env.API_VERSION}/users/signup`)
+    .send({
+      firstName: 'tobe',
+      lastName: 'deleted',
+      email: 'deleted@user.com',
+      password: 'NewUser20'
+    })
+    .end((err, res) => {
+      const { token } = res.body.data;
+      deletedUserToken = token;
+      done(err);
+    });
+});
 
 const { expect } = chai;
 
@@ -223,30 +246,23 @@ describe('Auth API endpoints', () => {
   });
   describe('POST /users/login', () => {
     it('Should log user in successfully', async () => {
-      const user = getUser();
-
-      await createUser(user);
-
       const response = await chai
         .request(app)
         .post(`${process.env.API_VERSION}/users/login`)
-        .send(user);
+        .send(loginUser);
+      console.log();
       expect(response).to.have.status(200);
       expect(response).to.be.an('object');
-      expect(response.body.data.email).to.equal(user.email);
+      expect(response.body.data.email).to.equal(loginUser.email);
     });
 
     it('should return error for a wrong email', async () => {
-      const user = getUser();
-
-      await createUser(user);
-
       const response = await chai
         .request(app)
         .post(`${process.env.API_VERSION}/users/login`)
         .send({
           email: 'wrong@email.com',
-          password: user.password
+          password: loginUser.password
         });
       expect(response).to.have.status(400);
       expect(response).to.be.a('object');
@@ -254,13 +270,11 @@ describe('Auth API endpoints', () => {
     });
 
     it('should return error for a wrong password', async () => {
-      const user = getUser();
-      await createUser(user);
       const response = await chai
         .request(app)
         .post(`${process.env.API_VERSION}/users/login`)
         .send({
-          email: user.email,
+          email: loginUser.email,
           password: 'limah000'
         });
       expect(response).to.have.status(400);

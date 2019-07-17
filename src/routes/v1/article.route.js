@@ -14,7 +14,7 @@ import bookmarksCheckMiddleware from '../../middlewares/bookmarkCheck.middleware
 import reactions from '../../controllers/reaction.controller';
 
 const { validator, checkValidationResult } = articleValidator;
-const { verifyToken, isAuthor, adminCheck } = authorization;
+const { verifyToken, isAuthor, adminCheck, verifyUser } = authorization;
 
 const { articlesLike } = reactions;
 
@@ -49,6 +49,7 @@ const {
   getUserBookmarks,
   removeUserBookmark
 } = bookmarkController;
+
 const { createReport, removeArticle } = reportController;
 const { bookmarkCheck } = bookmarksCheckMiddleware;
 const router = express.Router();
@@ -57,6 +58,7 @@ router
   .post(
     '/',
     verifyToken,
+    verifyUser,
     upload.array('image'),
     validator('create'),
     checkValidationResult,
