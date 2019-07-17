@@ -94,6 +94,7 @@ export default (sequelize, DataTypes) => {
       as: 'author',
       onDelete: 'CASCADE'
     });
+
     Article.hasMany(
       models.Rating,
       {
@@ -111,6 +112,11 @@ export default (sequelize, DataTypes) => {
       as: 'bookmarks',
       foreignKey: 'articleId',
       otherKey: 'userId'
+    });
+    // defines many-to-many association with the tags table
+    Article.belongsToMany(models.Tag, {
+      as: 'Tags',
+      through: 'ArticleTags'
     });
   };
   return Article;

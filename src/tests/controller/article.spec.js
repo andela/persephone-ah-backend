@@ -246,8 +246,36 @@ describe('Article API endpoints', () => {
           done();
         });
     });
+    it('Should successfully create an article with tags', done => {
+      chai
+        .request(app)
+        .post(`${process.env.API_VERSION}/articles`)
+        .set({ Authorization: `Bearer ${userToken}` })
+        .field('title', 'first article')
+        .field('description', 'this is a description')
+        .field('body', 'this is a description this is a description')
+        .field('tag', 'javascript, php, java')
+        .end((error, response) => {
+          expect(response.status).to.equal(201);
+          expect(response).to.be.an('Object');
+          expect(response.body).to.have.property('status');
+          expect(response.body).to.have.property('data');
+          expect(response.body.status).to.equal('success');
+          expect(response.body.data.title).to.equal('first article');
+          expect(response.body.data.description).to.equal(
+            'this is a description'
+          );
+          expect(response.body.data.body).to.equal(
+            'this is a description this is a description'
+          );
+          expect(response.body.data.tagList[0]).to.equal('javascript');
+          expect(response.body.data.tagList[1]).to.equal('php');
+          expect(response.body.data.tagList[2]).to.equal('java');
+          done();
+        });
+    });
 
-    it('Should successfully create an article', done => {
+    it('Should return an error if request is empty', done => {
       chai
         .request(app)
         .post(`${process.env.API_VERSION}/articles`)
@@ -443,6 +471,25 @@ describe('Article API endpoints', () => {
           expect(response.body.status).to.equal(400);
           expect(response.body.error).to.equal(
             'No token provided, you do not have access to this page'
+          );
+          done();
+        });
+    });
+
+    it('Should return an error if user is unauthorized', done => {
+      chai
+        .request(app)
+        .put(`${process.env.API_VERSION}/articles/publish/${thirdArticle.slug}`)
+        .set({ Authorization: `Bearer ${secondUserToken}` })
+        .send(getArticleData())
+        .end((error, response) => {
+          expect(response.status).to.equal(403);
+          expect(response).to.be.an('Object');
+          expect(response.body).to.have.property('status');
+          expect(response.body).to.have.property('data');
+          expect(response.body.status).to.equal('fail');
+          expect(response.body.data.message).to.equal(
+            'Forbidden, you can not publish this resource'
           );
           done();
         });

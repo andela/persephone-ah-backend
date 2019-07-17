@@ -13,7 +13,8 @@ const {
   Follow,
   Rating,
   ArticleReaction,
-  CommentReaction
+  CommentReaction,
+  Tag
 } = model;
 /** Istanbul ignore next */
 /**
@@ -26,15 +27,45 @@ const {
  */
 // eslint-disable-next-line import/prefer-default-export
 export const createArticleService = async data => {
-  const { title, body, description } = data.body;
+  const { title, body, description, tag } = data.body;
   const userId = data.user.id;
   const readTime = await readtime(body);
+  const articleTags = tag
+    ? tag
+        .toLowerCase()
+        .trim()
+        .split(', ')
+    : null;
+  const tagList = [];
+
+  if (articleTags) {
+    articleTags.forEach(async tagItem => {
+      // check if tag exists in the tags table
+      const tagExists = await Tag.findOne({
+        where: {
+          name: tagItem
+        }
+      });
+      // tag exists
+      if (tagExists) {
+        tagList.push(tagExists.id);
+      }
+      // if tag does not exist, create new tag and push to tagList
+      if (!tagExists) {
+        const tagResult = await Tag.create({
+          name: tagItem
+        });
+        tagList.push(tagResult.id);
+      }
+    });
+  }
 
   const uploadedImage = [];
   const images = data.files;
   const imagePaths = [];
 
   const loopUpload = async image => {
+    // for each image in the request files
     // eslint-disable-next-line no-restricted-syntax
     for (const imageItem of image) {
       const imagePath = imageItem.path;
@@ -61,6 +92,9 @@ export const createArticleService = async data => {
     image: finalUploads,
     readTime
   });
+  // set
+  await article.setTags(tagList);
+  article.setDataValue('tagList', articleTags);
   return article;
 };
 
@@ -83,6 +117,12 @@ export const getArticleService = async data => {
         model: User,
         as: 'author',
         attributes: ['firstName', 'lastName', 'image']
+      },
+      {
+        model: Tag,
+        as: 'Tags',
+        attributes: ['name'],
+        through: { attributes: [] }
       }
     ]
   });
@@ -133,6 +173,12 @@ export const userGetDraftArticleService = async data => {
         model: User,
         as: 'author',
         attributes: ['firstName', 'lastName', 'image']
+      },
+      {
+        model: Tag,
+        as: 'Tags',
+        attributes: ['name'],
+        through: { attributes: [] }
       }
     ]
   });
@@ -160,6 +206,12 @@ export const userGetPublishedArticleService = async data => {
         model: User,
         as: 'author',
         attributes: ['firstName', 'lastName', 'image']
+      },
+      {
+        model: Tag,
+        as: 'Tags',
+        attributes: ['name'],
+        through: { attributes: [] }
       }
     ]
   });
@@ -187,6 +239,12 @@ export const getSingleUserPublishedArticleService = async data => {
         model: User,
         as: 'author',
         attributes: ['firstName', 'lastName', 'image']
+      },
+      {
+        model: Tag,
+        as: 'Tags',
+        attributes: ['name'],
+        through: { attributes: [] }
       }
     ]
   });
@@ -222,6 +280,12 @@ export const getAllPublishedArticleService = async (
           model: User,
           as: 'author',
           attributes: ['firstName', 'lastName', 'image']
+        },
+        {
+          model: Tag,
+          as: 'Tags',
+          attributes: ['name'],
+          through: { attributes: [] }
         }
       ]
     });

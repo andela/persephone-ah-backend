@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
-import model from '../db/models';
 import { isTokenInBlackListService } from '../services/auth.service';
+import model from '../db/models';
 
 const { Article, User } = model;
 

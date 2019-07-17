@@ -102,7 +102,7 @@ export default {
 
   /**
    * @method getUserPublishedArticles
-   * @description fetch all published articles
+   * @description fetch all published articles by a specific user
    * Route: GET: /articles/publish
    * @param {Object} request request object
    * @param {Object} response request object

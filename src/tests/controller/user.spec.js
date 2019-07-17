@@ -3,7 +3,6 @@ import chaiHttp from 'chai-http';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 import dotenv from 'dotenv';
-
 import { Response, createUser, getUser } from '../utils/db.utils';
 import userController from '../../controllers/user.controller';
 import app from '../../index';
@@ -53,6 +52,7 @@ describe('User API endpoints', () => {
         });
     });
   });
+
   describe('POST /users/follow/', () => {
     it('Should log user in successfully to test follow feature', async () => {
       const user = getUser();
