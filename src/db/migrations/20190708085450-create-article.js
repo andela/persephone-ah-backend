@@ -51,6 +51,14 @@ module.exports = {
         allowNull: false,
         defaultValue: 0
       },
+      likesCount: {
+        type: Sequelize.INTEGER,
+        defaultValue: 0
+      },
+      viewsCount: {
+        type: Sequelize.INTEGER,
+        defaultValue: 0
+      },
       isPublished: {
         type: Sequelize.BOOLEAN,
         allowNull: false,

@@ -34,7 +34,7 @@ export default {
       const article = await createArticleService(request);
       return Helper.successResponse(response, 201, article);
     } catch (error) {
-      return Helper.failResponse(response, 500, error);
+      return Helper.failResponse(response, 500, error.message);
     }
   },
 
@@ -287,6 +287,7 @@ export default {
       if (error.status === 404) {
         return Helper.errorResponse(response, error.status, error.message);
       }
+      console.log(error);
       return Helper.errorResponse(response, 500, error);
     }
   },

@@ -4,11 +4,10 @@ import moment from 'moment';
 import cron from 'node-cron';
 import getToken, { getPasswordResetToken } from '../helpers/jwt.helper';
 import model from '../db/models';
-import sendWelcomeEmail, {
-  sendForgotPasswordMail
-} from '../helpers/mail.helper';
+import mail from '../helpers/mail.helper';
 
 const { User, BlackList } = model;
+const { sendWelcomeEmail, sendForgotPasswordMail } = mail;
 
 /**
  * @method hashPassword
@@ -19,7 +18,8 @@ const { User, BlackList } = model;
  * @returns {string} hashed password
  */
 
-export const hashPassword = async password => bcrypt.hash(password, 10);
+const hashPassword = async password => bcrypt.hash(password, 10);
+export default hashPassword;
 
 /**
  * @method signUpService
@@ -105,6 +105,12 @@ export const loginService = async body => {
  * @returns {object}  Database User Instance
  */
 
+export const findUserById = async userId => User.findByPk(userId);
+
+/**
+ * @method isUserExist
+ * - it persist a new user to the database
+ * - returns a promise
 export const findUserById = async userId => User.findByPk(userId);
 
 /**
@@ -221,3 +227,16 @@ cron.schedule('0 0 * * *', () => {
     });
   });
 });
+
+/**
+ *  @method isVerifyUser
+ * - it check if user confimation code is in the database
+ * - returns a promise
+ *
+ * @param {String} emailConfirmCode user's confirmation code
+ *
+ * @returns {Promise}
+ */
+
+export const isVerifyUser = async emailConfirmCode =>
+  User.findOne({ where: { confirmEmailCode: emailConfirmCode } });

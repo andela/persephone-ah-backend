@@ -27,6 +27,7 @@ const {
   getUserPublishedArticles,
   unPublishArticle
 } = articleController;
+
 chai.use(chaiHttp);
 chai.use(sinonChai);
 
@@ -170,11 +171,31 @@ describe('User API endpoints', () => {
           './src/tests/testFiles/default_avatar.png',
           'image.jpeg'
         )
-        .attach(
-          'image',
-          './src/tests/testFiles/default_avatar.png',
-          'image.jpeg'
-        )
+        .end((error, response) => {
+          expect(response.status).to.equal(201);
+          expect(response).to.be.an('Object');
+          expect(response.body).to.have.property('status');
+          expect(response.body).to.have.property('data');
+          expect(response.body.status).to.equal('success');
+          expect(response.body.data.title).to.equal('first article');
+          expect(response.body.data.description).to.equal(
+            'this is a description'
+          );
+          expect(response.body.data.body).to.equal(
+            'this is a description this is a description'
+          );
+          done();
+        });
+    });
+
+    it('Should successfully create an article', done => {
+      chai
+        .request(app)
+        .post(`${process.env.API_VERSION}/articles`)
+        .set({ Authorization: `Bearer ${userToken}` })
+        .field('title', 'first article')
+        .field('description', 'this is a description')
+        .field('body', 'this is a description this is a description')
         .end((error, response) => {
           expect(response.status).to.equal(201);
           expect(response).to.be.an('Object');

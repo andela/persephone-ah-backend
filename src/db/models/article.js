@@ -48,6 +48,14 @@ module.exports = (sequelize, DataTypes) => {
           args: true
         }
       },
+      likesCount: {
+        type: DataTypes.INTEGER,
+        default: 0
+      },
+      viewsCount: {
+        type: DataTypes.INTEGER,
+        default: 0
+      },
       averageRating: {
         type: DataTypes.FLOAT,
         default: 0

@@ -47,7 +47,7 @@ const sendWelcomeEmail = (
  * @returns {Promise}
  */
 
-export const sendForgotPasswordMail = async (
+const sendForgotPasswordMail = async (
   recipientName,
   recipientMail,
   subject,
@@ -64,4 +64,4 @@ export const sendForgotPasswordMail = async (
     .send();
 };
 
-export default sendWelcomeEmail;
+export default { sendWelcomeEmail, sendForgotPasswordMail };

@@ -7,13 +7,14 @@ import { getUserData, Response, createUser, getUser } from '../utils/db.utils';
 import authenticationController from '../../controllers/auth.controllers';
 import AuthenticationMiddleWare from '../../middlewares/profileUpdateCheck.middleware';
 import app from '../../index';
-import models from '../../db/models';
 import { getPasswordResetToken } from '../../helpers/jwt.helper';
 import * as imageHelper from '../../helpers/image.helper';
+import model from '../../db/models';
+
+const { User } = model;
 
 dotenv.config();
 
-const { User } = models;
 const { signUp } = authenticationController;
 chai.use(chaiHttp);
 chai.use(sinonChai);
@@ -21,30 +22,11 @@ let userToken;
 let secondUserToken;
 let deletedUserToken;
 let mockImage;
-before(done => {
-  chai
-    .request(app)
-    .post(`${process.env.API_VERSION}/users/signup`)
-    .send({
-      firstName: 'tobe',
-      lastName: 'deleted',
-      email: 'deleted@user.com',
-      password: 'NewUser20'
-    })
-    .end((err, res) => {
-      const { token } = res.body.data;
-      deletedUserToken = token;
-      done(err);
-    });
-});
 
 const { expect } = chai;
 
 describe('Auth API endpoints', () => {
   describe('POST /users/signup', () => {
-    before(async () => {
-      await User.destroy({ where: {}, force: true });
-    });
     before(done => {
       chai
         .request(app)
@@ -418,6 +400,18 @@ describe('Auth API endpoints', () => {
   });
 
   describe('PUT users', () => {
+    before(async () => {
+      const user = getUser();
+      const deletedUser = await createUser(user);
+
+      const response = await chai
+        .request(app)
+        .post(`${process.env.API_VERSION}/users/login`)
+        .send(user);
+      deletedUserToken = response.body.data.token;
+
+      await User.destroy({ where: { id: deletedUser.id }, force: true });
+    });
     after(() => {
       mockImage.restore();
     });
@@ -481,10 +475,9 @@ describe('Auth API endpoints', () => {
         .set('Authorization', `Bearer ${deletedUserToken}`)
         .send({
           bio: 'My name is my name',
-          userName: 'aboyhasnoname',
+          userName: 'aboyhasnon',
           firstName: 'newname'
         });
-
       expect(response).to.have.status(404);
       expect(response.body.status).to.be.equal('fail');
       expect(response.body.data.message).to.be.equal(

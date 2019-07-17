@@ -8,3 +8,5 @@ import './models/article.spec';
 import './controller/auth.spec';
 import './controller/user.spec';
 import './controller/article.spec';
+import './controller/reaction.spec';
+import './controller/stats.spec';

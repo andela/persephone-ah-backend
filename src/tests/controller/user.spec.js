@@ -283,7 +283,7 @@ describe('User API endpoints', () => {
         .put(`/api/v1/users/update/${userId}`)
         .set('Authorization', `Bearer ${superAdminToken}`)
         .send({
-          firstName: '23',
+          firstName: '22',
           lastName: 'Paul'
         });
 
@@ -318,7 +318,7 @@ describe('User API endpoints', () => {
         .post('/api/v1/users/follow')
         .set('Authorization', `Bearer ${authorToken}`)
         .send({
-          userId: 23
+          userId: 22
         });
       expect(response).to.have.status(200);
       expect(response).to.be.an('object');
@@ -331,7 +331,7 @@ describe('User API endpoints', () => {
         .post('/api/v1/users/follow')
         .set('Authorization', `Bearer ${authorToken}`)
         .send({
-          userId: 23
+          userId: 22
         });
       expect(response).to.have.status(200);
       expect(response).to.be.an('object');
@@ -385,7 +385,7 @@ describe('User API endpoints', () => {
         .post('/api/v1/users/follow')
         .set('Authorization', `Bearer ${authorToken}`)
         .send({
-          userId: 23
+          userId: 21
         });
       expect(response).to.have.status(200);
       expect(response).to.be.an('object');

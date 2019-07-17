@@ -120,6 +120,10 @@ export default (sequelize, DataTypes) => {
       foreignKey: 'friendUserId',
       as: 'followersfriend'
     });
+    User.hasMany(models.Reaction, {
+      foreignKey: 'userId',
+      as: 'likes'
+    });
     // associations can be defined here
     User.hasMany(
       models.Article,

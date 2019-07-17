@@ -1,7 +1,9 @@
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
-
+import model from '../db/models';
 import { isTokenInBlackListService } from '../services/auth.service';
+
+const { Article } = model;
 
 dotenv.config();
 
@@ -173,6 +175,31 @@ export default {
         status: 'fail',
         message: 'You do not have access to this resource, unauthorized'
       });
+    }
+    next();
+  },
+
+  /**
+   * @method isAuthor
+   * - it checks if user is an author an article
+   * - returns next()
+   *
+   * @param {Object} request request object
+   * @param {Object} response response object
+   * @param {Function} next function
+   *
+   * @returns {Response} response object
+   */
+
+  async isAuthor(request, response, next) {
+    const { slug } = request.params;
+    const author = await Article.findOne({
+      where: {
+        slug
+      }
+    });
+    if (author) {
+      request.authorId = author.userId;
     }
     next();
   }
