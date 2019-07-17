@@ -30,7 +30,6 @@ describe('GET /', () => {
         done();
       });
   });
-
   it('Should return an error when there is an uncaught error on the app', done => {
     chai
       .request(app)
