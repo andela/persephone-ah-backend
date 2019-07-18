@@ -14,7 +14,7 @@ import * as imageHelper from '../../helpers/image.helper';
 dotenv.config();
 
 const { User } = models;
-const { signUp, verifyEmail } = authenticationController;
+const { signUp } = authenticationController;
 chai.use(chaiHttp);
 chai.use(sinonChai);
 let userToken;
@@ -220,46 +220,6 @@ describe('Auth API endpoints', () => {
       const response = new Response();
       sinon.stub(response, 'status').returnsThis();
       await signUp(request, response);
-      expect(response.status).to.have.been.calledWith(500);
-    });
-  });
-
-  describe('GET /users/verify/:confirmEmailCode', () => {
-    it('Should verify user successfully', async () => {
-      const userDetails = getUser();
-      const { confirmEmailCode } = await createUser(userDetails);
-      chai
-        .request(app)
-        .get(`/api/v1/users/verify/${confirmEmailCode}`)
-        .end((error, response) => {
-          expect(response.status).to.equal(200);
-          expect(response.body.status).to.equal('success');
-          expect(response.body.data.message).to.equal(
-            'User successfully verified'
-          );
-        });
-    });
-
-    it('Should return error if token is not provided', async () => {
-      chai
-        .request(app)
-        .get(`/api/v1/users/verify/35489ujdkhfjgkdf`)
-        .end((error, response) => {
-          expect(response.status).to.equal(400);
-          expect(response.body.status).to.equal('fail');
-          expect(response.body.data.message).to.equal(
-            'You have provided an invalid token'
-          );
-        });
-    });
-
-    it('Should return internal server error', async () => {
-      const request = {
-        body: {}
-      };
-      const response = new Response();
-      sinon.stub(response, 'status').returnsThis();
-      await verifyEmail(request, response);
       expect(response.status).to.have.been.calledWith(500);
     });
   });
@@ -708,6 +668,23 @@ describe('Auth API endpoints', () => {
       const nextCallback = sinon.spy();
       authenticationController.profileUpdate({}, {}, nextCallback);
       sinon.assert.calledOnce(nextCallback);
+    });
+  });
+
+  describe('GET /users/verify/:confirmEmailCode', () => {
+    it('Should verify user successfully', async () => {
+      const userDetails = getUser();
+      const { confirmEmailCode } = await createUser(userDetails);
+      chai
+        .request(app)
+        .get(`/api/v1/users/verify/${confirmEmailCode}`)
+        .end((error, response) => {
+          expect(response.status).to.equal(200);
+          expect(response.body.status).to.equal('success');
+          expect(response.body.data.message).to.equal(
+            'User successfully verified'
+          );
+        });
     });
   });
 });

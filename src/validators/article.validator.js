@@ -1,4 +1,4 @@
-import { check, validationResult } from 'express-validator';
+import { check, validationResult, param } from 'express-validator';
 import Helper from '../services/helper';
 
 const ArticleValidator = {
@@ -51,6 +51,18 @@ const ArticleValidator = {
             .not()
             .isInt({ gt: 5 })
             .withMessage('Rating cannot be greater than 5')
+        ];
+
+      case 'fetchRating':
+        return [
+          param('articleId')
+            .isNumeric({ gt: 0 })
+            .not()
+            .not()
+            .matches('[-, +, %]')
+            .withMessage(
+              'Article ID must be a number and can not be less than 1'
+            )
         ];
       default:
     }

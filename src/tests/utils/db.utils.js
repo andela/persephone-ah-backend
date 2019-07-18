@@ -96,7 +96,9 @@ export class Response {
    * @memberof Response
    * @returns {object} this
    */
-  status() {}
+  status() {
+    return this;
+  }
 
   /**
    *

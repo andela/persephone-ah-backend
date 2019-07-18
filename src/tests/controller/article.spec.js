@@ -170,11 +170,31 @@ describe('User API endpoints', () => {
           './src/tests/testFiles/default_avatar.png',
           'image.jpeg'
         )
-        .attach(
-          'image',
-          './src/tests/testFiles/default_avatar.png',
-          'image.jpeg'
-        )
+        .end((error, response) => {
+          expect(response.status).to.equal(201);
+          expect(response).to.be.an('Object');
+          expect(response.body).to.have.property('status');
+          expect(response.body).to.have.property('data');
+          expect(response.body.status).to.equal('success');
+          expect(response.body.data.title).to.equal('first article');
+          expect(response.body.data.description).to.equal(
+            'this is a description'
+          );
+          expect(response.body.data.body).to.equal(
+            'this is a description this is a description'
+          );
+          done();
+        });
+    });
+
+    it('Should successfully create an article', done => {
+      chai
+        .request(app)
+        .post(`${process.env.API_VERSION}/articles`)
+        .set({ Authorization: `Bearer ${userToken}` })
+        .field('title', 'first article')
+        .field('description', 'this is a description')
+        .field('body', 'this is a description this is a description')
         .end((error, response) => {
           expect(response.status).to.equal(201);
           expect(response).to.be.an('Object');
@@ -213,33 +233,6 @@ describe('User API endpoints', () => {
           );
           done();
         });
-    });
-    it('Should return an error if user is not authorized', done => {
-      chai
-        .request(app)
-        .post(`${process.env.API_VERSION}/articles`)
-        .send({})
-        .end((error, response) => {
-          expect(response.status).to.equal(400);
-          expect(response).to.be.an('Object');
-          expect(response.body).to.have.property('status');
-          expect(response.body).to.have.property('error');
-          expect(response.body.status).to.equal(400);
-          expect(response.body.error).to.equal(
-            'No token provided, you do not have access to this page'
-          );
-          done();
-        });
-    });
-
-    it('Should return internal server error', async () => {
-      const request = {
-        body: {}
-      };
-      const response = new Response();
-      sinon.stub(response, 'status').returnsThis();
-      await createArticle(request, response);
-      expect(response.status).to.have.been.calledWith(500);
     });
   });
 
@@ -314,20 +307,19 @@ describe('User API endpoints', () => {
         });
     });
 
-    it('Should return an error if user is unauthorized', done => {
+    it('Should return an error if user is not authorized', done => {
       chai
         .request(app)
-        .put(`${process.env.API_VERSION}/articles/publish/${thirdArticle.slug}`)
-        .set({ Authorization: `Bearer ${secondUserToken}` })
-        .send(getArticleData())
+        .post(`${process.env.API_VERSION}/articles`)
+        .send({})
         .end((error, response) => {
-          expect(response.status).to.equal(403);
+          expect(response.status).to.equal(400);
           expect(response).to.be.an('Object');
           expect(response.body).to.have.property('status');
-          expect(response.body).to.have.property('data');
-          expect(response.body.status).to.equal('fail');
-          expect(response.body.data.message).to.equal(
-            'Forbidden, you can not publish this resource'
+          expect(response.body).to.have.property('error');
+          expect(response.body.status).to.equal(400);
+          expect(response.body.error).to.equal(
+            'No token provided, you do not have access to this page'
           );
           done();
         });
@@ -339,7 +331,7 @@ describe('User API endpoints', () => {
       };
       const response = new Response();
       sinon.stub(response, 'status').returnsThis();
-      await publishArticle(request, response);
+      await createArticle(request, response);
       expect(response.status).to.have.been.calledWith(500);
     });
   });
@@ -1038,6 +1030,79 @@ describe('User API endpoints', () => {
       expect(response.body.status).to.equal('fail');
       expect(response.body.data[0].msg).to.equal(
         'Article ID must be greater than 0'
+      );
+    });
+  });
+
+  describe('GET /articles/:articleId/ratings', () => {
+    let article;
+
+    before('first before hook for fetch ratings', async () => {
+      const user = getUser();
+
+      const userResult = await createUser(user);
+
+      article = await mockCreateArticle(userResult.id);
+
+      const signupResponse = await chai
+        .request(app)
+        .post(`${API_VERSION}/users/login`)
+        .send(user);
+      userToken = signupResponse.body.data.token;
+    });
+
+    before('second before hook fetch ratings', async () => {
+      await chai
+        .request(app)
+        .post(`${API_VERSION}/articles/ratings`)
+        .set({ Authorization: `Bearer ${userToken}` })
+        .send({ articleId: article.id, rating: 4 });
+    });
+
+    it('should return ratings for a specified article id', async () => {
+      const response = await chai
+        .request(app)
+        .get(`${API_VERSION}/articles/${article.id}/ratings`)
+        .set({ Authorization: `Bearer ${userToken}` });
+
+      expect(response).to.have.status(200);
+      expect(response.body.status).to.equal('success');
+      expect(response.body.data[0].articleId).to.equal(article.id);
+    });
+
+    it('should return error for article id that is less than 1', async () => {
+      const response = await chai
+        .request(app)
+        .get(`${API_VERSION}/articles/-1/ratings`)
+        .set({ Authorization: `Bearer ${userToken}` });
+
+      expect(response).to.have.status(400);
+      expect(response.body.status).to.equal('fail');
+      expect(response.body.data[0].msg).to.equal(
+        'Article ID must be a number and can not be less than 1'
+      );
+    });
+
+    it('should return error for article id that not a number', async () => {
+      const response = await chai
+        .request(app)
+        .get(`${API_VERSION}/articles/notNumber/ratings`)
+        .set({ Authorization: `Bearer ${userToken}` });
+
+      expect(response).to.have.status(400);
+      expect(response.body.status).to.equal('fail');
+      expect(response.body.data[0].msg).to.equal('Invalid value');
+    });
+
+    it('should return error for no token provided', async () => {
+      const response = await chai
+        .request(app)
+        .get(`${API_VERSION}/articles/${article.id}/ratings`);
+
+      expect(response).to.have.status(400);
+      expect(response.body.status).to.equal(400);
+      expect(response.body.error).to.equal(
+        'No token provided, you do not have access to this page'
       );
     });
   });
