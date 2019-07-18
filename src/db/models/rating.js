@@ -30,12 +30,14 @@ module.exports = (sequelize, DataTypes) => {
   Rating.associate = models => {
     Rating.belongsTo(models.User, {
       foreignKey: 'userId',
-      as: 'rater'
+      as: 'rater',
+      onDelete: 'cascade'
     });
 
     Rating.belongsTo(models.Article, {
       foreignKey: 'articleId',
-      as: 'ratedArticle'
+      as: 'ratedArticle',
+      onDelete: 'cascade'
     });
   };
   return Rating;

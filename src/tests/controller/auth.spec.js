@@ -21,30 +21,11 @@ let userToken;
 let secondUserToken;
 let deletedUserToken;
 let mockImage;
-before(done => {
-  chai
-    .request(app)
-    .post(`${process.env.API_VERSION}/users/signup`)
-    .send({
-      firstName: 'tobe',
-      lastName: 'deleted',
-      email: 'deleted@user.com',
-      password: 'NewUser20'
-    })
-    .end((err, res) => {
-      const { token } = res.body.data;
-      deletedUserToken = token;
-      done(err);
-    });
-});
 
 const { expect } = chai;
 
 describe('Auth API endpoints', () => {
   describe('POST /users/signup', () => {
-    before(async () => {
-      await User.destroy({ where: {}, force: true });
-    });
     before(done => {
       chai
         .request(app)
@@ -417,6 +398,18 @@ describe('Auth API endpoints', () => {
   });
 
   describe('PUT users', () => {
+    before(async () => {
+      const user = getUser();
+      const deletedUser = await createUser(user);
+
+      const response = await chai
+        .request(app)
+        .post(`${process.env.API_VERSION}/users/login`)
+        .send(user);
+      deletedUserToken = response.body.data.token;
+
+      await User.destroy({ where: { id: deletedUser.id }, force: true });
+    });
     after(() => {
       mockImage.restore();
     });

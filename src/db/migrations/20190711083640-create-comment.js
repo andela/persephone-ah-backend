@@ -37,7 +37,7 @@ module.exports = {
         type: Sequelize.TEXT,
         allowNull: true
       },
-      isEdit: {
+      isEdited: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
         defaultValue: false

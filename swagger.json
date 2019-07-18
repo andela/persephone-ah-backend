@@ -553,6 +553,226 @@
       }
     }
   },
+  "/users/": {
+    "put": {
+      "tags": ["Users"],
+      "summary": "API endpoint for users to update their profile details",
+      "produces": ["application/json"],
+      "consumes": ["application/x-www-form-urlencoded", "multipart/form-data"],
+      "parameters": [
+        {
+          "name": "firstName",
+          "in": "formData",
+          "description": "The new user's firstname",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "lastName",
+          "in": "formData",
+          "description": "The new user's lastname",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "userName",
+          "in": "formData",
+          "description": "The new username of the user",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "bio",
+          "in": "formData",
+          "description": "biography of the user",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "image",
+          "in": "formData",
+          "description": "user profile photo",
+          "required": false,
+          "type": "file"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "successful operation"
+        },
+        "401": {
+          "description": "Not authorized"
+        },
+        "403": {
+          "description": "Auth token not supplied"
+        },
+        "404": {
+          "description": "User account does not exist"
+        },
+        "409": {
+          "description": "Username has already been taken"
+        },
+        "500": {
+          "description": "Auth token expired"
+        }
+      },
+      "security": [
+        {
+          "JWT": []
+        }
+      ]
+    }
+  },
+  "/profiles/{userName}": {
+    "get": {
+      "tags": ["Profiles"],
+      "summary": "API endpoint to view user profile",
+      "parameters": [
+        {
+          "name": "userName",
+          "in": "path",
+          "description": "username of the user to be viewed",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "successful operation"
+        },
+        "404": {
+          "description": "User does not exist"
+        }
+      }
+    }
+  },
+  "/articles/{slug}/comments/{id}": {
+    "get": {
+      "tags": ["Articles"],
+      "summary": "API endpoint to view specific comment record",
+      "parameters": [
+        {
+          "name": "slug",
+          "in": "path",
+          "description": "Article slug",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "id",
+          "in": "path",
+          "description": "comment ID",
+          "required": true,
+          "type": "integer"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "successful operation"
+        },
+        "404": {
+          "description": "Comment does not exist"
+        }
+      }
+    }
+  },
+  "/articles/{slug}/comments": {
+    "get": {
+      "tags": ["Articles"],
+      "summary": "API endpoint to view all comments for an article",
+      "parameters": [
+        {
+          "name": "slug",
+          "in": "path",
+          "description": "Article slug",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "successful operation"
+        },
+        "404": {
+          "description": "Article does not exist"
+        }
+      }
+    }
+  },
+  "/articles/{slug}/comments/{id}/history": {
+    "get": {
+      "tags": ["Articles"],
+      "summary": "API endpoint to view the edit history of a comment",
+      "parameters": [
+        {
+          "name": "slug",
+          "in": "path",
+          "description": "Article slug",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "id",
+          "in": "path",
+          "description": "comment ID",
+          "required": true,
+          "type": "integer"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "successful operation"
+        },
+        "404": {
+          "description": "Comment does not exist"
+        }
+      }
+    }
+  },
+  "/articles/{slug}/comments/{id}/edit": {
+    "patch": {
+      "tags": ["Articles"],
+      "summary": "API endpoint to edit a comment",
+      "consumes": ["application/x-www-form-urlencoded"],
+      "parameters": [
+        {
+          "name": "slug",
+          "in": "path",
+          "description": "Article slug",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "id",
+          "in": "path",
+          "description": "comment ID",
+          "required": true,
+          "type": "integer"
+        },
+        {
+          "name": "comment",
+          "in": "formData",
+          "description": "new comment",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Comment updated successfully"
+        },
+        "400": {
+          "description": "Comment cannot be empty"
+        },
+        "403": {
+          "description": "You don't have permission to edit this comment"
+        },
+        "404": {
+          "description": "Comment does not exist"
+        }
+      }
+    }
+  },
   "securityDefinitions": {
     "JWT": {
       "type": "apiKey",
