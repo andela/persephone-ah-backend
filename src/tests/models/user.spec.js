@@ -22,7 +22,6 @@ describe('src/models/User', () => {
       'password',
       'confirmEmail',
       'isNotified',
-      'isPublished',
       'passwordToken',
       'socialAuth',
       'roleType',

@@ -78,11 +78,6 @@ export default (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: true
     },
-    isPublished: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValue: false
-    },
     passwordToken: {
       type: DataTypes.STRING,
       allowNull: true

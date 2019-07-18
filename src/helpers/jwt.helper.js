@@ -14,7 +14,7 @@ dotenv.config();
  * @returns {Response} object
  */
 
-const getToken = user => {
+export const getToken = user => {
   return jwt.sign(
     { id: user.id, email: user.email, roleType: user.roleType },
     process.env.SECRET,
@@ -35,5 +35,3 @@ export const getPasswordResetToken = user => {
     expiresIn: '2h'
   });
 };
-
-export default getToken;
