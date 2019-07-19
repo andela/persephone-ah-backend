@@ -1,6 +1,6 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('Reactions', {
+    return queryInterface.createTable('ArticleReactions', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -26,12 +26,6 @@ module.exports = {
           args: true
         }
       },
-      commentId: {
-        type: Sequelize.INTEGER,
-        allowNull: {
-          args: true
-        }
-      },
       isLiked: {
         type: Sequelize.BOOLEAN,
         allowNull: {
@@ -50,6 +44,6 @@ module.exports = {
     });
   },
   down: queryInterface => {
-    return queryInterface.dropTable('Reactions');
+    return queryInterface.dropTable('ArticleReactions');
   }
 };

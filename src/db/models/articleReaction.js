@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-  const Reaction = sequelize.define('Reaction', {
+  const ArticleReaction = sequelize.define('ArticleReaction', {
     userId: {
       type: DataTypes.INTEGER,
       allowNull: {
@@ -7,12 +7,6 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
     articleId: {
-      type: DataTypes.INTEGER,
-      allowNull: {
-        args: true
-      }
-    },
-    commentId: {
       type: DataTypes.INTEGER,
       allowNull: {
         args: true
@@ -26,16 +20,16 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: true
     }
   });
-  Reaction.associate = models => {
+  ArticleReaction.associate = models => {
     // associations can be defined here
-    Reaction.belongsTo(models.User, {
+    ArticleReaction.belongsTo(models.User, {
       foreignKey: 'userId',
       as: 'liker'
     });
-    Reaction.belongsTo(models.Article, {
+    ArticleReaction.belongsTo(models.Article, {
       foreignKey: 'articleId',
       as: 'articleLiked'
     });
   };
-  return Reaction;
+  return ArticleReaction;
 };

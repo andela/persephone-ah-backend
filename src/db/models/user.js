@@ -116,7 +116,7 @@ export default (sequelize, DataTypes) => {
       as: 'followersfriend',
       onDelete: 'CASCADE'
     });
-    User.hasMany(models.Reaction, {
+    User.hasMany(models.ArticleReaction, {
       foreignKey: 'userId',
       as: 'likes'
     });

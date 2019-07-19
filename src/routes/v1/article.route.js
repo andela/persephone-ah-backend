@@ -11,9 +11,12 @@ import { pageViewCount } from '../../middlewares/pageViewCount.middleware';
 import stats from '../../controllers/readingStat.controller';
 import bookmarkController from '../../controllers/bookmark.controller';
 import bookmarksCheckMiddleware from '../../middlewares/bookmarkCheck.middleware';
+import reactions from '../../controllers/reaction.controller';
 
 const { validator, checkValidationResult } = articleValidator;
 const { verifyToken, isAuthor, adminCheck } = authorization;
+
+const { articlesLike } = reactions;
 
 const { readingStats } = stats;
 const {
@@ -144,6 +147,7 @@ router.get(
   getArticlesCommentsCheck,
   getCommentHistory
 );
+router.get('/:articleId/reactions', verifyToken, articlesLike);
 router.patch(
   '/:slug/comments/:id/edit',
   verifyToken,

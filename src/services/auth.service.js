@@ -240,7 +240,6 @@ export const cronJob = () => {
     });
   });
 };
-});
 
 /**
  *  @method isVerifyUser
