@@ -79,9 +79,6 @@ export const createArticleService = async data => {
 
   if (images) {
     await loopUpload(images);
-    // imagePaths.forEach(path => {
-    //   fs.unlinkSync(path);
-    // });
   }
   const finalUploads = JSON.stringify(Object.assign({}, uploadedImage));
   const article = await Article.create({

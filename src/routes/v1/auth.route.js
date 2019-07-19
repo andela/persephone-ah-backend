@@ -24,7 +24,6 @@ router
   .post('/login', validator('login'), checkValidationResult, login)
   .post(
     '/forgot_password',
-    verifyToken,
     validator('forgotPassword'),
     checkValidationResult,
     forgotPassword

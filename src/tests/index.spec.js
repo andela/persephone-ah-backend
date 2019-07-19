@@ -15,6 +15,7 @@ import './validators/validator.spec';
 import './controller/comment.spec';
 import './controller/user.spec';
 import './controller/bookmark.spec';
+import './controller/search.spec';
 import './controller/admin.spec';
 import './controller/report.spec';
 import './helpers/read-time.spec';
