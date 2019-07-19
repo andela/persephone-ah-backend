@@ -4,6 +4,7 @@ import { upload } from '../helpers/image.helper';
 import model from '../db/models';
 import Helper from './helper';
 import { paginationQueryMetadata, pageMetadata } from '../helpers/pagination';
+import averageRatings from '../helpers/average-ratings';
 
 const { Comment, Article, User, Follow, Rating } = model;
 /** Istanbul ignore next */
@@ -74,7 +75,10 @@ export const getArticleService = async data => {
       }
     ]
   });
-  return article;
+  if (article) {
+    const articleRatingDetails = await averageRatings(article.id);
+    return { articleRatingDetails, article };
+  }
 };
 
 /**
