@@ -78,11 +78,6 @@ export default (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: true
     },
-    isPublished: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValue: false
-    },
     passwordToken: {
       type: DataTypes.STRING,
       allowNull: true
@@ -109,18 +104,18 @@ export default (sequelize, DataTypes) => {
       allowNull: true
     }
   });
-
   User.associate = models => {
     // associations can be defined here
     User.hasMany(models.Follow, {
       foreignKey: 'userId',
-      as: 'followers'
+      as: 'followers',
+      onDelete: 'CASCADE'
     });
     User.hasMany(models.Follow, {
       foreignKey: 'friendUserId',
-      as: 'followersfriend'
+      as: 'followersfriend',
+      onDelete: 'CASCADE'
     });
-    // associations can be defined here
     User.hasMany(
       models.Article,
       {

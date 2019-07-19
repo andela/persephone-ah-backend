@@ -3,7 +3,7 @@ import chaiHttp from 'chai-http';
 import dotenv from 'dotenv';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
-import getToken from '../../helpers/jwt.helper';
+import { getToken } from '../../helpers/jwt.helper';
 import middleware from '../../middlewares/auth.middleware';
 import { Response } from '../utils/db.utils';
 

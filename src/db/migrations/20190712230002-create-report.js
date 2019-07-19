@@ -1,6 +1,6 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('Comments', {
+    return queryInterface.createTable('Reports', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -13,7 +13,7 @@ module.exports = {
         references: {
           model: 'Users',
           key: 'id',
-          as: 'authorComment'
+          as: 'reporter'
         }
       },
       articleId: {
@@ -22,30 +22,12 @@ module.exports = {
         references: {
           model: 'Articles',
           key: 'id',
-          as: 'articleComment'
+          as: 'article'
         }
       },
-      slug: {
-        type: Sequelize.TEXT,
+      reason: {
+        type: Sequelize.STRING,
         allowNull: false
-      },
-      body: {
-        type: Sequelize.JSON,
-        allowNull: false
-      },
-      highlightedText: {
-        type: Sequelize.TEXT,
-        allowNull: true
-      },
-      isEdited: {
-        type: Sequelize.BOOLEAN,
-        allowNull: false,
-        defaultValue: false
-      },
-      isDeleted: {
-        type: Sequelize.BOOLEAN,
-        allowNull: false,
-        defaultValue: false
       },
       createdAt: {
         allowNull: false,
@@ -63,6 +45,6 @@ module.exports = {
     });
   },
   down: queryInterface => {
-    return queryInterface.dropTable('Comments');
+    return queryInterface.dropTable('Reports');
   }
 };

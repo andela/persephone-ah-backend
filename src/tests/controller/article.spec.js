@@ -208,6 +208,31 @@ describe('User API endpoints', () => {
           expect(response.body.data.body).to.equal(
             'this is a description this is a description'
           );
+          done();
+        });
+    });
+
+    it('Should successfully create an article', done => {
+      chai
+        .request(app)
+        .post(`${process.env.API_VERSION}/articles`)
+        .set({ Authorization: `Bearer ${userToken}` })
+        .field('title', 'first article')
+        .field('description', 'this is a description')
+        .field('body', 'this is a description this is a description')
+        .end((error, response) => {
+          expect(response.status).to.equal(201);
+          expect(response).to.be.an('Object');
+          expect(response.body).to.have.property('status');
+          expect(response.body).to.have.property('data');
+          expect(response.body.status).to.equal('success');
+          expect(response.body.data.title).to.equal('first article');
+          expect(response.body.data.description).to.equal(
+            'this is a description'
+          );
+          expect(response.body.data.body).to.equal(
+            'this is a description this is a description'
+          );
           createdArticle = response.body.data;
           done();
         });
@@ -233,6 +258,47 @@ describe('User API endpoints', () => {
           );
           done();
         });
+    });
+    it('Should return an error if user is not authorized', done => {
+      chai
+        .request(app)
+        .post(`${process.env.API_VERSION}/articles`)
+        .send({})
+        .set({ Authorization: `Bearer ${userToken}` })
+        .end((error, response) => {
+          expect(response.status).to.equal(400);
+          expect(response).to.be.an('Object');
+          expect(response.body).to.have.property('status');
+          expect(response.body).to.have.property('data');
+          expect(response.body.status).to.equal('fail');
+          expect(response.body.data[0].msg).to.equal(
+            'Please enter your title for this post'
+          );
+          expect(response.body.data[1].msg).to.equal(
+            'Please enter valid content for this article'
+          );
+          done();
+        });
+    });
+
+    it('Should return internal server error', async () => {
+      const request = {
+        body: {}
+      };
+      const response = new Response();
+      sinon.stub(response, 'status').returnsThis();
+      await createArticle(request, response);
+      expect(response.status).to.have.been.calledWith(500);
+    });
+
+    it('Should return internal server error', async () => {
+      const request = {
+        body: {}
+      };
+      const response = new Response();
+      sinon.stub(response, 'status').returnsThis();
+      await createArticle(request, response);
+      expect(response.status).to.have.been.calledWith(500);
     });
   });
 
@@ -417,12 +483,51 @@ describe('User API endpoints', () => {
           expect(response.body).to.have.property('status');
           expect(response.body).to.have.property('data');
           expect(response.body.status).to.equal('success');
-          expect(response.body.data[0].title).to.equal('new article');
-          expect(response.body.data[0].description).to.equal(
+          expect(response.body.data.allArticles[0].title).to.equal(
+            'new article'
+          );
+          expect(response.body.data.allArticles[0].description).to.equal(
             'this is a description'
           );
-          expect(response.body.data[0].body).to.equal(
+          expect(response.body.data.allArticles[0].body).to.equal(
             'this is a description this is a description'
+          );
+          done();
+        });
+    });
+    it('Should use deafult vaules for page and query if they are set to zero', done => {
+      chai
+        .request(app)
+        .get(`${process.env.API_VERSION}/articles?page=0&limit=0`)
+        .end((error, response) => {
+          expect(response.body).to.have.property('data');
+          expect(response.body.status).to.equal('success');
+          expect(response.body.data.allArticles[0].title).to.equal(
+            'new article'
+          );
+          done();
+        });
+    });
+    it('Should return error if invalid query', done => {
+      chai
+        .request(app)
+        .get(`${process.env.API_VERSION}/articles?page=a&limit=a`)
+        .end((error, response) => {
+          expect(response.body).to.have.property('data');
+          expect(response.body.status).to.equal('fail');
+          expect(response.body.data[0].msg).to.equal('Page must be a number');
+          done();
+        });
+    });
+    it('Should use return no articles on this page if page given in query does not exist', done => {
+      chai
+        .request(app)
+        .get(`${process.env.API_VERSION}/articles?page=20&limit=10`)
+        .end((error, response) => {
+          expect(response.body).to.have.property('data');
+          expect(response.body.status).to.equal('success');
+          expect(response.body.data.pageResponse).to.equal(
+            'No articles on this page'
           );
           done();
         });

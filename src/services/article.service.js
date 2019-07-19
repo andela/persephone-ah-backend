@@ -2,6 +2,8 @@ import fs from 'fs';
 import moment from 'moment';
 import { upload } from '../helpers/image.helper';
 import model from '../db/models';
+import Helper from './helper';
+import { paginationQueryMetadata, pageMetadata } from '../helpers/pagination';
 
 const { Comment, Article, User, Follow, Rating } = model;
 /** Istanbul ignore next */
@@ -35,9 +37,9 @@ export const createArticleService = async data => {
 
   if (images) {
     await loopUpload(images);
-    imagePaths.forEach(path => {
-      fs.unlinkSync(path);
-    });
+    // imagePaths.forEach(path => {
+    //   fs.unlinkSync(path);
+    // });
   }
   const finalUploads = JSON.stringify(Object.assign({}, uploadedImage));
   const article = await Article.create({
@@ -164,21 +166,47 @@ export const getSingleUserPublishedArticleService = async data => {
  * @returns {Object} article data object
  */
 
-export const getAllPublishedArticleService = async () => {
-  const article = await Article.findAll({
-    where: {
-      isPublished: true,
-      isDeleted: false
-    },
-    include: [
-      {
-        model: User,
-        as: 'author',
-        attributes: ['firstName', 'lastName', 'image']
-      }
-    ]
-  });
-  return article;
+export const getAllPublishedArticleService = async (
+  queryParams,
+  returnValue
+) => {
+  try {
+    const { limit, offset } = paginationQueryMetadata(
+      queryParams.query.page,
+      queryParams.query.limit
+    );
+    const article = await Article.findAndCountAll({
+      limit,
+      offset,
+      where: {
+        isPublished: true,
+        isDeleted: false
+      },
+      include: [
+        {
+          model: User,
+          as: 'author',
+          attributes: ['firstName', 'lastName', 'image']
+        }
+      ]
+    });
+
+    const pageResponse = pageMetadata(
+      queryParams.query.page,
+      queryParams.query.limit,
+      article.count,
+      '/articles'
+    );
+    if (article.count === 0) {
+      return Helper.failResponse(returnValue, 404, {
+        message: 'No article in the database'
+      });
+    }
+    const allArticles = article.rows;
+    return { pageResponse, allArticles };
+  } catch (err) {
+    return err.message;
+  }
 };
 
 /**

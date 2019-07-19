@@ -1,10 +1,19 @@
 import express from 'express';
 import articleValidator from '../../validators/article.validator';
 import articleController from '../../controllers/article.controller';
+import PaginationValidator from '../../validators/pagination.validator';
 import authorization from '../../middlewares/auth.middleware';
 import upload from '../../middlewares/imageUpload.middleware';
+import commentController from '../../controllers/comment.controller';
+import commentsCheck from '../../middlewares/commentsCheck.middleware';
+import reportController from '../../controllers/report.controller';
 
 const { validator, checkValidationResult } = articleValidator;
+
+const {
+  validator: paginationValidator,
+  checkValidationResult: ValidationResult
+} = PaginationValidator;
 
 const {
   createComment,
@@ -22,7 +31,13 @@ const {
   userGetAllDraftArticles
 } = articleController;
 
-const { verifyToken } = authorization;
+const { getCommentHistory, editComment, getSingleComment } = commentController;
+
+const { editCommentCheck, getArticlesCommentsCheck } = commentsCheck;
+
+const { verifyToken, adminCheck } = authorization;
+
+const { createReport, removeArticle } = reportController;
 
 const router = express.Router();
 router
@@ -45,7 +60,12 @@ router
   .get('/publish', verifyToken, userGetAllPublishedArticles)
   .get('/publish/:userId', getUserPublishedArticles)
   .get('/:slug', getArticle)
-  .get('/', getAllPublishedArticles)
+  .get(
+    '/',
+    paginationValidator()('pagination'),
+    ValidationResult,
+    getAllPublishedArticles
+  )
   .put('/publish/:slug', verifyToken, publishArticle)
   .put('/unpublish/:slug', verifyToken, unPublishArticle)
   .put('/:slug', verifyToken, upload.array('image'), updateArticle)
@@ -71,5 +91,39 @@ router
     validator('fetchRating'),
     checkValidationResult,
     articleController.fetchRatings
+  )
+  .post(
+    '/:slug/reports',
+    verifyToken,
+    validator('remove-article'),
+    checkValidationResult,
+    createReport
+  )
+  .delete(
+    '/:slug/remove-article',
+    verifyToken,
+    adminCheck,
+    checkValidationResult,
+    removeArticle
   );
+
+router.get(
+  '/:slug/comments/:id',
+  verifyToken,
+  getArticlesCommentsCheck,
+  getSingleComment
+);
+router.get(
+  '/:slug/comments/:id/history',
+  verifyToken,
+  getArticlesCommentsCheck,
+  getCommentHistory
+);
+router.patch(
+  '/:slug/comments/:id/edit',
+  verifyToken,
+  editCommentCheck,
+  editComment
+);
+
 export default router;
