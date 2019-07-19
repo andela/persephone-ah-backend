@@ -21,9 +21,6 @@ describe('src/models/article', () => {
       'slug',
       'isPublished',
       'isDeleted',
-      'viewsCount',
-      'sumOfRating',
-      'numberOfRating',
       'image'
     ].forEach(checkPropertyExists(article));
   });

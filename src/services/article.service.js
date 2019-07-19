@@ -4,6 +4,7 @@ import model from '../db/models';
 import Helper from './helper';
 import { paginationQueryMetadata, pageMetadata } from '../helpers/pagination';
 import readtime from '../helpers/read-time';
+import averageRatings from '../helpers/average-ratings';
 
 const { Comment, Article, User, Follow, Rating, CommentReaction } = model;
 /** Istanbul ignore next */
@@ -52,7 +53,6 @@ export const createArticleService = async data => {
     image: finalUploads,
     readTime
   });
-
   return article;
 };
 
@@ -77,7 +77,10 @@ export const getArticleService = async data => {
       }
     ]
   });
-  return article;
+  if (article) {
+    const articleRatingDetails = await averageRatings(article.id);
+    return { article, articleRatingDetails };
+  }
 };
 
 /**
@@ -487,31 +490,6 @@ export const deleteCommentService = async (slug, id, userId) => {
 };
 
 /**
- * @method updateArticleRating
- * - Helps update the article table
- *
- * @param {integer} articleId - Id of the article to be rated
- * @param {integer} rating the rating value from from 1 - 5
- * @param {integer} userId - id of the user rating the article
- *
- * @return {Promise}
- */
-
-const updateArticlesRating = async (
-  sumOfRating,
-  numberOfRating,
-  averageRating,
-  id
-) => {
-  const article = await Article.findByPk(id);
-  return article.update({
-    sumOfRating,
-    numberOfRating,
-    averageRating
-  });
-};
-
-/**
  * @method articleRatingsService
  * @description Helps handle the ratings endpoint
  * Route: POST: /articles/ratings
@@ -531,15 +509,6 @@ export const articleRatingsService = async (articleId, rating, userId) => {
     if (!article) {
       return 'The article specified does not exist';
     }
-
-    let { sumOfRating, numberOfRating, averageRating } = article.dataValues;
-
-    sumOfRating = sumOfRating ? sumOfRating + rating : rating;
-    numberOfRating = numberOfRating ? numberOfRating + 1 : 1;
-    averageRating = averageRating
-      ? parseFloat((sumOfRating / numberOfRating).toFixed(1))
-      : sumOfRating;
-
     const ratings = await Rating.findOne({ where: { userId, articleId } });
     if (ratings) {
       return null;
@@ -550,13 +519,6 @@ export const articleRatingsService = async (articleId, rating, userId) => {
       articleId,
       rating
     });
-
-    await updateArticlesRating(
-      sumOfRating,
-      numberOfRating,
-      averageRating,
-      articleId
-    );
     return result;
   } catch (error) {
     return error;
