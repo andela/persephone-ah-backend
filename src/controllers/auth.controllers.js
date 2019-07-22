@@ -222,6 +222,11 @@ export default {
         });
       }
       const user = await isVerifyUser(confirmEmailCode);
+      if (!user) {
+        return Helper.failResponse(response, 400, {
+          message: 'You have provided an invalid token'
+        });
+      }
       await user.update({ confirmEmailCode: null });
 
       return Helper.successResponse(response, 200, {

@@ -4,7 +4,8 @@ import moment from 'moment';
 import cron from 'node-cron';
 import { getToken, getPasswordResetToken } from '../helpers/jwt.helper';
 import model from '../db/models';
-import sendWelcomeEmail, {
+import {
+  sendWelcomeEmail,
   sendForgotPasswordMail
 } from '../helpers/mail.helper';
 
@@ -233,6 +234,7 @@ export const cronJob = () => {
     });
   });
 };
+
 /**
  *  @method isVerifyUser
  * - it check if user confimation code is in the database

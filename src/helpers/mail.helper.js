@@ -17,7 +17,7 @@ dotenv.config();
  * @returns {Promise}
  */
 
-const sendWelcomeEmail = (
+export const sendWelcomeEmail = (
   recipientName,
   recipientMail,
   subject,
@@ -93,5 +93,3 @@ export const sendBlockedArticle = async (
     })
     .send();
 };
-
-export default sendWelcomeEmail;

@@ -18,3 +18,5 @@ import './controller/admin.spec';
 import './controller/report.spec';
 import './helpers/read-time.spec';
 import './services/notification.service';
+import './controller/reaction.spec';
+import './controller/stats.spec';

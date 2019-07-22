@@ -54,8 +54,12 @@ export default (sequelize, DataTypes) => {
           args: true
         }
       },
-      averageRating: {
-        type: DataTypes.FLOAT,
+      likesCount: {
+        type: DataTypes.INTEGER,
+        default: 0
+      },
+      viewsCount: {
+        type: DataTypes.INTEGER,
         default: 0
       },
       numberOfRating: {
