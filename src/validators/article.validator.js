@@ -58,7 +58,6 @@ const ArticleValidator = {
           param('articleId')
             .isNumeric({ gt: 0 })
             .not()
-            .not()
             .matches('[-, +, %]')
             .withMessage(
               'Article ID must be a number and can not be less than 1'
@@ -70,6 +69,13 @@ const ArticleValidator = {
             .isLength({ min: 2 })
             .withMessage('Please reason cannot be empty')
             .trim()
+        ];
+      case 'commentLike':
+        return [
+          param('commentId')
+            .isNumeric()
+            .isInt({ gt: 0 })
+            .withMessage('Comment ID must be greater than 0')
         ];
       default:
     }

@@ -102,15 +102,6 @@ export default (sequelize, DataTypes) => {
       as: 'author',
       onDelete: 'CASCADE'
     });
-  };
-
-  Article.associate = models => {
-    // associations can be defined here
-    Article.belongsTo(models.User, {
-      foreignKey: 'userId',
-      as: 'author',
-      onDelete: 'CASCADE'
-    });
     Article.hasMany(
       models.Rating,
       {

@@ -1,4 +1,3 @@
-import fs from 'fs';
 import moment from 'moment';
 import { upload } from '../helpers/image.helper';
 import model from '../db/models';
@@ -6,7 +5,7 @@ import Helper from './helper';
 import { paginationQueryMetadata, pageMetadata } from '../helpers/pagination';
 import readtime from '../helpers/read-time';
 
-const { Comment, Article, User, Follow, Rating } = model;
+const { Comment, Article, User, Follow, Rating, CommentReaction } = model;
 /** Istanbul ignore next */
 /**
  * @method createArticleService
@@ -560,6 +559,81 @@ export const articleRatingsService = async (articleId, rating, userId) => {
     return result;
   } catch (error) {
     return error;
+  }
+};
+
+export const getCommentLikesCount = async commentId => {
+  const likeCount = await CommentReaction.findAndCountAll({
+    where: { commentId }
+  });
+
+  return likeCount.count;
+};
+/**
+ * @method likeCommentService
+ *  - helps populate the reaction table with comment liked
+ *
+ * @param {string} slug - the comment that is liked
+ * @param {integer} commentId - the comment that is liked
+ * @param {integer} userId - the person that reacted to this comment
+ * @param {string} reaction - the reaction value -like or dislike
+ */
+
+export const likeCommentService = async (slug, commentId, userId) => {
+  try {
+    const articleExist = await Article.findOne({ where: { slug } });
+
+    const commentExist = await Comment.findByPk(commentId);
+
+    if (!articleExist) {
+      return `The article with the specified slug does not exist`;
+    }
+
+    if (!commentExist) {
+      return 'The comment with the specified id does not exist';
+    }
+
+    const findReaction = await CommentReaction.findOne({
+      where: {
+        userId,
+        commentId
+      }
+    });
+
+    if (!findReaction) {
+      await CommentReaction.create({
+        userId,
+        commentId
+      });
+
+      const likeCount = await getCommentLikesCount(commentId);
+
+      const result = {
+        likeCount,
+        message: 'you have successfully liked this comment',
+        commentId,
+        userId
+      };
+      return result;
+    }
+    await CommentReaction.destroy({
+      where: {
+        userId,
+        commentId
+      }
+    });
+
+    const likeCount = await getCommentLikesCount(commentId);
+
+    const result = {
+      likeCount,
+      message: 'you have successfully unliked this comment',
+      commentId,
+      userId
+    };
+    return result;
+  } catch (error) {
+    return error.message;
   }
 };
 

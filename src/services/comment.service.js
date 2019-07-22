@@ -1,5 +1,6 @@
 import moment from 'moment';
 import model from '../db/models';
+import { getCommentLikesCount } from './article.service';
 
 const { Comment, Article, User } = model;
 
@@ -55,6 +56,8 @@ export const getSingleArticleComment = async (id, slug) => {
 
   if (!commentRecord) return false;
 
+  const likeCount = await getCommentLikesCount(id);
+
   const { body } = commentRecord.get({ plain: true });
   const latestTimestamp = Object.keys(body)[Object.keys(body).length - 1];
   const latestComment = body[latestTimestamp];
@@ -63,6 +66,7 @@ export const getSingleArticleComment = async (id, slug) => {
     createdAt: latestTimestamp,
     updatedAt: commentRecord.updatedAt,
     body: latestComment,
+    likeCount,
     author: {
       username: commentRecord.userComment.userName,
       bio: commentRecord.userComment.bio,

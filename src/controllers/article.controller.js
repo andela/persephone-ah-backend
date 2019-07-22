@@ -13,7 +13,8 @@ import {
   updateArticleService,
   deleteArticleService,
   articleRatingsService,
-  fetchRatingsService
+  fetchRatingsService,
+  likeCommentService
 } from '../services/article.service';
 
 import Helper from '../services/helper';
@@ -381,7 +382,36 @@ export default {
     if (result === `Article with id: ${articleId} does not exist`) {
       return Helper.failResponse(response, 404, result);
     }
-
     return Helper.successResponse(response, 200, result);
+  },
+
+  /**
+   * @method likeComment
+   * @description handles the logic to like a comment
+   * Route: POST: /articles/ratings
+   * @param {object} request containing the user request metadata
+   * @param {object} response contains the response to the question
+   *
+   * @returns {object} contains the appropriate response
+   */
+
+  async likeComment(request, response) {
+    const { id } = request.user;
+    const { slug, commentId } = request.params;
+
+    const result = await likeCommentService(slug, commentId, id);
+
+    if (result === `The article with the specified slug does not exist`) {
+      return Helper.failResponse(response, 404, {
+        message: result
+      });
+    }
+
+    if (result === `The comment with the specified id does not exist`) {
+      return Helper.failResponse(response, 404, {
+        message: result
+      });
+    }
+    if (result) return Helper.successResponse(response, 200, result);
   }
 };

@@ -24,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     rating: {
       type: DataTypes.INTEGER,
-      allowNull: { args: false }
+      allowNull: false
     }
   });
   Rating.associate = models => {

@@ -4,12 +4,14 @@ import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 import dotenv from 'dotenv';
 import faker from 'faker';
+
 import {
   getArticleData,
   Response,
   getUser,
   createUser,
-  mockCreateArticle
+  mockCreateArticle,
+  createComment
 } from '../utils/db.utils';
 import articleController from '../../controllers/article.controller';
 import app from '../../index';
@@ -1219,6 +1221,117 @@ describe('Article API endpoints', () => {
       expect(response.body.status).to.equal(400);
       expect(response.body.error).to.equal(
         'No token provided, you do not have access to this page'
+      );
+    });
+  });
+
+  describe('POST /articles/:slug/comments/commentId/reactions', () => {
+    let article, comment;
+
+    before(async () => {
+      const user = getUser();
+
+      const userResult = await createUser(user);
+
+      article = await mockCreateArticle(userResult.id);
+
+      comment = await createComment(userResult.id, article.id, article.slug);
+
+      const signupResponse = await chai
+        .request(app)
+        .post(`${API_VERSION}/users/login`)
+        .send(user);
+      userToken = signupResponse.body.data.token;
+    });
+
+    it('should return error for no token provided', async () => {
+      const response = await chai
+        .request(app)
+        .get(
+          `${API_VERSION}/articles/${article.slug}/comments/${comment.id}/reactions`
+        );
+
+      expect(response).to.have.status(400);
+      expect(response.body.status).to.equal(400);
+      expect(response.body.error).to.equal(
+        'No token provided, you do not have access to this page'
+      );
+    });
+
+    it('should like a specific comment', async () => {
+      const response = await chai
+        .request(app)
+        .get(
+          `${API_VERSION}/articles/${article.slug}/comments/${comment.id}/reactions`
+        )
+        .set({ Authorization: `Bearer ${userToken}` });
+
+      expect(response).to.have.status(200);
+      expect(response.body.status).to.equal('success');
+      expect(response.body.data.message).to.equal(
+        'you have successfully liked this comment'
+      );
+    });
+
+    it('should dislike a specific comment', async () => {
+      const response = await chai
+        .request(app)
+        .get(
+          `${API_VERSION}/articles/${article.slug}/comments/${comment.id}/reactions`
+        )
+        .set({ Authorization: `Bearer ${userToken}` });
+
+      expect(response).to.have.status(200);
+      expect(response.body.status).to.equal('success');
+      expect(response.body.data.message).to.equal(
+        'you have successfully unliked this comment'
+      );
+    });
+
+    it('should return error that the specified comment id does not exist', async () => {
+      const response = await chai
+        .request(app)
+        .get(
+          `${API_VERSION}/articles/${
+            article.slug
+          }/comments/${1212121}/reactions`
+        )
+        .set({ Authorization: `Bearer ${userToken}` });
+
+      expect(response).to.have.status(404);
+      expect(response.body.status).to.equal('fail');
+      expect(response.body.data.message).to.equal(
+        'The comment with the specified id does not exist'
+      );
+    });
+
+    it('should return error that the comment id is less than 1', async () => {
+      const response = await chai
+        .request(app)
+        .get(`${API_VERSION}/articles/${article.slug}/comments/${0}/reactions`)
+        .set({ Authorization: `Bearer ${userToken}` });
+
+      expect(response).to.have.status(400);
+      expect(response.body.status).to.equal('fail');
+      expect(response.body.data[0].msg).to.equal(
+        'Comment ID must be greater than 0'
+      );
+    });
+
+    it('should return error that the specified article slug does not exist', async () => {
+      const response = await chai
+        .request(app)
+        .get(
+          `${API_VERSION}/articles/${
+            article.slug
+          }slugifault/comments/${1}/reactions`
+        )
+        .set({ Authorization: `Bearer ${userToken}` });
+
+      expect(response).to.have.status(404);
+      expect(response.body.status).to.equal('fail');
+      expect(response.body.data.message).to.equal(
+        'The article with the specified slug does not exist'
       );
     });
   });

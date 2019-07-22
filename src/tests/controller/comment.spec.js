@@ -125,6 +125,7 @@ describe('Comments API Endpoints', () => {
         'author',
         'createdAt',
         'updatedAt',
+        'likeCount',
         'body'
       );
       expect(response.body.data.author).to.have.keys(
