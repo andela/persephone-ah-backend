@@ -34,6 +34,7 @@
     "cross-env": "^5.2.0",
     "dotenv": "^6.2.0",
     "express": "^4.16.3",
+    "express-session": "^1.16.2",
     "express-validator": "^6.1.0",
     "faker": "^4.1.0",
     "friendly-mail": "^1.0.0",
@@ -46,6 +47,7 @@
     "node-cron": "^2.0.3",
     "passport": "^0.4.0",
     "passport-facebook": "^3.0.0",
+    "passport-google-oauth20": "^2.0.0",
     "passport-twitter": "^1.0.4",
     "pg": "^7.11.0",
     "pg-hstore": "^2.3.3",
@@ -71,7 +73,9 @@
   "nyc": {
     "exclude": [
       "src/db/models/index.js",
-      "src/tests/utils/db.utils.js"
+      "src/tests/utils/db.utils.js",
+      "src/tests/utils/db.utils.js",
+      "src/config/passportStrategies.js"
     ]
   },
   "devDependencies": {

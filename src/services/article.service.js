@@ -4,6 +4,7 @@ import { upload } from '../helpers/image.helper';
 import model from '../db/models';
 import Helper from './helper';
 import { paginationQueryMetadata, pageMetadata } from '../helpers/pagination';
+import readtime from '../helpers/read-time';
 
 const { Comment, Article, User, Follow, Rating } = model;
 /** Istanbul ignore next */
@@ -19,6 +20,7 @@ const { Comment, Article, User, Follow, Rating } = model;
 export const createArticleService = async data => {
   const { title, body, description } = data.body;
   const userId = data.user.id;
+  const readTime = await readtime(body);
 
   const uploadedImage = [];
   const images = data.files;
@@ -47,7 +49,8 @@ export const createArticleService = async data => {
     title,
     description,
     body,
-    image: finalUploads
+    image: finalUploads,
+    readTime
   });
 
   return article;
@@ -219,6 +222,7 @@ export const getAllPublishedArticleService = async (
 
 export const updateArticleService = async data => {
   const { title, body, description } = data.body;
+  const readTime = await readtime(body);
   const authorArticle = await Article.findOne({
     where: { userId: data.user.id, slug: data.params.slug }
   });
@@ -248,7 +252,8 @@ export const updateArticleService = async data => {
     title,
     description,
     body,
-    image: finalUploads
+    image: finalUploads,
+    readTime
   });
   return article;
 };

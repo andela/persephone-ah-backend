@@ -36,6 +36,10 @@ module.exports = {
         type: Sequelize.TEXT,
         allowNull: true
       },
+      readTime: {
+        type: Sequelize.TEXT,
+        allowNull: true
+      },
       averageRating: {
         type: Sequelize.FLOAT,
         allowNull: false,

@@ -57,7 +57,7 @@ let commentSlug;
 let secondCommentId;
 let secondCommentSlug;
 
-describe('User API endpoints', () => {
+describe('Article API endpoints', () => {
   before(async () => {
     const userA = getUser();
     const userB = getUser();

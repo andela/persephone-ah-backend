@@ -48,6 +48,12 @@ export default (sequelize, DataTypes) => {
           args: true
         }
       },
+      readTime: {
+        type: DataTypes.TEXT,
+        allowNull: {
+          args: true
+        }
+      },
       averageRating: {
         type: DataTypes.FLOAT,
         default: 0
