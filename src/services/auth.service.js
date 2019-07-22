@@ -220,17 +220,19 @@ export const getExpiredToken = async () => {
   return expiredToken;
 };
 
-cron.schedule('0 0 * * *', () => {
-  getExpiredToken().then(tokens => {
-    tokens.forEach(token => {
-      BlackList.destroy({
-        where: {
-          userToken: token
-        }
+export const cronJob = () => {
+  cron.schedule('0 0 * * *', () => {
+    getExpiredToken().then(tokens => {
+      tokens.forEach(token => {
+        BlackList.destroy({
+          where: {
+            userToken: token
+          }
+        });
       });
     });
   });
-});
+};
 /**
  *  @method isVerifyUser
  * - it check if user confimation code is in the database

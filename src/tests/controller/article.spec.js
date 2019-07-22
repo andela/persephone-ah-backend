@@ -324,7 +324,6 @@ describe('Article API endpoints', () => {
           done();
         });
     });
-
     it('Should return an error 500', async () => {
       const requests = {
         body: {}
@@ -1058,13 +1057,25 @@ describe('Article API endpoints', () => {
           .post(endpoint)
           .set({ Authorization: `Bearer ${userToken}` })
           .send({ articleId: article.id, rating: 4 });
-
         expect(response).to.have.status(400);
         expect(response.body.status).to.equal('fail');
         expect(response.body.data).to.equal(
           'you are only allowed to rate this article once'
         );
       });
+    });
+
+    it('should return 404 for no article found', async () => {
+      const response = await chai
+        .request(app)
+        .post(endpoint)
+        .set({ Authorization: `Bearer ${userToken}` })
+        .send({ articleId: 455, rating: 4 });
+      expect(response).to.have.status(404);
+      expect(response.body.status).to.equal('fail');
+      expect(response.body.data.message).to.equal(
+        'The article specified does not exist'
+      );
     });
 
     it('should return error for invalid token', async () => {
