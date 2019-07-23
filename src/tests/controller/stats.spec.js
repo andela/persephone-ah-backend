@@ -43,6 +43,13 @@ describe('Page View Count Tests', () => {
       });
   });
 
+  beforeEach(async () => {
+    await chai
+      .request(app)
+      .put(`${process.env.API_VERSION}/articles/publish/${firstArticle.slug}`)
+      .set({ Authorization: `Bearer ${userToken}` });
+  });
+
   it('Should successfully increase the view count this article by 1', done => {
     chai
       .request(app)

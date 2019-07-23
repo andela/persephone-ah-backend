@@ -2,7 +2,7 @@ import moment from 'moment';
 import model from '../db/models';
 import { getCommentLikesCount } from './article.service';
 
-const { Comment, Article, User } = model;
+const { Comment, User } = model;
 
 /**
  *
@@ -18,20 +18,6 @@ export const findCommentRecord = async (id, slug) => {
     where: { id, slug }
   });
   return record;
-};
-
-/**
- * @method getArticleInstance
- * Queries the database for an article
- * @param {slug} slug
- * @returns {object} article instance object
- */
-
-export const getArticleInstance = async slug => {
-  const article = await Article.findOne({
-    where: { slug }
-  });
-  return article;
 };
 
 /**
