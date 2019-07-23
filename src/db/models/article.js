@@ -62,14 +62,6 @@ export default (sequelize, DataTypes) => {
           args: false
         }
       },
-      numberOfRating: {
-        type: DataTypes.INTEGER,
-        default: 0
-      },
-      sumOfRating: {
-        type: DataTypes.INTEGER,
-        default: 0
-      },
       isPublished: {
         type: DataTypes.BOOLEAN,
         default: false
