@@ -1148,6 +1148,29 @@
           }
         }
       }
+    },
+    "get": {
+      "tags": ["Articles"],
+      "summary": "Post endpoint to rate an article",
+      "produces": ["application/json"],
+      "consumes": ["application/x-www-form-urlencoded"],
+      "parameters": [
+        {
+          "name": "articleId",
+          "in": "path",
+          "description": "id of the article's ratings to be fetched",
+          "required": true,
+          "type": "integer"
+        }
+      ],
+      "responses": {
+        "400": {
+          "description": "Error in input"
+        },
+        "401": {
+          "description": "Error with authentication"
+        }
+      }
     }
   },
   "securityDefinitions": {

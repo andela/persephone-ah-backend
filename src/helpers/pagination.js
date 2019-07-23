@@ -43,7 +43,7 @@ export const pageMetadata = (page = 1, limit = 10, totalItems, entity = '') => {
           1}&limit=${pageLimit}`
       : null;
   if (page > totalPages) {
-    return 'No articles on this page';
+    return 'No content on this page';
   }
   return {
     totalItems,

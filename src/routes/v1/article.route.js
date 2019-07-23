@@ -102,6 +102,8 @@ router
     verifyToken,
     validator('fetchRating'),
     checkValidationResult,
+    paginationValidator()('pagination'),
+    ValidationResult,
     articleController.fetchRatings
   )
   .post(
@@ -123,7 +125,11 @@ router
     verifyToken,
     validator('commentLike'),
     checkValidationResult,
-    likeComment
+    likeComment,
+    authorization.verifyToken,
+    validator('fetchRating'),
+    checkValidationResult,
+    articleController.fetchRatings
   );
 
 router.get(

@@ -58,6 +58,7 @@ const ArticleValidator = {
           param('articleId')
             .isNumeric({ gt: 0 })
             .not()
+            .not()
             .matches('[-, +, %]')
             .withMessage(
               'Article ID must be a number and can not be less than 1'
