@@ -93,7 +93,7 @@ describe('GET /profiles/:username', () => {
   it('should return an error when a user tries to view a non existent profile', async () => {
     const response = await chai
       .request(app)
-      .get(`${process.env.API_VERSION}/profiles/nonexistent`)
+      .get(`${process.env.API_VERSION}/profiles/nonexisteut`)
       .set('Authorization', `Bearer ${viewerToken}`);
     expect(response).to.have.status(404);
     expect(response.body.status).to.be.equal('fail');

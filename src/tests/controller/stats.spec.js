@@ -2,8 +2,11 @@ import chai from 'chai';
 import chaiHttp from 'chai-http';
 import sinonChai from 'sinon-chai';
 import dotenv from 'dotenv';
-import { getArticleData, getUser } from '../utils/db.utils';
+import { getArticleData } from '../utils/db.utils';
 import app from '../../index';
+import models from '../../db/models';
+
+const { User } = models;
 
 chai.use(chaiHttp);
 chai.use(sinonChai);
@@ -19,16 +22,26 @@ chai.use(chaiHttp);
 chai.use(sinonChai);
 
 describe('Page View Count Tests', () => {
-  before(done => {
-    const randomUser = getUser();
-    chai
+  before(async () => {
+    const verifiedUser = {
+      firstName: 'verified',
+      lastName: 'user',
+      password: 'Sewtreaction2',
+      email: 'user@viewstats.com'
+    };
+    const response = await chai
       .request(app)
       .post(`${process.env.API_VERSION}/users/signup`)
-      .send(randomUser)
-      .end((error, response) => {
-        userToken = response.body.data.token;
-        done();
-      });
+      .send(verifiedUser);
+    userToken = response.body.data.token;
+    const { confirmEmailCode } = await User.findOne({
+      where: { email: verifiedUser.email }
+    });
+    // verify this user
+    await chai
+      .request(app)
+      .get(`${process.env.API_VERSION}/users/verify/${confirmEmailCode}`)
+      .set({ Authorization: `Bearer ${userToken}` });
   });
 
   before(done => {

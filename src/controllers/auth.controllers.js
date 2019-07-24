@@ -228,6 +228,7 @@ export default {
         });
       }
       await user.update({ confirmEmailCode: null });
+      await user.update({ confirmEmail: true });
 
       return Helper.successResponse(response, 200, {
         message: 'User successfully verified'

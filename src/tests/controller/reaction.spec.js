@@ -3,6 +3,9 @@ import chaiHttp from 'chai-http';
 import sinonChai from 'sinon-chai';
 import { getArticleData, getUser } from '../utils/db.utils';
 import app from '../../index';
+import model from '../../db/models';
+
+const { User } = model;
 
 chai.use(chaiHttp);
 chai.use(sinonChai);
@@ -14,16 +17,27 @@ let firstArticle;
 let secondArticle;
 
 describe('Articles Reactions API endpoints', () => {
-  before(done => {
-    const randomUser = getUser();
-    chai
+  before(async () => {
+    const verifiedUser = {
+      firstName: 'verified',
+      lastName: 'user',
+      password: 'Sewtreaction2',
+      email: 'user@reaction.com'
+    };
+    const response = await chai
       .request(app)
       .post(`${process.env.API_VERSION}/users/signup`)
-      .send(randomUser)
-      .end((error, response) => {
-        userToken = response.body.data.token;
-        done();
-      });
+      .send(verifiedUser);
+    userToken = response.body.data.token;
+
+    const { confirmEmailCode } = await User.findOne({
+      where: { email: verifiedUser.email }
+    });
+    // verify this user
+    await chai
+      .request(app)
+      .get(`${process.env.API_VERSION}/users/verify/${confirmEmailCode}`)
+      .set({ Authorization: `Bearer ${userToken}` });
   });
 
   before(done => {
@@ -34,9 +48,10 @@ describe('Articles Reactions API endpoints', () => {
       .send(secondRandomUser)
       .end((error, response) => {
         secondUserToken = response.body.data.token;
-        done();
       });
+    done();
   });
+
   before(done => {
     chai
       .request(app)
@@ -54,7 +69,7 @@ describe('Articles Reactions API endpoints', () => {
       .request(app)
       .post(`${process.env.API_VERSION}/articles`)
       .send(getArticleData())
-      .set({ Authorization: `Bearer ${secondUserToken}` })
+      .set({ Authorization: `Bearer ${userToken}` })
       .end((error, response) => {
         secondArticle = response.body.data;
         done();

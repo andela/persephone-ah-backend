@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import model from '../db/models';
 import { isTokenInBlackListService } from '../services/auth.service';
 
-const { Article } = model;
+const { Article, User } = model;
 
 dotenv.config();
 
@@ -200,6 +200,31 @@ export default {
     });
     if (author) {
       request.authorId = author.userId;
+    }
+    next();
+  },
+
+  /**
+   * @method verifyUser
+   * - it checks if user has confirm email
+   * - returns next()
+   *
+   * @param {Object} request request object
+   * @param {Object} response response object
+   * @param {Function} next function
+   *
+   * @returns {Response} response object
+   */
+
+  async verifyUser(request, response, next) {
+    const user = await User.findOne({
+      where: { id: request.user.id, confirmEmail: true }
+    });
+    if (!user) {
+      return response.status(403).json({
+        status: 'fail',
+        message: 'Please confirm your email'
+      });
     }
     next();
   }
