@@ -6,7 +6,15 @@ import { paginationQueryMetadata, pageMetadata } from '../helpers/pagination';
 import readtime from '../helpers/read-time';
 import averageRatings from '../helpers/average-ratings';
 
-const { Comment, Article, User, Follow, Rating, CommentReaction } = model;
+const {
+  Comment,
+  Article,
+  User,
+  Follow,
+  Rating,
+  ArticleReaction,
+  CommentReaction
+} = model;
 /** Istanbul ignore next */
 /**
  * @method createArticleService
@@ -67,6 +75,7 @@ export const createArticleService = async data => {
 
 export const getArticleService = async data => {
   const articleSlug = data.params.slug;
+
   const article = await Article.findOne({
     where: { slug: articleSlug, isPublished: true },
     include: [
@@ -79,8 +88,28 @@ export const getArticleService = async data => {
   });
   if (article) {
     const articleRatingDetails = await averageRatings(article.id);
-    return { article, articleRatingDetails };
+    // search for likes in reactions table
+    const articleLikes = await ArticleReaction.findAndCountAll({
+      where: { articleId: article.id, isLiked: true },
+      attributes: [],
+      include: [
+        {
+          model: User,
+          as: 'liker',
+          attributes: ['firstName', 'lastName', 'image']
+        }
+      ]
+    });
+    let likesCount;
+    if (articleLikes) {
+      likesCount = articleLikes.count;
+    }
+    article.setDataValue('likesCount', likesCount);
+    article.setDataValue('likers', articleLikes.rows);
+    article.setDataValue('rating', articleRatingDetails);
   }
+
+  return article;
 };
 
 /**
