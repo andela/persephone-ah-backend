@@ -10,6 +10,7 @@ import app from '../../index';
 import { getPasswordResetToken } from '../../helpers/jwt.helper';
 import * as imageHelper from '../../helpers/image.helper';
 import model from '../../db/models';
+import * as mail from '../../helpers/mail.helper';
 
 const { User } = model;
 
@@ -22,6 +23,7 @@ let userToken;
 let secondUserToken;
 let deletedUserToken;
 let mockImage;
+let mockMail;
 
 const { expect } = chai;
 
@@ -42,7 +44,12 @@ describe('Auth API endpoints', () => {
         done(err);
       });
   });
+  after(() => {
+    mockMail.restore();
+  });
   describe('POST /users/signup', () => {
+    mockMail = sinon.stub(mail, 'sendWelcomeEmail').resolves({});
+    mockMail = sinon.stub(mail, 'sendForgotPasswordMail').resolves({});
     before(done => {
       chai
         .request(app)
