@@ -588,13 +588,13 @@ describe('Article API endpoints', () => {
           expect(response.body).to.have.property('data');
           expect(response.body.status).to.equal('success');
           expect(response.body.data.allArticles[0].title).to.equal(
-            'new article'
+            'first article title'
           );
           expect(response.body.data.allArticles[0].description).to.equal(
-            'this is a description'
+            'This is a description'
           );
           expect(response.body.data.allArticles[0].body).to.equal(
-            'this is a description this is a description'
+            'lorem ipsum whatever'
           );
           done();
         });
@@ -607,7 +607,7 @@ describe('Article API endpoints', () => {
           expect(response.body).to.have.property('data');
           expect(response.body.status).to.equal('success');
           expect(response.body.data.allArticles[0].title).to.equal(
-            'new article'
+            'first article title'
           );
           done();
         });
