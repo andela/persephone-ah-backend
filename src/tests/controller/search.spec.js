@@ -86,6 +86,7 @@ describe('Search And Filter Tests', () => {
       'readTime',
       'image',
       'viewsCount',
+      'author',
       'tags'
     );
     expect(response.body.data.searchResult[0].tags.name[0]).to.be.equal(
@@ -307,7 +308,8 @@ describe('Search And Filter Tests', () => {
       'readTime',
       'image',
       'tags',
-      'viewsCount'
+      'viewsCount',
+      'author'
     );
     expect(response.body.data.searchResult[0].tags.name[0]).to.be.equal('vue');
     expect(response.body.data.searchResult[0].title).to.include(
