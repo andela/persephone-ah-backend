@@ -79,6 +79,17 @@ const getSearchResult = async (multiple, queryParams, hasTitle) => {
   if (!multiple && !hasTitle) include = [queryParams];
   if (multiple) include = queryParams;
 
+  include = include
+    ? [
+        ...include,
+        {
+          model: User,
+          as: 'author',
+          attributes: ['firstName', 'lastName', 'image', 'email', 'userName']
+        }
+      ]
+    : include;
+
   const searchResult = await Article.findAll({
     where: !hasTitle
       ? { isPublished: true }

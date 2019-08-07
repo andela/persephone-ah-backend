@@ -662,19 +662,6 @@ describe('Auth API endpoints', () => {
       );
     });
 
-    it('should return error for logged out token used to access forgot_password route', async () => {
-      const response = await chai
-        .request(app)
-        .post(`${baseUrl}forgot_password`)
-        .set({ Authorization: `Bearer ${userToken}` });
-
-      expect(response).to.have.status(401);
-      expect(response.body.status).to.equal('error');
-      expect(response.body.error.message).to.equal(
-        'kindly sign in as the token used has been logged out'
-      );
-    });
-
     it('should call the next middleware function on unhandled error in during profile update', async () => {
       const nextCallback = sinon.spy();
       authenticationController.profileUpdate({}, {}, nextCallback);
