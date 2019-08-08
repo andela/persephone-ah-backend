@@ -112,7 +112,7 @@ describe('Auth API endpoints', () => {
           expect(response.body).to.have.property('status');
           expect(response.body).to.have.property('data');
           expect(response.body.status).to.equal('fail');
-          expect(response.body.data[0].msg).to.equal(
+          expect(response.body.data.message.firstName).to.equal(
             'First name must be only alphabetical chars'
           );
           done();
@@ -134,7 +134,7 @@ describe('Auth API endpoints', () => {
           expect(response.body).to.have.property('status');
           expect(response.body).to.have.property('data');
           expect(response.body.status).to.equal('fail');
-          expect(response.body.data[0].msg).to.equal(
+          expect(response.body.data.message.email).to.equal(
             'Please enter a valid email'
           );
           done();
@@ -156,7 +156,7 @@ describe('Auth API endpoints', () => {
           expect(response.body).to.have.property('status');
           expect(response.body).to.have.property('data');
           expect(response.body.status).to.equal('fail');
-          expect(response.body.data[0].msg).to.equal(
+          expect(response.body.data.message.firstName).to.equal(
             'First name must be only alphabetical chars'
           );
           done();
@@ -178,7 +178,7 @@ describe('Auth API endpoints', () => {
           expect(response.body).to.have.property('status');
           expect(response.body).to.have.property('data');
           expect(response.body.status).to.equal('fail');
-          expect(response.body.data[0].msg).to.equal(
+          expect(response.body.data.message.lastName).to.equal(
             'Last name must be only alphabetical chars'
           );
           done();
@@ -200,7 +200,7 @@ describe('Auth API endpoints', () => {
           expect(response.body).to.have.property('status');
           expect(response.body).to.have.property('data');
           expect(response.body.status).to.equal('fail');
-          expect(response.body.data[0].msg).to.equal(
+          expect(response.body.data.message.password).to.equal(
             'Password can not be less than 8 characters'
           );
           done();

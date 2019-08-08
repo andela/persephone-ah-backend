@@ -98,11 +98,16 @@ const UserValidator = {
   },
 
   checkValidationResult(request, response, next) {
-    const result = validationResult(request);
-    if (result.isEmpty()) {
-      return next();
+    const errorFormatter = ({ msg }) => {
+      return `${msg}`;
+    };
+    const result = validationResult(request).formatWith(errorFormatter);
+    if (!result.isEmpty()) {
+      return Helper.failResponse(response, 400, {
+        message: result.mapped()
+      });
     }
-    return Helper.failResponse(response, 400, result.errors);
+    return next();
   }
 };
 export default UserValidator;
