@@ -142,7 +142,7 @@ export const isUserExist = async userEmail =>
 
 export const forgotPasswordServices = async user => {
   const token = await getPasswordResetToken(user);
-  const url = `${process.env.url}/api/v1/users/password_reset?token=${token}`;
+  const url = `${process.env.FRONTEND_URL}/password_reset?token=${token}`;
 
   sendForgotPasswordMail(
     user.firstName,
