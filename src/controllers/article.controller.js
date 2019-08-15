@@ -14,7 +14,8 @@ import {
   deleteArticleService,
   articleRatingsService,
   fetchRatingsService,
-  likeCommentService
+  likeCommentService,
+  fetchTagsService
 } from '../services/article.service';
 
 import Helper from '../services/helper';
@@ -423,5 +424,22 @@ export default {
     }
 
     return Helper.successResponse(response, 200, result);
+  },
+
+  /**
+   * @method fetchTags
+   * - Route: GET: /articles/tags
+   * - Helps handle the request to the above route
+   *
+   * @param {request} request
+   * @param {response} response
+   */
+
+  async fetchTags(request, response) {
+    const result = await fetchTagsService();
+
+    if (result.length > 0) {
+      return Helper.successResponse(response, 200, result);
+    }
   }
 };

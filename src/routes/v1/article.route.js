@@ -38,7 +38,8 @@ const {
   unPublishArticle,
   getUserPublishedArticles,
   userGetAllDraftArticles,
-  likeComment
+  likeComment,
+  fetchTags
 } = articleController;
 
 const { getCommentHistory, editComment, getSingleComment } = commentController;
@@ -64,6 +65,7 @@ router
     checkValidationResult,
     createArticle
   )
+  .get('/tags', fetchTags)
   .post(
     '/:slug/comments',
     verifyToken,

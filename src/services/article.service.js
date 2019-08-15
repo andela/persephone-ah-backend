@@ -730,3 +730,16 @@ export const fetchRatingsService = async (articleId, queryParams) => {
   const allRatings = ratings.rows;
   return { pageResponse, allRatings };
 };
+
+/**
+ * @method fetchTagsService
+ * - Helps fetch all tags in the database
+ */
+
+export const fetchTagsService = async () => {
+  const result = await Tag.findAll({
+    attributes: { exclude: ['createdAt', 'updatedAt'] }
+  });
+
+  return result;
+};

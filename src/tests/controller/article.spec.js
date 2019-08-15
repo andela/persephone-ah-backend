@@ -1456,4 +1456,16 @@ describe('Article API endpoints', () => {
       );
     });
   });
+
+  describe('GET /articles/tags', () => {
+    it('should return all tags in record', async () => {
+      const response = await chai
+        .request(app)
+        .get(`${API_VERSION}/articles/tags`);
+
+      expect(response).to.have.status(200);
+      expect(response.body.status).to.equal('success');
+      expect(response.body.data.length).greaterThan(0);
+    });
+  });
 });
