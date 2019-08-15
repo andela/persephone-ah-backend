@@ -104,9 +104,12 @@ describe('User API endpoints', () => {
         .send({
           userId: -20
         });
+      console.log(32, response.body);
       expect(response).to.have.status(400);
       expect(response).to.be.an('object');
-      expect(response.body.data[0].msg).to.equal('User ID must be a number');
+      expect(response.body.data.message.userId).to.equal(
+        'User ID must be a number'
+      );
     });
 
     it('Should return no user found when trying to follow a user', async () => {
