@@ -1,9 +1,10 @@
 import { getToken } from '../helpers/jwt.helper';
 import model from '../db/models';
-import Helper from '../services/helper';
 import { hashPassword } from '../services/auth.service';
 
 const { User } = model;
+
+const { frontendURL } = process.env;
 
 /**
  * @description returns tokens and profile from social service
@@ -31,6 +32,7 @@ const socialCallback = async (accessToken, refreshToken, profile, done) => {
     defaults: {
       firstName: names[0] || `${provider}Firstname`,
       lastName: names[1] || `${provider}Lastname`,
+      userName: username || names[0],
       password: hashedPassword,
       email: userEmail,
       socialAuth: provider,
@@ -52,13 +54,17 @@ const socialCallback = async (accessToken, refreshToken, profile, done) => {
  */
 
 const socialRedirect = async (request, response) => {
-  if (request.user.noEmail) {
-    return Helper.failResponse(response, 400, {
-      message: 'user has no email address'
-    });
+  try {
+    if (request.user.noEmail) {
+      response.redirect(`${frontendURL}/error`);
+    }
+    const token = await getToken(request.user);
+    const { id, firstName, lastName, userName, email } = await request.user;
+    response.redirect(
+      `${frontendURL}/social?token=${token}&userid=${id}&firstname=${firstName}&lastname=${lastName}&username=${userName}&email=${email}`
+    );
+  } catch (error) {
+    return error.message;
   }
-
-  const token = await getToken(request.user);
-  return Helper.successResponse(response, 200, { token });
 };
 export { socialCallback, socialRedirect };
