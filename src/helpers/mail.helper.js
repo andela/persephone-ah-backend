@@ -1,7 +1,8 @@
-import Mail from 'friendly-mail';
+import sendgrid from '@sendgrid/mail';
 import dotenv from 'dotenv';
 
 dotenv.config();
+sendgrid.setApiKey(process.env.SENDGRID_API);
 /**
  * @method sendWelcomeEmail
  * - it sends a welcome email to new users
@@ -24,14 +25,14 @@ export const sendWelcomeEmail = (
   type,
   confirmCode
 ) => {
-  return new Mail(type)
-    .to(recipientMail)
-    .subject(subject)
-    .data({
-      name: recipientName,
-      url: `${process.env.url}/api/v1/users/verify/${confirmCode}`
-    })
-    .send();
+  return sendgrid.send({
+    to: recipientMail,
+    subject,
+    from: 'persephone@andela.com',
+    html: `Hi ${recipientName}. Welcome To Author's Haven.
+
+Please click on this  <a href="${process.env.FRONTEND_URL}/verify?token=${confirmCode}" >link</a> to confirm your email.`
+  });
 };
 
 /**
@@ -54,14 +55,14 @@ export const sendForgotPasswordMail = async (
   type,
   url
 ) => {
-  return new Mail(type)
-    .to(recipientMail)
-    .subject(subject)
-    .data({
-      name: recipientName,
-      url
-    })
-    .send();
+  return sendgrid.send({
+    to: recipientMail,
+    subject,
+    from: 'persephone@andela.com',
+    html: `Hi ${recipientName}. You requested to reset your author's haven account's password.
+
+Please click on this  <a href="${url}" >link</a> to reset your password.`
+  });
 };
 
 /**
@@ -84,12 +85,17 @@ export const sendBlockedArticle = async (
   type,
   articleTitle
 ) => {
-  return new Mail(type)
-    .to(recipientMail)
-    .subject(subject)
-    .data({
-      name: recipientName,
-      articleTitle
-    })
-    .send();
+  return sendgrid.send({
+    to: recipientMail,
+    subject,
+    from: 'persephone@andela.com',
+    html: `Hi ${recipientName}. This letter is to notify you concerning the article you published titled <strong>${articleTitle}</strong>.
+The above article has been reported by different users and after several investigations, we decided to take the article
+down.
+The above article has violated the rules and regulations of the Author's Haven Platform.
+
+Thank you for your kind attention to the above matter. Please feel free to contact us at any time: authorhaven@mail.com.
+
+Author's Haven.`
+  });
 };
