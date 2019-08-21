@@ -38,6 +38,8 @@ const socialCallback = async (accessToken, refreshToken, profile, done) => {
       socialAuth: provider,
       image: profileImage,
       passwordToken: true,
+      confirmEmail: true,
+      confirmEmailCode: null,
       twitterHandle: username ? `@${username}` : null
     }
   });

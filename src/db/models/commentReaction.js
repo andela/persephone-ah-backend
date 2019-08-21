@@ -11,6 +11,12 @@ module.exports = (sequelize, DataTypes) => {
         }
       }
     },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: {
+        args: false
+      }
+    },
     commentId: {
       type: DataTypes.INTEGER,
       allowNull: {

@@ -18,6 +18,12 @@ module.exports = {
           }
         }
       },
+      email: {
+        type: Sequelize.STRING,
+        allowNull: {
+          args: false
+        }
+      },
       commentId: {
         type: Sequelize.INTEGER,
         allowNull: {

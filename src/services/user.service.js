@@ -208,7 +208,14 @@ export const getUserFollowersService = async userId => {
       {
         model: User,
         as: 'follower',
-        attributes: ['firstName', 'lastName', 'email', 'userName', 'image']
+        attributes: [
+          'id',
+          'firstName',
+          'lastName',
+          'email',
+          'userName',
+          'image'
+        ]
       }
     ]
   });
