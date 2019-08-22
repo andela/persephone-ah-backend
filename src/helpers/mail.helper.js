@@ -48,12 +48,12 @@ Please click on this  <a href="${process.env.FRONTEND_URL}/verify?token=${confir
  * @returns {Promise}
  */
 
-export const sendForgotPasswordMail = async (
+export const sendForgotPasswordMail = (
   recipientName,
   recipientMail,
   subject,
   type,
-  url
+  token
 ) => {
   return sendgrid.send({
     to: recipientMail,
@@ -61,7 +61,7 @@ export const sendForgotPasswordMail = async (
     from: 'persephone@andela.com',
     html: `Hi ${recipientName}. You requested to reset your author's haven account's password.
 
-Please click on this  <a href="${url}" >link</a> to reset your password.`
+Please click on this  <a href="${process.env.FRONTEND_URL}/password_reset?token=${token}" >link</a> to reset your password.`
   });
 };
 
