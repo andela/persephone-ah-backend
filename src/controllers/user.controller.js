@@ -123,8 +123,8 @@ const adminDeleteUser = async (request, response) => {
 
 const followUser = async (request, response) => {
   try {
-    const userId = request.user.id;
-    const friendUserId = request.body.userId;
+    const friendUserId = request.user.id;
+    const { userId } = request.body;
 
     const value = await followUserService(
       userId,
