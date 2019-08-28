@@ -35,6 +35,29 @@ const pushNotification = (receiver, message) => {
 };
 
 /**
+ * @method fetchNotificationService
+ * @description method that fetches all notifications
+ *
+ * @param {Object} request receiver details
+ *
+ * @returns {Object} true or false
+ */
+export const fetchNotificationService = async request => {
+  const userId = request.user.id;
+  // notifications
+  try {
+    const findNotification = await Notification.findAll({
+      where: {
+        receiverUserId: userId
+      }
+    });
+    return findNotification;
+  } catch (error) {
+    throw Error(error);
+  }
+};
+
+/**
  * @method createNotificationMessage
  * @description persist data into the Notification table
  *
