@@ -202,6 +202,7 @@ export const getUserFollowersService = async userId => {
   }
   const followers = await Follow.findAll({
     where: { userId, isFollowing: true },
+    attributes: ['id'],
     include: [
       {
         model: User,

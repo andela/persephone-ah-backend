@@ -152,6 +152,7 @@ export default {
         lastName: request.body.lastName || request.foundUser.lastName,
         bio: request.body.bio || request.foundUser.bio,
         userName: request.body.userName || request.foundUser.userName,
+        isNotified: request.body.isNotifyActive || request.foundUser.isNotified,
         twitterHandle:
           request.body.twitterHandle || request.foundUser.twitterHandle,
         facebookHandle:
@@ -167,7 +168,8 @@ export default {
         userName: updatedUser.dataValues.userName,
         twitterHandle: updatedUser.dataValues.twitterHandle,
         facebookHandle: updatedUser.dataValues.facebookHandle,
-        image: updatedUser.dataValues.image
+        image: updatedUser.dataValues.image,
+        isNotifyActive: updatedUser.dataValues.isNotified
       });
     } catch (error) {
       /* istanbul ignore next */
