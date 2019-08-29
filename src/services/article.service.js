@@ -5,6 +5,11 @@ import Helper from './helper';
 import { paginationQueryMetadata, pageMetadata } from '../helpers/pagination';
 import readtime from '../helpers/read-time';
 import averageRatings from '../helpers/average-ratings';
+import {
+  commentArticleNotification,
+  likeCommentNotification,
+  sendNotificationOnArticlePublish
+} from './notification.service';
 
 const {
   Comment,
@@ -394,6 +399,11 @@ export const publishArticleService = async data => {
     isPublished: true,
     publishedAt: date.toISOString()
   });
+  const details = {
+    publisherUserId: data.user.id,
+    articleSlug
+  };
+  sendNotificationOnArticlePublish(details);
   return article;
 };
 
@@ -442,7 +452,7 @@ export const createCommentService = async (userId, slug, commentDetails) => {
       {
         model: User,
         as: 'author',
-        attributes: ['firstName', 'lastName'],
+        attributes: ['id', 'firstName', 'lastName'],
         include: [
           { model: Follow, as: 'followersfriend', attributes: ['isFollowing'] }
         ]
@@ -470,6 +480,14 @@ export const createCommentService = async (userId, slug, commentDetails) => {
     body: bodyDetails,
     highlightedText: highlightedText || null
   });
+
+  const details = {
+    userId: article['author.id'],
+    commentUserId: userId,
+    articleSlug: slug,
+    commentId: result.dataValues.id
+  };
+  commentArticleNotification(details);
 
   const comment = {
     id: result.id,
@@ -665,13 +683,19 @@ export const likeCommentService = async (slug, commentId, userId, email) => {
       });
 
       const likeCount = await getCommentLikesCount(commentId);
-
       const result = {
         likeCount,
         message: 'you have successfully liked this comment',
         commentId,
         userId
       };
+      const details = {
+        userId: commentExist.dataValues.userId,
+        likeUserId: userId,
+        articleSlug: slug,
+        commentId
+      };
+      likeCommentNotification(details);
       return result;
     }
     await CommentReaction.destroy({

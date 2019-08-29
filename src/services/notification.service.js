@@ -2,10 +2,11 @@ import Pusher from 'pusher';
 import dotenv from 'dotenv';
 import models from '../db/models';
 import { findUserById } from './auth.service';
+import { getUserFollowersService } from './user.service';
 
 dotenv.config();
 
-const { Notification } = models;
+const { Notification, Follow } = models;
 
 /**
  * @method pusher
@@ -86,7 +87,7 @@ export const followNotification = async (userId, friendUserId) => {
     const sender = await findUserById(userId);
     const receiver = await findUserById(friendUserId);
     if (receiver.isNotified) {
-      const message = `${sender.userName} is now following you`;
+      const message = `${sender.firstName} is now following you`;
       const link = `/profiles/${sender.userName}`;
       const messageDetails = {
         senderUserId: sender.id,
@@ -158,7 +159,7 @@ export const likeArticleNotification = async details => {
     const receiver = await findUserById(userId);
 
     if (receiver.isNotified) {
-      const message = `${sender.userName} liked your article`;
+      const message = `${sender.firstName} liked your article`;
       const link = `/articles/${articleSlug}`;
       const messageDetails = {
         senderUserId: sender.dataValues.id,
@@ -194,7 +195,7 @@ export const likeCommentNotification = async details => {
     const receiver = await findUserById(userId);
 
     if (receiver.isNotified) {
-      const message = `${sender.userName} liked your comment`;
+      const message = `${sender.firstName} liked your comment`;
       const link = `/articles/${articleSlug}/comments/${commentId}`;
       const messageDetails = {
         senderUserId: sender.id,
@@ -208,6 +209,50 @@ export const likeCommentNotification = async details => {
       const savedNotification = await createNotificationMessage(messageDetails);
       return !!savedNotification;
     }
+    return false;
+  } catch (error) {
+    const response = { message: 'something went wrong' };
+    return response;
+  }
+};
+
+/**
+ * @method likeCommentNotification
+ * @description create a notification when a user likes a comment
+ *
+ * @param {Object} details details of the notification to be sent
+ *
+ * @returns {Boolean} true or false
+ */
+export const sendNotificationOnArticlePublish = async details => {
+  try {
+    const { publisherUserId, articleSlug } = details;
+    const sender = await findUserById(publisherUserId);
+    const followers = await getUserFollowersService(publisherUserId);
+
+    const followersUserId = followers.map(fol => {
+      return fol.dataValues.friendUserId;
+    });
+    await followersUserId.forEach(async userId => {
+      const receiver = await findUserById(userId);
+      if (receiver.isNotified) {
+        const message = `${sender.firstName} published an article`;
+        const link = `/articles/${articleSlug}`;
+        const messageDetails = {
+          senderUserId: sender.id,
+          receiverUserId: receiver.id,
+          notificationMessage: message,
+          link
+        };
+        pushNotification(receiver, message);
+
+        const savedNotification = await createNotificationMessage(
+          messageDetails
+        );
+        return !!savedNotification;
+      }
+      return false;
+    });
     return false;
   } catch (error) {
     const response = { message: 'something went wrong' };
