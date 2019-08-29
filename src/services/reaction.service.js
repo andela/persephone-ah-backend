@@ -1,7 +1,8 @@
 /* eslint-disable import/prefer-default-export */
 import models from '../db/models';
+import { likeArticleNotification } from './notification.service';
 
-const { ArticleReaction } = models;
+const { ArticleReaction, Article } = models;
 /**
  * @method reactionService
  * - user can like or dislike article
@@ -23,11 +24,24 @@ export const reactionService = async data => {
         articleId
       }
     });
+    const article = await Article.findOne({
+      where: {
+        id: articleId
+      }
+    });
+
     if (findReaction == null) {
       await ArticleReaction.create({
         userId,
         articleId
       });
+
+      const details = {
+        userId: article.dataValues.userId,
+        likeUserId: userId,
+        articleSlug: article.dataValues.slug
+      };
+      likeArticleNotification(details);
       return { message: 'You have liked this article successfully' };
     }
     await findReaction.destroy({ where: { userId } });

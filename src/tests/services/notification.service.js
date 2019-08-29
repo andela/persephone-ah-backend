@@ -63,7 +63,7 @@ describe('Notification service', () => {
       userId: userIdA,
       commentUserId: userIdB,
       articleSlug:
-        '/articles/temporibus-labore-laborum-repudiandae-vitae-rerum-debitis-ut-quidem-quisquam/comments/2',
+        'temporibus-labore-laborum-repudiandae-vitae-rerum-debitis-ut-quidem-quisquam',
       commentId: 5
     };
     const response = await commentArticleNotification(details);
@@ -80,7 +80,7 @@ describe('Notification service', () => {
       userId: userIdA,
       likeUserId: userIdB,
       articleSlug:
-        '/articles/temporibus-labore-laborum-repudiandae-vitae-rerum-debitis-ut-quidem-quisquam/comments/2'
+        'temporibus-labore-laborum-repudiandae-vitae-rerum-debitis-ut-quidem-quisquam'
     };
     const response = await likeArticleNotification(details);
     expect(response).to.equal(true);
@@ -146,7 +146,7 @@ describe('Notification service', () => {
       userId: userIdC,
       commentUserId: userIdB,
       articleSlug:
-        '/articles/temporibus-labore-laborum-repudiandae-vitae-rerum-debitis-ut-quidem-quisquam/comments/2',
+        'temporibus-labore-laborum-repudiandae-vitae-rerum-debitis-ut-quidem-quisquam',
       commentId: 5
     };
     const response = await commentArticleNotification(details);
@@ -163,7 +163,7 @@ describe('Notification service', () => {
       userId: userIdC,
       likeUserId: userIdA,
       articleSlug:
-        '/articles/temporibus-labore-laborum-repudiandae-vitae-rerum-debitis-ut-quidem-quisquam/comments/2'
+        'temporibus-labore-laborum-repudiandae-vitae-rerum-debitis-ut-quidem-quisquam'
     };
     const response = await likeArticleNotification(details);
     expect(response).to.equal(false);

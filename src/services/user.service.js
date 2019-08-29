@@ -5,6 +5,7 @@ import Helper from './helper';
 import model from '../db/models';
 import { paginationQueryMetadata, pageMetadata } from '../helpers/pagination';
 import { sendWelcomeEmail } from '../helpers/mail.helper';
+import { followNotification } from './notification.service';
 
 const { User, Follow } = model;
 
@@ -174,12 +175,14 @@ export const followUserService = async (userId, friendUserId) => {
     }
 
     // if isFollwing is false, it's updated to true
+    followNotification(friendUserId, userId);
     return 'You have followed this user';
   }
   await Follow.create({
     userId,
     friendUserId
   });
+  followNotification(friendUserId, userId);
   return 'You have followed this user';
 };
 
