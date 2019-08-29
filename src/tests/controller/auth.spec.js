@@ -450,6 +450,8 @@ describe('Auth API endpoints', () => {
       expect(response.body.data.userName).to.be.equal('aboyhasnoname');
       expect(response.body.data).to.have.keys(
         'bio',
+        'id',
+        'isNotifyActive',
         'userName',
         'firstName',
         'lastName',
@@ -478,6 +480,8 @@ describe('Auth API endpoints', () => {
       expect(response.body.data).to.have.keys(
         'bio',
         'userName',
+        'id',
+        'isNotifyActive',
         'firstName',
         'lastName',
         'twitterHandle',

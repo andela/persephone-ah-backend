@@ -53,7 +53,11 @@ export const signUpService = async body => {
     lastName: result.lastName,
     email: result.email,
     image: result.image,
-    token: getToken(result)
+    token: getToken(result),
+    userName: result.userName,
+    bio: result.bio,
+    id: result.id,
+    isNotified: result.isNotified
   };
 
   sendWelcomeEmail(

@@ -163,6 +163,7 @@ export default {
 
       return Helper.successResponse(response, 200, {
         firstName: updatedUser.dataValues.firstName,
+        id: updatedUser.dataValues.id,
         lastName: updatedUser.dataValues.lastName,
         bio: updatedUser.dataValues.bio,
         userName: updatedUser.dataValues.userName,

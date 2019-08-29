@@ -62,6 +62,7 @@ export const getBookmarks = async userId => {
           'body',
           'image',
           'likesCount',
+          'isPublished',
           'viewsCount',
           'description'
         ],
@@ -78,6 +79,14 @@ export const getBookmarks = async userId => {
   });
   if (userBookmarks.bookmarks.length < 1) {
     return { message: `You currently don't have any bookmarks` };
+  }
+
+  if (userBookmarks.bookmarks) {
+    userBookmarks.bookmarks.forEach((article, index) => {
+      if (article.isPublished === false) {
+        userBookmarks.bookmarks.splice(index);
+      }
+    });
   }
   return userBookmarks;
 };

@@ -165,6 +165,7 @@ describe('Bookmarks API Endpoints', () => {
         'body',
         'image',
         'likesCount',
+        'isPublished',
         'viewsCount',
         'description',
         'bookmarks'
