@@ -160,6 +160,7 @@ describe('Bookmarks API Endpoints', () => {
         'bookmarks'
       );
       expect(response.body.data.bookmarks[0]).to.have.keys(
+        'slug',
         'title',
         'body',
         'image',

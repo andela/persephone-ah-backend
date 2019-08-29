@@ -57,6 +57,7 @@ export const getBookmarks = async userId => {
         model: Article,
         as: 'bookmarks',
         attributes: [
+          'slug',
           'title',
           'body',
           'image',

@@ -113,7 +113,7 @@ export const getArticleService = async data => {
       {
         model: User,
         as: 'author',
-        attributes: ['firstName', 'lastName', 'image']
+        attributes: ['id', 'firstName', 'lastName', 'image']
       },
       {
         model: Tag,
@@ -523,12 +523,16 @@ export const getAllArticleCommentsService = async slug => {
   const articleId = article.id;
   const comments = await Comment.findAll({
     where: { articleId },
-    attributes: ['body', 'highlightedText', 'slug', 'createdAt'],
+    attributes: ['id', 'body', 'highlightedText', 'slug', 'createdAt'],
     include: [
       {
         model: User,
         as: 'userComment',
-        attributes: ['firstName', 'lastName', 'userName']
+        attributes: ['image', 'firstName', 'lastName', 'userName', 'email']
+      },
+      {
+        model: CommentReaction,
+        as: 'commentLikes'
       }
     ]
   });
@@ -620,7 +624,7 @@ export const getCommentLikesCount = async commentId => {
     where: { commentId }
   });
 
-  return likeCount.count;
+  return likeCount;
 };
 /**
  * @method likeCommentService
@@ -632,7 +636,7 @@ export const getCommentLikesCount = async commentId => {
  * @param {string} reaction - the reaction value -like or dislike
  */
 
-export const likeCommentService = async (slug, commentId, userId) => {
+export const likeCommentService = async (slug, commentId, userId, email) => {
   try {
     const articleExist = await Article.findOne({ where: { slug } });
 
@@ -656,7 +660,8 @@ export const likeCommentService = async (slug, commentId, userId) => {
     if (!findReaction) {
       await CommentReaction.create({
         userId,
-        commentId
+        commentId,
+        email
       });
 
       const likeCount = await getCommentLikesCount(commentId);

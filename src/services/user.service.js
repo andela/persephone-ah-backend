@@ -197,18 +197,23 @@ export const getUserFollowersService = async userId => {
   // checks if the user exist in the system
   const isUserExist = await User.findOne({ where: { id: userId } });
   if (!isUserExist) {
-    const response = { message: 'Invalid request', status: 400 };
+    const response = { message: 'User does not exist', status: 404 };
     throw response;
   }
-
   const followers = await Follow.findAll({
-    where: { userId },
-    attributes: ['id'],
+    where: { userId, isFollowing: true },
     include: [
       {
         model: User,
         as: 'follower',
-        attributes: ['firstName', 'lastName', 'email', 'userName', 'image']
+        attributes: [
+          'id',
+          'firstName',
+          'lastName',
+          'email',
+          'userName',
+          'image'
+        ]
       }
     ]
   });

@@ -55,6 +55,11 @@ export default (sequelize, DataTypes) => {
       onDelete: 'CASCADE'
     });
 
+    Comment.hasMany(models.CommentReaction, {
+      foreignKey: 'commentId',
+      as: 'commentLikes'
+    });
+
     Comment.belongsTo(models.Article, {
       foreignKey: 'articleId',
       as: 'articleComment',

@@ -104,7 +104,6 @@ describe('User API endpoints', () => {
         .send({
           userId: -20
         });
-      console.log(32, response.body);
       expect(response).to.have.status(400);
       expect(response).to.be.an('object');
       expect(response.body.data.message.userId).to.equal(
@@ -181,15 +180,15 @@ describe('User API endpoints', () => {
         .request(app)
         .get('/api/v1/users/follow/256')
         .set('Authorization', `Bearer ${authorToken}`);
-      expect(response).to.have.status(400);
+      expect(response).to.have.status(404);
       expect(response).to.be.an('object');
-      expect(response.body.message).to.equal('Invalid request');
+      expect(response.body.message).to.equal('User does not exist');
     });
 
     it('Should return user has no follower', async () => {
       const response = await chai
         .request(app)
-        .get('/api/v1/users/follow/21')
+        .get('/api/v1/users/follow/4')
         .set('Authorization', `Bearer ${authorToken}`);
       expect(response).to.have.status(200);
       expect(response).to.be.an('object');

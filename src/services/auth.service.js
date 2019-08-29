@@ -87,13 +87,26 @@ export const loginService = async body => {
     return bcrypt.compareSync(plainText, result.password);
   };
   if (result && validatePassword(password)) {
-    const { firstName, lastName } = result;
+    const {
+      id,
+      firstName,
+      lastName,
+      image,
+      bio,
+      userName,
+      isNotified
+    } = result;
     const token = await getToken(result);
     const user = {
+      id,
       firstName,
       lastName,
       email: result.email,
-      token
+      token,
+      image,
+      bio,
+      userName,
+      isNotified
     };
     return { user };
   }

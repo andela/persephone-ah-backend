@@ -397,10 +397,10 @@ export default {
    */
 
   async likeComment(request, response) {
-    const { id } = request.user;
+    const { id, email } = request.user;
     const { slug, commentId } = request.params;
 
-    const result = await likeCommentService(slug, commentId, id);
+    const result = await likeCommentService(slug, commentId, id, email);
 
     if (result === `The article with the specified slug does not exist`) {
       return Helper.failResponse(response, 404, {
