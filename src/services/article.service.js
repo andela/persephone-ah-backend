@@ -118,7 +118,7 @@ export const getArticleService = async data => {
       {
         model: User,
         as: 'author',
-        attributes: ['id', 'firstName', 'lastName', 'image']
+        attributes: ['id', 'firstName', 'lastName', 'image', 'userName', 'bio']
       },
       {
         model: Tag,

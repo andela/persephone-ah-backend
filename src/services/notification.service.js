@@ -259,3 +259,26 @@ export const sendNotificationOnArticlePublish = async details => {
     return response;
   }
 };
+
+/**
+ * @method readNotificationService
+ * @description read a notification
+ *
+ * @param {Object} details details of the notification to be sent
+ *
+ * @returns {Boolean} true or false
+ */
+export const readNotificationService = async details => {
+  try {
+    const { notificationId } = details;
+    const readNotification = await Notification.findOne({
+      where: { id: notificationId }
+    });
+    readNotification.update({ isRead: true });
+    const response = { message: 'you have read the notification' };
+    return response;
+  } catch (error) {
+    const response = { message: 'something went wrong' };
+    return response;
+  }
+};
